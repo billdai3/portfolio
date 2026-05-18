@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Brand */
+  --color-brand: #fcc92c;
+
+  /* Custom grayscale */
+  --color-ash-50: #f1f1f1;
+  --color-ash-100: #d6d6d6;
+  --color-ash-200: #bcbcbc;
+  --color-ash-300: #a1a1a1;
+  --color-ash-400: #868686;
+  --color-ash-500: #6c6c6c;
+  --color-ash-600: #585858;
+  --color-ash-700: #444444;
+  --color-ash-800: #313131;
+  --color-ash-900: #1d1d1d;
+
+  /* Semantic (map to ash / brand) */
+  --color-bg-page: var(--color-ash-50);
+  --color-bg-soft: var(--color-ash-50);
+  --color-bg-elevated: #ffffff;
+  --color-text-primary: var(--color-ash-900);
+  --color-text-secondary: var(--color-ash-500);
+  --color-text-muted: var(--color-ash-400);
+  --color-border-default: var(--color-ash-100);
+  --color-border-strong: var(--color-ash-200);
+  --color-accent: var(--color-brand);
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply m-0 min-h-svh bg-bg-page text-text-primary;
+  }
+}
