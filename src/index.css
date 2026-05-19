@@ -26,6 +26,13 @@
   --color-border-default: var(--color-ash-100);
   --color-border-strong: var(--color-ash-200);
   --color-accent: var(--color-brand);
+
+  /* Typography — system default for body; Google Fonts for headings & buttons */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-montserrat: 'Montserrat', var(--font-sans);
+  --font-montserrat-alt: 'Montserrat Alternates', var(--font-sans);
 }
 
 @layer base {
@@ -34,6 +41,30 @@
   }
 
   body {
-    @apply m-0 min-h-svh bg-bg-page text-text-primary;
+    @apply m-0 min-h-svh bg-bg-page font-sans text-text-primary;
+  }
+}
+
+/*
+  Reusable typography combos — use these class names on headings & buttons
+  instead of repeating font-family + size + weight in every component.
+*/
+@layer components {
+  /* Montserrat Alternates — display / section headings */
+  .type-hero-title {
+    @apply font-montserrat-alt text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl;
+  }
+
+  .type-section-title {
+    @apply font-montserrat-alt text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+
+  .type-page-title {
+    @apply font-montserrat-alt text-3xl font-bold tracking-tight md:text-4xl;
+  }
+
+  /* Montserrat — nav pills, buttons, text CTAs */
+  .type-btn {
+    @apply font-montserrat text-sm font-bold;
   }
 }

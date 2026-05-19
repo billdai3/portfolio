@@ -9,7 +9,7 @@ const navItems = [
 
 function pillNavLinkClass({ isActive }: { isActive: boolean }) {
   return [
-    'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+    'type-btn rounded-full px-4 py-2 transition-colors',
     isActive
       ? 'bg-ash-900 text-white'
       : 'text-text-secondary hover:bg-ash-100 hover:text-text-primary',

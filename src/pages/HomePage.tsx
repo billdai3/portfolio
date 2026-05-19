@@ -62,7 +62,7 @@ export default function HomePage() {
         aria-label="Hero"
       >
         <div className="mx-auto w-full max-w-6xl">
-          <h1 className="max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">
+          <h1 className="type-hero-title max-w-4xl">
             Bill's Portfolio
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-text-secondary sm:text-xl">
@@ -79,7 +79,7 @@ export default function HomePage() {
         <button
           type="button"
           onClick={scrollToSelectedWorks}
-          className="absolute bottom-10 right-6 z-10 cursor-pointer rounded-full border border-transparent px-2 py-6 text-sm font-medium text-text-muted transition hover:text-text-primary focus-visible:border-border-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-300"
+          className="type-btn absolute bottom-10 right-6 z-10 cursor-pointer rounded-full border border-transparent px-2 py-6 text-text-muted transition hover:text-text-primary focus-visible:border-border-default focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-300"
           aria-label="Scroll to Selected Works"
         >
           <span className="inline-block rotate-90">Scroll</span>
@@ -95,10 +95,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2
-                id="home-selected-works-heading"
-                className="text-2xl font-medium tracking-tight sm:text-3xl"
-              >
+              <h2 id="home-selected-works-heading" className="type-section-title">
                 Selected Works
               </h2>
               <p className="mt-2 max-w-lg text-text-secondary">
@@ -107,7 +104,7 @@ export default function HomePage() {
             </div>
             <Link
               to="/work"
-              className="text-sm font-medium text-text-primary underline-offset-4 hover:underline"
+              className="type-btn text-text-primary underline-offset-4 hover:underline"
             >
               View all work
             </Link>
@@ -130,10 +127,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2
-                id="home-experiments-heading"
-                className="text-2xl font-medium tracking-tight sm:text-3xl"
-              >
+              <h2 id="home-experiments-heading" className="type-section-title">
                 Creative Coding &amp; Experiments
               </h2>
               <p className="mt-2 max-w-lg text-text-secondary">
@@ -142,7 +136,7 @@ export default function HomePage() {
             </div>
             <Link
               to="/lab"
-              className="text-sm font-medium text-text-primary underline-offset-4 hover:underline"
+              className="type-btn text-text-primary underline-offset-4 hover:underline"
             >
               Open lab
             </Link>
