@@ -59,6 +59,10 @@
     @apply font-montserrat-alt text-2xl font-bold tracking-tight sm:text-3xl;
   }
 
+  .type-hero-subtitle {
+    @apply font-montserrat-alt text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+
   .type-page-title {
     @apply font-montserrat-alt text-3xl font-bold tracking-tight md:text-4xl;
   }

@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import HeroAnimation from "../components/HeroAnimation";
 
 type ShowcaseItem = {
-  title: string
-  tag: string
-  href?: string
-}
+  title: string;
+  tag: string;
+  href?: string;
+};
 
 function ShowcaseCard({ item }: { item: ShowcaseItem }) {
   const inner = (
@@ -17,7 +18,7 @@ function ShowcaseCard({ item }: { item: ShowcaseItem }) {
         {item.title}
       </h3>
     </>
-  )
+  );
 
   if (item.href) {
     return (
@@ -27,53 +28,49 @@ function ShowcaseCard({ item }: { item: ShowcaseItem }) {
       >
         {inner}
       </Link>
-    )
+    );
   }
 
   return (
     <div className="rounded-2xl border border-border-default bg-bg-elevated p-5">
       {inner}
     </div>
-  )
+  );
 }
 
 const selectedWorks: ShowcaseItem[] = [
-  { title: 'Project Alpha', tag: 'Product design', href: '/work' },
-  { title: 'Project Beta', tag: 'Brand & web', href: '/work' },
-]
+  { title: "Project Alpha", tag: "Product design", href: "/work" },
+  { title: "Project Beta", tag: "Brand & web", href: "/work" },
+];
 
 const experiments: ShowcaseItem[] = [
-  { title: 'Sketch One', tag: 'WebGL', href: '/lab' },
-  { title: 'Sketch Two', tag: 'Generative', href: '/lab' },
-]
+  { title: "Sketch One", tag: "WebGL", href: "/lab" },
+  { title: "Sketch Two", tag: "Generative", href: "/lab" },
+];
 
 export default function HomePage() {
   const scrollToSelectedWorks = () => {
     document
-      .getElementById('selected-works')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+      .getElementById("selected-works")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div className="text-text-primary">
       {/* Hero — 100vh */}
       <section
-        className="relative flex min-h-screen flex-col justify-center px-6 py-16"
+        className="relative grid min-h-screen grid-rows-[1fr_minmax(0,45vh)_auto] bg-brand"
         aria-label="Hero"
       >
-        <div className="mx-auto w-full max-w-6xl">
-          <h1 className="type-hero-title max-w-4xl">
-            Bill's Portfolio
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-text-secondary sm:text-xl">
-            <span className="text-text-muted">: </span>
-            <a
-              href="mailto:twbilldai@gmail.com"
-              className="text-text-primary underline decoration-ash-200 underline-offset-4 transition hover:decoration-ash-900"
-            >
-              twbilldai@gmail.com
-            </a>
-          </p>
+        <div className="min-h-0" aria-hidden />
+
+        <div className="flex min-h-0 items-center justify-center px-6">
+          <HeroAnimation className="aspect-square h-full max-h-[min(45vh,24rem)] w-full max-w-md" />
+        </div>
+
+        <div className="flex flex-col items-center px-6 pb-16 pt-6 text-center sm:pb-24">
+          <h1 className="type-hero-title">Bill's Portfolio</h1>
+          <p className="type-hero-subtitle mt-3 text-text-primary">UI/UX Design</p>
         </div>
 
         <button
@@ -95,7 +92,10 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex flex-col gap-3 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 id="home-selected-works-heading" className="type-section-title">
+              <h2
+                id="home-selected-works-heading"
+                className="type-section-title"
+              >
                 Selected Works
               </h2>
               <p className="mt-2 max-w-lg text-text-secondary">
@@ -151,5 +151,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
