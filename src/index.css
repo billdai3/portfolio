@@ -63,7 +63,12 @@
     @apply font-montserrat-alt text-3xl font-bold tracking-tight md:text-4xl;
   }
 
-  /* Montserrat — nav pills, buttons, text CTAs */
+  /* Montserrat Alternates — navbar pills */
+  .type-nav {
+    @apply font-montserrat-alt text-sm font-bold;
+  }
+
+  /* Montserrat — buttons, text CTAs */
   .type-btn {
     @apply font-montserrat text-sm font-bold;
   }
