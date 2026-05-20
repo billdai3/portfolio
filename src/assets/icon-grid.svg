@@ -1,0 +1,104 @@
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect width="512" height="512" />
+  <g id="grid">
+    <g id="graphic">
+      <path
+        id="bg-rounded-rect"
+        d="M398 0H114C51.0395 0 0 51.0395 0 114V398C0 460.96 51.0395 512 114 512H398C460.96 512 512 460.96 512 398V114C512 51.0395 460.96 0 398 0Z"
+        fill="#F1F1F1"
+      />
+      <path
+        id="line-rounded-rect"
+        d="M398 1H114C51.5918 1 1 51.5918 1 114V398C1 460.408 51.5918 511 114 511H398C460.408 511 511 460.408 511 398V114C511 51.5918 460.408 1 398 1Z"
+        stroke="#1D1D1D"
+        stroke-width="2"
+      />
+      <g id="line-cir">
+        <path
+          id="line-cir-3"
+          d="M256 352C309.019 352 352 309.019 352 256C352 202.981 309.019 160 256 160C202.981 160 160 202.981 160 256C160 309.019 202.981 352 256 352Z"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-cir-2"
+          d="M256 391C330.558 391 391 330.558 391 256C391 181.442 330.558 121 256 121C181.442 121 121 181.442 121 256C121 330.558 181.442 391 256 391Z"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-cir-1"
+          d="M256 477C378.055 477 477 378.055 477 256C477 133.945 378.055 35 256 35C133.945 35 35 133.945 35 256C35 378.055 133.945 477 256 477Z"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+      </g>
+      <path
+        id="line-rect"
+        d="M477 35H35V477H477V35Z"
+        stroke="#1D1D1D"
+        stroke-width="2"
+      />
+      <g id="line-vert">
+        <path
+          id="line-vert-3"
+          d="M352 512V0"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-vert-2"
+          d="M256 512V0"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-vert-1"
+          d="M160 512V0"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+      </g>
+      <g id="line-hor">
+        <path
+          id="line-hor-3"
+          d="M0 352H512"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-hor-2"
+          d="M0 256H512"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-hor-1"
+          d="M0 160H512"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+      </g>
+      <g id="line-cross">
+        <path
+          id="line-cross-2"
+          d="M478 478L34 34"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+        <path
+          id="line-cross-1"
+          d="M34 478L478 34"
+          stroke="#1D1D1D"
+          stroke-width="2"
+        />
+      </g>
+    </g>
+  </g>
+</svg>

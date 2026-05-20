@@ -43,6 +43,8 @@ function pillNavLinkClass(isHome: boolean) {
 
 export default function Layout() {
   const location = useLocation();
+  const hidePrimaryNav =
+    import.meta.env.DEV && location.pathname === "/dev/gsap";
   const navRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
   const [navVisible, setNavVisible] = useState(true);
@@ -137,45 +139,47 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <header
-        className={[
-          "fixed top-0 right-0 left-0 z-50 px-4 pt-6 pb-2 transition-transform duration-300 ease-out sm:px-6",
-          navVisible ? "translate-y-0" : "-translate-y-full",
-        ].join(" ")}
-      >
-        <div className="mx-auto flex max-w-6xl justify-center">
-          <nav
-            ref={navRef}
-            className="relative inline-flex items-center rounded-full bg-white p-1.5 shadow-md"
-            aria-label="Primary"
-          >
-            <div
-              aria-hidden
-              className={[
-                "pointer-events-none absolute top-1.5 bottom-1.5 rounded-full transition-[left,width,background-color] duration-300 ease-out",
-                indicator.isHome ? "bg-accent" : "bg-ash-900",
-                indicator.ready ? "opacity-100" : "opacity-0",
-              ].join(" ")}
-              style={{
-                left: indicator.left,
-                width: indicator.width,
-              }}
-            />
+      {hidePrimaryNav ? null : (
+        <header
+          className={[
+            "fixed top-0 right-0 left-0 z-50 px-4 pt-6 pb-2 transition-transform duration-300 ease-out sm:px-6",
+            navVisible ? "translate-y-0" : "-translate-y-full",
+          ].join(" ")}
+        >
+          <div className="mx-auto flex max-w-6xl justify-center">
+            <nav
+              ref={navRef}
+              className="relative inline-flex items-center rounded-full bg-white p-1.5 shadow-md"
+              aria-label="Primary"
+            >
+              <div
+                aria-hidden
+                className={[
+                  "pointer-events-none absolute top-1.5 bottom-1.5 rounded-full transition-[left,width,background-color] duration-300 ease-out",
+                  indicator.isHome ? "bg-accent" : "bg-ash-900",
+                  indicator.ready ? "opacity-100" : "opacity-0",
+                ].join(" ")}
+                style={{
+                  left: indicator.left,
+                  width: indicator.width,
+                }}
+              />
 
-            {navItems.map(({ to, label, isHome, ...rest }) => (
-              <NavLink
-                key={to}
-                to={to}
-                data-home={isHome ? "true" : "false"}
-                className={pillNavLinkClass(isHome)}
-                {...rest}
-              >
-                {label}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-      </header>
+              {navItems.map(({ to, label, isHome, ...rest }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  data-home={isHome ? "true" : "false"}
+                  className={pillNavLinkClass(isHome)}
+                  {...rest}
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        </header>
+      )}
 
       <main className="flex-1">
         <Outlet />
