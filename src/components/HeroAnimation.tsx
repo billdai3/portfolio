@@ -82,9 +82,10 @@ function setVertLineHidden(
 ): number {
   ensureVertPathDirection(path, growFrom);
   const len = path.getTotalLength();
+  // path 起點在「長出來」的那一端：offset len→0 沿 path 方向畫出
   gsap.set(path, {
     strokeDasharray: len,
-    strokeDashoffset: growFrom === "top" ? len : -len,
+    strokeDashoffset: len,
   });
   return len;
 }
