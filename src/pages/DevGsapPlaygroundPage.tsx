@@ -2,14 +2,14 @@ import { useCallback, useRef } from 'react'
 import { button, Leva, useControls } from 'leva'
 
 import HeroAnimation, {
-  type CircleTimelineHandle,
+  type GridIconTimelineHandle,
 } from '../components/HeroAnimation'
 
 /** 與 GSAP `progress()` 接近時視為 Leva 回寫，避免再 `seek` 打斷播放 */
 const PROGRESS_SEEK_EPS = 0.002
 
 export default function DevGsapPlaygroundPage() {
-  const circleRef = useRef<CircleTimelineHandle | null>(null)
+  const gridIconRef = useRef<GridIconTimelineHandle | null>(null)
   const suppressSeekFromTimeline = useRef(false)
 
   const [, set] = useControls(() => ({
@@ -21,14 +21,14 @@ export default function DevGsapPlaygroundPage() {
       label: 'Progress',
       onChange: (v: number) => {
         if (suppressSeekFromTimeline.current) return
-        const api = circleRef.current
+        const api = gridIconRef.current
         if (!api) return
         if (Math.abs(v - api.getProgress()) < PROGRESS_SEEK_EPS) return
         api.seek(v)
       },
     },
     Reset: button(() => {
-      circleRef.current?.restart()
+      gridIconRef.current?.restart()
     }),
   }))
 
@@ -52,7 +52,7 @@ export default function DevGsapPlaygroundPage() {
       <Leva titleBar={{ title: 'GSAP tweaks', drag: true, filter: false }} />
       <HeroAnimation
         className="h-64 w-64 max-w-full shrink-0"
-        circleTimelineRef={circleRef}
+        gridIconTimelineRef={gridIconRef}
         levaSetValues={levaSetWrapped}
       />
     </div>
