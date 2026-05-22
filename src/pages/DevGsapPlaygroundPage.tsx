@@ -1,15 +1,15 @@
 import { useCallback, useRef } from 'react'
 import { button, Leva, useControls } from 'leva'
 
-import HeroAnimation, {
-  type GridIconTimelineHandle,
-} from '../components/HeroAnimation'
+import SkillDesignAnimation, {
+  type SkillDesignTimelineHandle,
+} from '../components/SkillDesignAnimation'
 
 /** 與 GSAP `progress()` 接近時視為 Leva 回寫，避免再 `seek` 打斷播放 */
 const PROGRESS_SEEK_EPS = 0.002
 
 export default function DevGsapPlaygroundPage() {
-  const gridIconRef = useRef<GridIconTimelineHandle | null>(null)
+  const skillDesignRef = useRef<SkillDesignTimelineHandle | null>(null)
   const suppressSeekFromTimeline = useRef(false)
 
   const [, set] = useControls(() => ({
@@ -21,14 +21,14 @@ export default function DevGsapPlaygroundPage() {
       label: 'Progress',
       onChange: (v: number) => {
         if (suppressSeekFromTimeline.current) return
-        const api = gridIconRef.current
+        const api = skillDesignRef.current
         if (!api) return
         if (Math.abs(v - api.getProgress()) < PROGRESS_SEEK_EPS) return
         api.seek(v)
       },
     },
     Reset: button(() => {
-      gridIconRef.current?.restart()
+      skillDesignRef.current?.restart()
     }),
   }))
 
@@ -50,9 +50,9 @@ export default function DevGsapPlaygroundPage() {
   return (
     <div className="flex min-h-svh w-full flex-col items-center justify-center gap-6 bg-ash-600 py-10">
       <Leva titleBar={{ title: 'GSAP tweaks', drag: true, filter: false }} />
-      <HeroAnimation
+      <SkillDesignAnimation
         className="h-64 w-64 max-w-full shrink-0"
-        gridIconTimelineRef={gridIconRef}
+        timelineRef={skillDesignRef}
         levaSetValues={levaSetWrapped}
       />
     </div>
