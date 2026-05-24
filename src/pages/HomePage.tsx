@@ -1,55 +1,6 @@
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
-
-type ShowcaseItem = {
-  title: string;
-  tag: string;
-  href?: string;
-};
-
-type ShowcaseCardVariant = "on-section" | "on-section-alt";
-
-function ShowcaseCard({
-  item,
-  variant,
-}: {
-  item: ShowcaseItem;
-  variant: ShowcaseCardVariant;
-}) {
-  const cardBg =
-    variant === "on-section" ? "bg-bg-card" : "bg-bg-card-alt";
-
-  const inner = (
-    <>
-      <div className="mb-5 aspect-16/10 rounded-xl bg-ash-600" />
-      <p className="text-xs font-medium uppercase tracking-wider text-text-muted">
-        {item.tag}
-      </p>
-      <h3 className="mt-1.5 text-lg font-medium tracking-tight text-text-primary">
-        {item.title}
-      </h3>
-    </>
-  );
-
-  if (item.href) {
-    return (
-      <Link
-        to={item.href}
-        className={`block rounded-2xl border border-border-default ${cardBg} p-5 transition hover:border-border-strong`}
-      >
-        {inner}
-      </Link>
-    );
-  }
-
-  return (
-    <div
-      className={`rounded-2xl border border-border-default ${cardBg} p-5`}
-    >
-      {inner}
-    </div>
-  );
-}
+import ShowcaseCard, { type ShowcaseItem } from "../components/ShowcaseCard";
 
 const selectedWorks: ShowcaseItem[] = [
   { title: "Project Alpha", tag: "Product design", href: "/work" },

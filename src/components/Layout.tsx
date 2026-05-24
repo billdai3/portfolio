@@ -121,9 +121,11 @@ export default function Layout() {
   }, [updateIndicator]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+
     const frame = requestAnimationFrame(() => {
       setNavVisible(true);
-      lastScrollY.current = window.scrollY;
+      lastScrollY.current = 0;
     });
     return () => cancelAnimationFrame(frame);
   }, [location.pathname]);
