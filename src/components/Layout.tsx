@@ -4,6 +4,8 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
+  type RefObject,
 } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -17,43 +19,66 @@ const navItems = [
   { to: "/about", label: "About", isHome: false },
 ] as const;
 
+type NavVisualTheme = "over-hero" | "scrolled";
+
 type IndicatorState = {
   left: number;
   width: number;
-  isHome: boolean;
   ready: boolean;
 };
 
-function pillNavLinkClass(isHome: boolean) {
-  return ({ isActive }: { isActive: boolean }) => {
-    const base =
-      "type-nav relative z-10 rounded-full px-4 py-2 transition-colors duration-300";
-
-    if (!isActive) {
-      return [base, "text-text-primary hover:bg-ash-100"].join(" ");
-    }
-
-    if (isHome) {
-      return [base, "text-text-primary"].join(" ");
-    }
-
-    return [base, "text-white"].join(" ");
+function subscribeNavOverHero(onStoreChange: () => void) {
+  window.addEventListener("scroll", onStoreChange, { passive: true });
+  window.addEventListener("resize", onStoreChange);
+  return () => {
+    window.removeEventListener("scroll", onStoreChange);
+    window.removeEventListener("resize", onStoreChange);
   };
+}
+
+function getNavOverHeroSnapshot(
+  isHome: boolean,
+  navRef: RefObject<HTMLElement | null>,
+) {
+  if (!isHome) return false;
+
+  const hero = document.getElementById("home-hero");
+  const nav = navRef.current;
+  if (!hero || !nav) return true;
+
+  const heroRect = hero.getBoundingClientRect();
+  const navBottom = nav.getBoundingClientRect().bottom;
+  return heroRect.bottom > navBottom;
+}
+
+function useNavOverHero(
+  isHome: boolean,
+  navRef: RefObject<HTMLElement | null>,
+) {
+  return useSyncExternalStore(
+    subscribeNavOverHero,
+    () => getNavOverHeroSnapshot(isHome, navRef),
+    () => isHome,
+  );
 }
 
 export default function Layout() {
   const location = useLocation();
+  const isHome = location.pathname === "/";
   const hidePrimaryNav =
     import.meta.env.DEV && location.pathname === "/dev/gsap";
   const navRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
   const [navVisible, setNavVisible] = useState(true);
+  const navOverHero = useNavOverHero(isHome, navRef);
   const [indicator, setIndicator] = useState<IndicatorState>({
     left: 0,
     width: 0,
-    isHome: true,
     ready: false,
   });
+
+  const navTheme: NavVisualTheme =
+    isHome && navOverHero ? "over-hero" : "scrolled";
 
   const updateIndicator = useCallback(() => {
     const nav = navRef.current;
@@ -68,7 +93,6 @@ export default function Layout() {
     setIndicator({
       left: linkRect.left - navRect.left,
       width: linkRect.width,
-      isHome: activeLink.dataset.home === "true",
       ready: true,
     });
   }, []);
@@ -77,7 +101,7 @@ export default function Layout() {
     updateIndicator();
     const frame = requestAnimationFrame(() => updateIndicator());
     return () => cancelAnimationFrame(frame);
-  }, [location.pathname, updateIndicator]);
+  }, [location.pathname, navTheme, updateIndicator]);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -149,14 +173,18 @@ export default function Layout() {
           <div className="mx-auto flex max-w-6xl justify-center">
             <nav
               ref={navRef}
-              className="relative inline-flex items-center rounded-full bg-white p-1.5 shadow-md"
+              className={[
+                "nav-pill",
+                navTheme === "over-hero"
+                  ? "nav-pill--over-hero"
+                  : "nav-pill--scrolled",
+              ].join(" ")}
               aria-label="Primary"
             >
               <div
                 aria-hidden
                 className={[
-                  "pointer-events-none absolute top-1.5 bottom-1.5 rounded-full transition-[left,width,background-color] duration-300 ease-out",
-                  indicator.isHome ? "bg-accent" : "bg-ash-900",
+                  "nav-pill__indicator",
                   indicator.ready ? "opacity-100" : "opacity-0",
                 ].join(" ")}
                 style={{
@@ -165,12 +193,12 @@ export default function Layout() {
                 }}
               />
 
-              {navItems.map(({ to, label, isHome, ...rest }) => (
+              {navItems.map(({ to, label, isHome: isHomeLink, ...rest }) => (
                 <NavLink
                   key={to}
                   to={to}
-                  data-home={isHome ? "true" : "false"}
-                  className={pillNavLinkClass(isHome)}
+                  data-home={isHomeLink ? "true" : "false"}
+                  className="nav-pill__link type-nav"
                   {...rest}
                 >
                   {label}
