@@ -1,0 +1,134 @@
+<svg
+  width="160"
+  height="160"
+  viewBox="0 0 160 160"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g id="skill-system">
+    <rect width="160" height="160" fill="#1D1D1D" />
+    <g id="donut">
+      <path
+        id="donut-out-100"
+        d="M80 140C67.3292 140 54.9837 135.989 44.7329 128.541C34.482 121.093 26.8521 110.592 22.9366 98.541L80 80L80 140Z"
+        fill="#313131"
+      />
+      <path
+        id="donut-out-80"
+        d="M137.064 98.539C133.149 110.59 125.519 121.092 115.269 128.54C105.018 135.988 92.6729 140 80.0021 140L80 80L137.064 98.539Z"
+        fill="#444444"
+      />
+      <path
+        id="donut-out-60"
+        d="M115.267 31.459C125.518 38.9067 133.148 49.4084 137.063 61.459C140.979 73.5096 140.979 86.4904 137.063 98.541L80 80L115.267 31.459Z"
+        fill="#585858"
+      />
+      <path
+        id="donut-out-40"
+        d="M44.7329 31.459C54.9838 24.0113 67.3293 20 80 20C92.6708 20 105.016 24.0113 115.267 31.459L80 80L44.7329 31.459Z"
+        fill="#6C6C6C"
+      />
+      <path
+        id="donut-out-20"
+        d="M22.9366 98.5411C19.0211 86.4905 19.0211 73.5097 22.9366 61.4591C26.8521 49.4085 34.482 38.9068 44.7329 31.4591L80 80.0001L22.9366 98.5411Z"
+        fill="#868686"
+      />
+      <path
+        id="donut-cover"
+        d="M80 141C67.1181 141 54.5668 136.922 44.1451 129.35C33.7234 121.778 25.9663 111.101 21.9855 98.85L80 80L80 141Z"
+        fill="#1D1D1D"
+      />
+      <circle id="donut-in" cx="80" cy="80" r="38" fill="#1D1D1D" />
+    </g>
+    <g id="symbol">
+      <g id="symbol-l">
+        <rect
+          id="symbol-l-out"
+          x="55.9584"
+          y="80"
+          width="4"
+          height="34"
+          rx="2"
+          transform="rotate(-45 55.9584 80)"
+          fill="#FCC92C"
+        />
+        <rect
+          id="symbol-l-in"
+          x="66.565"
+          y="90.6066"
+          width="19"
+          height="4"
+          rx="2"
+          transform="rotate(-45 66.565 90.6066)"
+          fill="#FCC92C"
+        />
+      </g>
+      <g id="symbol-b">
+        <rect
+          id="symbol-b-out"
+          x="77.1716"
+          y="101.213"
+          width="34"
+          height="4"
+          rx="2"
+          transform="rotate(-45 77.1716 101.213)"
+          fill="#FCC92C"
+        />
+        <rect
+          id="symbol-b-in"
+          x="77.1716"
+          y="80"
+          width="4"
+          height="19"
+          rx="2"
+          transform="rotate(-45 77.1716 80)"
+          fill="#FCC92C"
+        />
+      </g>
+      <g id="symbol-r">
+        <rect
+          id="symbol-r-out"
+          x="77.1716"
+          y="58.7867"
+          width="4"
+          height="34"
+          rx="2"
+          transform="rotate(-45 77.1716 58.7867)"
+          fill="#FCC92C"
+        />
+        <rect
+          id="symbol-r-in"
+          x="77.1716"
+          y="80"
+          width="19"
+          height="4"
+          rx="2"
+          transform="rotate(-45 77.1716 80)"
+          fill="#FCC92C"
+        />
+      </g>
+      <g id="symbol-t">
+        <rect
+          id="symbol-t-out"
+          x="55.9584"
+          y="80"
+          width="34"
+          height="4"
+          rx="2"
+          transform="rotate(-45 55.9584 80)"
+          fill="#FCC92C"
+        />
+        <rect
+          id="symbol-t-in"
+          x="66.565"
+          y="69.3934"
+          width="4"
+          height="19"
+          rx="2"
+          transform="rotate(-45 66.565 69.3934)"
+          fill="#FCC92C"
+        />
+      </g>
+    </g>
+  </g>
+</svg>
