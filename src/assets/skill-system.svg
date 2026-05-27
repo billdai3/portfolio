@@ -44,88 +44,80 @@
       <g id="symbol-l">
         <rect
           id="symbol-l-out"
-          x="55.9584"
-          y="80"
+          x="63"
+          y="63"
           width="4"
           height="34"
           rx="2"
-          transform="rotate(-45 55.9584 80)"
           fill="#FCC92C"
         />
         <rect
           id="symbol-l-in"
-          x="66.565"
-          y="90.6066"
+          x="63"
+          y="78"
           width="19"
           height="4"
           rx="2"
-          transform="rotate(-45 66.565 90.6066)"
           fill="#FCC92C"
         />
       </g>
       <g id="symbol-b">
         <rect
           id="symbol-b-out"
-          x="77.1716"
-          y="101.213"
+          x="63"
+          y="93"
           width="34"
           height="4"
           rx="2"
-          transform="rotate(-45 77.1716 101.213)"
           fill="#FCC92C"
         />
         <rect
           id="symbol-b-in"
-          x="77.1716"
-          y="80"
+          x="78"
+          y="78"
           width="4"
           height="19"
           rx="2"
-          transform="rotate(-45 77.1716 80)"
           fill="#FCC92C"
         />
       </g>
       <g id="symbol-r">
         <rect
           id="symbol-r-out"
-          x="77.1716"
-          y="58.7867"
+          x="93"
+          y="63"
           width="4"
           height="34"
           rx="2"
-          transform="rotate(-45 77.1716 58.7867)"
           fill="#FCC92C"
         />
         <rect
           id="symbol-r-in"
-          x="77.1716"
-          y="80"
+          x="78"
+          y="78"
           width="19"
           height="4"
           rx="2"
-          transform="rotate(-45 77.1716 80)"
           fill="#FCC92C"
         />
       </g>
       <g id="symbol-t">
         <rect
           id="symbol-t-out"
-          x="55.9584"
-          y="80"
+          x="63"
+          y="63"
           width="34"
           height="4"
           rx="2"
-          transform="rotate(-45 55.9584 80)"
           fill="#FCC92C"
         />
         <rect
           id="symbol-t-in"
-          x="66.565"
-          y="69.3934"
+          x="78"
+          y="63"
           width="4"
           height="19"
           rx="2"
-          transform="rotate(-45 66.565 69.3934)"
           fill="#FCC92C"
         />
       </g>

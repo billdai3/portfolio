@@ -4,22 +4,14 @@ import type { RefObject } from "react";
 
 import skillSystemSvg from "../assets/skill-system.svg?raw";
 
-const TIMELINE_DURATION_SEC = 4.4;
-const SVG_ORIGIN = "80 80";
+const TIMELINE_DURATION_SEC = 7.2;
 const SYM_EASE = "power1.out";
 const SYM_DUR = 0.3;
-const ANIM_END_SEC = 2.8;
-
-const SYMBOL_PART_IDS = [
-  "symbol-t-out",
-  "symbol-r-out",
-  "symbol-b-out",
-  "symbol-l-out",
-  "symbol-t-in",
-  "symbol-r-in",
-  "symbol-b-in",
-  "symbol-l-in",
-] as const;
+const ANIM_END_SEC = 5.7;
+const SYMBOL_ORIGIN = "50% 50%";
+const DONUT_SPIN_DUR = 0.5;
+const DONUT_SPIN_EASE = "power1.in";
+const SVG_ORIGIN = "80 80";
 
 /** 給 Leva scrub / Reset 用（僅 dev 頁）。 */
 export type SkillSystemTimelineHandle = {
@@ -40,23 +32,19 @@ function q<T extends Element>(root: ParentNode, id: string): T | null {
   return root.querySelector<T>(`#${id}`);
 }
 
-function symbolParts(root: ParentNode): SVGElement[] {
-  return SYMBOL_PART_IDS.map((id) => q<SVGElement>(root, id)).filter(
-    (el): el is SVGElement => el != null,
-  );
-}
-
 function buildSkillSystemTimeline(
   root: ParentNode,
   levaSetValues?: LevaSetValues,
 ): gsap.core.Timeline {
+  const donut = q<SVGGElement>(root, "donut");
   const donutCover = q<SVGElement>(root, "donut-cover");
   const donutIn = q<SVGCircleElement>(root, "donut-in");
   const donutOut20 = q<SVGElement>(root, "donut-out-20");
   const donutOut40 = q<SVGElement>(root, "donut-out-40");
   const donutOut60 = q<SVGElement>(root, "donut-out-60");
   const donutOut80 = q<SVGElement>(root, "donut-out-80");
-  const parts = symbolParts(root);
+  const donutOut100 = q<SVGElement>(root, "donut-out-100");
+  const symbol = q<SVGGElement>(root, "symbol");
   const symbolTOut = q<SVGRectElement>(root, "symbol-t-out");
   const symbolROut = q<SVGRectElement>(root, "symbol-r-out");
   const symbolBOut = q<SVGRectElement>(root, "symbol-b-out");
@@ -70,13 +58,20 @@ function buildSkillSystemTimeline(
   const symMove = { duration: SYM_DUR, ease: SYM_EASE };
 
   if (donutCover) tl.set(donutCover, { autoAlpha: 0 }, 0);
+  if (symbol) {
+    tl.set(
+      symbol,
+      { rotation: -45, transformOrigin: SYMBOL_ORIGIN },
+      0,
+    );
+  }
 
-  if (parts.length > 0) {
+  if (symbol) {
     tl.to(
-      parts,
+      symbol,
       {
         rotation: "+=45",
-        svgOrigin: SVG_ORIGIN,
+        transformOrigin: SYMBOL_ORIGIN,
         duration: SYM_DUR,
         ease: SYM_EASE,
       },
@@ -85,28 +80,44 @@ function buildSkillSystemTimeline(
   }
 
   if (symbolTOut) {
-    tl.to(symbolTOut, { y: "+=5", ...symMove }, 1.1);
+    tl.to(symbolTOut, { attr: { y: "+=5" }, ...symMove }, 1.1);
   }
   if (symbolROut) {
-    tl.to(symbolROut, { x: "+=-5", ...symMove }, 1.1);
+    tl.to(symbolROut, { attr: { x: "+=-5" }, ...symMove }, 1.1);
   }
   if (symbolBOut) {
-    tl.to(symbolBOut, { y: "+=-5", ...symMove }, 1.1);
+    tl.to(symbolBOut, { attr: { y: "+=-5" }, ...symMove }, 1.1);
   }
   if (symbolLOut) {
-    tl.to(symbolLOut, { x: "+=5", ...symMove }, 1.1);
+    tl.to(symbolLOut, { attr: { x: "+=5" }, ...symMove }, 1.1);
   }
   if (symbolTIn) {
-    tl.to(symbolTIn, { y: "+=5", height: "-=15", ...symMove }, 1.1);
+    tl.to(
+      symbolTIn,
+      { attr: { y: "+=5", height: "-=15" }, ...symMove },
+      1.1,
+    );
   }
   if (symbolRIn) {
-    tl.to(symbolRIn, { x: "+=10", width: "-=15", ...symMove }, 1.1);
+    tl.to(
+      symbolRIn,
+      { attr: { x: "+=10", width: "-=15" }, ...symMove },
+      1.1,
+    );
   }
   if (symbolBIn) {
-    tl.to(symbolBIn, { y: "+=10", height: "-=15", ...symMove }, 1.1);
+    tl.to(
+      symbolBIn,
+      { attr: { y: "+=10", height: "-=15" }, ...symMove },
+      1.1,
+    );
   }
   if (symbolLIn) {
-    tl.to(symbolLIn, { x: "+=5", width: "-=15", ...symMove }, 1.1);
+    tl.to(
+      symbolLIn,
+      { attr: { x: "+=5", width: "-=15" }, ...symMove },
+      1.1,
+    );
   }
   if (donutIn) {
     tl.to(donutIn, { attr: { r: 61 }, ...symMove }, 1.1);
@@ -125,12 +136,13 @@ function buildSkillSystemTimeline(
   if (donutOut80) {
     tl.set(donutOut80, { rotation: -288, svgOrigin: SVG_ORIGIN }, 1.4);
   }
-  if (parts.length > 0) {
+
+  if (symbol) {
     tl.to(
-      parts,
+      symbol,
       {
-        rotation: "+=45",
-        svgOrigin: SVG_ORIGIN,
+        rotation: 45,
+        transformOrigin: SYMBOL_ORIGIN,
         duration: SYM_DUR,
         ease: SYM_EASE,
       },
@@ -139,17 +151,105 @@ function buildSkillSystemTimeline(
   }
 
   if (symbolTOut) {
-    tl.to(symbolTOut, { x: "+=3.5355", y: "+=-3.5355", ...symMove }, 2.5);
+    tl.to(symbolTOut, { attr: { y: "+=-5" }, ...symMove }, 2.5);
   }
   if (symbolROut) {
-    tl.to(symbolROut, { x: "+=3.5355", y: "+=3.5355", ...symMove }, 2.5);
+    tl.to(symbolROut, { attr: { x: "+=5" }, ...symMove }, 2.5);
   }
   if (symbolBOut) {
-    tl.to(symbolBOut, { x: "+=-3.5355", y: "+=3.5355", ...symMove }, 2.5);
+    tl.to(symbolBOut, { attr: { y: "+=5" }, ...symMove }, 2.5);
   }
   if (symbolLOut) {
-    tl.to(symbolLOut, { x: "+=-3.5355", y: "+=-3.5355", ...symMove }, 2.5);
+    tl.to(symbolLOut, { attr: { x: "+=-5" }, ...symMove }, 2.5);
   }
+  if (symbolTIn) tl.set(symbolTIn, { attr: { y: "+=10" } }, 2.5);
+  if (symbolRIn) tl.set(symbolRIn, { attr: { x: "+=-10" } }, 2.5);
+  if (symbolBIn) tl.set(symbolBIn, { attr: { y: "+=-10" } }, 2.5);
+  if (symbolLIn) tl.set(symbolLIn, { attr: { x: "+=10" } }, 2.5);
+
+  const scaleInFrom = {
+    scale: 0,
+    transformOrigin: SYMBOL_ORIGIN,
+    duration: SYM_DUR,
+    ease: SYM_EASE,
+    immediateRender: false,
+  };
+  if (symbolTIn) tl.from(symbolTIn, scaleInFrom, 2.5);
+  if (symbolRIn) tl.from(symbolRIn, scaleInFrom, 2.5);
+  if (symbolBIn) tl.from(symbolBIn, scaleInFrom, 2.5);
+  if (symbolLIn) tl.from(symbolLIn, scaleInFrom, 2.5);
+
+  if (symbolTIn) {
+    tl.to(
+      symbolTIn,
+      { attr: { y: "+=-15", height: "+=15" }, ...symMove },
+      3.2,
+    );
+  }
+  if (symbolRIn) {
+    tl.to(symbolRIn, { attr: { width: "+=15" }, ...symMove }, 3.2);
+  }
+  if (symbolBIn) {
+    tl.to(symbolBIn, { attr: { height: "+=15" }, ...symMove }, 3.2);
+  }
+  if (symbolLIn) {
+    tl.to(
+      symbolLIn,
+      { attr: { x: "+=-15", width: "+=15" }, ...symMove },
+      3.2,
+    );
+  }
+
+  if (donutIn) tl.set(donutIn, { attr: { r: 38 } }, 3.7);
+
+  const donutSpin = {
+    rotation: "+=72",
+    svgOrigin: SVG_ORIGIN,
+    duration: DONUT_SPIN_DUR,
+    ease: DONUT_SPIN_EASE,
+  };
+  if (donutOut20) tl.to(donutOut20, donutSpin, 3.7);
+  if (donutOut40) tl.to(donutOut40, donutSpin, 3.7);
+  if (donutOut60) tl.to(donutOut60, donutSpin, 3.7);
+  if (donutOut80) tl.to(donutOut80, donutSpin, 3.7);
+  if (donutOut100) tl.to(donutOut100, donutSpin, 3.7);
+
+  const donutStep = (duration: number) => ({
+    rotation: "+=72",
+    svgOrigin: SVG_ORIGIN,
+    duration,
+    ease: "none" as const,
+  });
+
+  if (donutCover) tl.set(donutCover, { autoAlpha: 0 }, 4.2);
+
+  if (donutOut40) tl.to(donutOut40, donutStep(0.3), 4.2);
+  if (donutOut60) tl.to(donutOut60, donutStep(0.3), 4.2);
+  if (donutOut80) tl.to(donutOut80, donutStep(0.3), 4.2);
+  if (donutOut100) tl.to(donutOut100, donutStep(0.3), 4.2);
+
+  if (donutOut60) tl.to(donutOut60, donutStep(0.2), 4.5);
+  if (donutOut80) tl.to(donutOut80, donutStep(0.2), 4.5);
+  if (donutOut100) tl.to(donutOut100, donutStep(0.2), 4.5);
+
+  if (donutOut80) tl.to(donutOut80, donutStep(0.1), 4.7);
+  if (donutOut100) tl.to(donutOut100, donutStep(0.1), 4.7);
+
+  if (donutOut100) tl.to(donutOut100, donutStep(0.1), 4.8);
+
+  if (donut) {
+    tl.to(
+      donut,
+      {
+        rotation: "+=360",
+        svgOrigin: SVG_ORIGIN,
+        duration: 0.8,
+        ease: SYM_EASE,
+      },
+      4.9,
+    );
+  }
+
   tl.to({}, { duration: TIMELINE_DURATION_SEC - ANIM_END_SEC }, ANIM_END_SEC);
 
   if (levaSetValues) {
