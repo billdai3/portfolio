@@ -1,0 +1,72 @@
+<svg
+  width="160"
+  height="160"
+  viewBox="0 0 160 160"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g id="skill-coding">
+    <rect width="160" height="160" fill="#1D1D1D" />
+    <g id="window">
+      <rect
+        id="window-board"
+        x="26"
+        y="34"
+        width="108"
+        height="92"
+        rx="2"
+        fill="#313131"
+        stroke="#444444"
+        stroke-width="4"
+      />
+      <path
+        id="window-bar"
+        d="M24 36C24 33.7909 25.7909 32 28 32H132C134.209 32 136 33.7909 136 36V48H24V36Z"
+        fill="#444444"
+      />
+      <circle id="window-btn-r" cx="32" cy="40" r="4" fill="#F15A5A" />
+      <circle id="window-btn-y" cx="44" cy="40" r="4" fill="#FCC92C" />
+      <circle id="window-btn-g" cx="56" cy="40" r="4" fill="#21AF6B" />
+    </g>
+    <g id="graphic-left">
+      <path
+        id="graphic-left-1"
+        d="M43 83.9706L59.9706 67"
+        stroke="#FCC92C"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+      <path
+        id="graphic-left-2"
+        d="M43 83.9706L59.9706 100.941"
+        stroke="#FCC92C"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+    </g>
+    <g id="graphic-right">
+      <path
+        id="graphic-right-1"
+        d="M116.941 83.9706L99.9706 67"
+        stroke="#FCC92C"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+      <path
+        id="graphic-right-2"
+        d="M116.941 83.9706L99.9706 100.941"
+        stroke="#FCC92C"
+        stroke-width="4"
+        stroke-linecap="round"
+      />
+    </g>
+    <path
+      id="graphic-slash"
+      d="M79.75 84L71 102L88.5 66L79.75 84Z"
+      stroke="#FCC92C"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>
