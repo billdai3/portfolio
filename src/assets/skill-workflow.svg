@@ -42,10 +42,11 @@
       rx="16"
       fill="#313131"
       stroke="#444444"
-      stroke-width="4"
+      stroke-width="6"
+      vector-effect="non-scaling-stroke"
     />
     <rect
-      id="Line1"
+      id="line-1"
       x="40"
       y="39"
       width="48"
@@ -54,7 +55,7 @@
       fill="#FCC92C"
     />
     <rect
-      id="Line2"
+      id="line-2"
       x="40"
       y="49"
       width="24"
@@ -70,7 +71,7 @@
       stroke-width="4"
     />
     <rect
-      id="Line3"
+      id="line-3"
       x="115"
       y="75"
       width="15"
@@ -79,7 +80,7 @@
       fill="#FCC92C"
     />
     <rect
-      id="Line4"
+      id="line-4"
       x="115"
       y="84"
       width="11"
