@@ -1,15 +1,15 @@
 import { useCallback, useRef } from 'react'
 import { button, Leva, useControls } from 'leva'
 
-import SkillCodingAnimation, {
-  type SkillCodingTimelineHandle,
-} from '../components/SkillCodingAnimation'
+import SkillWorkflowAnimation, {
+  type SkillWorkflowTimelineHandle,
+} from '../components/SkillWorkflowAnimation'
 
 /** 與 GSAP `progress()` 接近時視為 Leva 回寫，避免再 `seek` 打斷播放 */
 const PROGRESS_SEEK_EPS = 0.002
 
 export default function DevGsapPlaygroundPage() {
-  const skillCodingRef = useRef<SkillCodingTimelineHandle | null>(null)
+  const skillWorkflowRef = useRef<SkillWorkflowTimelineHandle | null>(null)
   const suppressSeekFromTimeline = useRef(false)
 
   const [, set] = useControls(() => ({
@@ -21,14 +21,14 @@ export default function DevGsapPlaygroundPage() {
       label: 'Progress',
       onChange: (v: number) => {
         if (suppressSeekFromTimeline.current) return
-        const api = skillCodingRef.current
+        const api = skillWorkflowRef.current
         if (!api) return
         if (Math.abs(v - api.getProgress()) < PROGRESS_SEEK_EPS) return
         api.seek(v)
       },
     },
     Reset: button(() => {
-      skillCodingRef.current?.restart()
+      skillWorkflowRef.current?.restart()
     }),
   }))
 
@@ -50,9 +50,9 @@ export default function DevGsapPlaygroundPage() {
   return (
     <div className="flex min-h-svh w-full flex-col items-center justify-center gap-6 bg-ash-600 py-10">
       <Leva titleBar={{ title: 'GSAP tweaks', drag: true, filter: false }} />
-      <SkillCodingAnimation
+      <SkillWorkflowAnimation
         className="h-64 w-64 max-w-full shrink-0"
-        timelineRef={skillCodingRef}
+        timelineRef={skillWorkflowRef}
         levaSetValues={levaSetWrapped}
       />
     </div>
