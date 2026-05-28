@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 
 import skillCodingSvg from "../assets/skill-coding.svg?raw";
 
-const TIMELINE_DURATION_SEC = 6.9;
+const TIMELINE_DURATION_SEC = 9.2;
 const EASE_POWER_OUT = "power1.out";
 const SLASH_SVG_ORIGIN = "80 80";
 const SLASH_D_ORIGINAL = "M79.75 84L71 102L88.5 66L79.75 84Z";
@@ -12,18 +12,22 @@ const SLASH_D_FLAT = "M80 104L68 104L92 104L80 104Z";
 const SLASH_D_FINAL = "M80 103L68 82L92 82L80 103Z";
 
 const LEFT1_D_ORIG = "M43 83.9706L59.9706 67";
+const LEFT1_D_RESET = "M43 83.9706L59.9706 100.941";
 const LEFT1_D_TARGET = "M54.31 68L65.63 79.31";
 const LEFT1_D_FINAL = "M54.31 68L65.63 68";
 const LEFT1_D_END = "M62.5 82L50 92";
 const LEFT2_D_ORIG = "M43 83.9706L59.9706 100.941";
+const LEFT2_D_RESET = "M43 83.9706L59.9706 67";
 const LEFT2_D_TARGET = "M54.31 68L43 79.31";
 const LEFT2_D_FINAL = "M54.31 68L43 68";
 const LEFT2_D_END = "M62.5 82L50 72";
 const RIGHT1_D_ORIG = "M116.941 83.9706L99.9706 67";
+const RIGHT1_D_RESET = "M116.941 83.9706L99.9706 100.941";
 const RIGHT1_D_TARGET = "M105.31 68L94 79.31";
 const RIGHT1_D_FINAL = "M105.31 68L94 68";
 const RIGHT1_D_END = "M97.5 82L110 92";
 const RIGHT2_D_ORIG = "M116.941 83.9706L99.9706 100.941";
+const RIGHT2_D_RESET = "M116.941 83.9706L99.9706 67";
 const RIGHT2_D_TARGET = "M105.31 68L116.63 79.31";
 const RIGHT2_D_FINAL = "M105.31 68L116.63 68";
 const RIGHT2_D_END = "M97.5 82L110 72";
@@ -293,8 +297,68 @@ function buildSkillCodingTimeline(
       6.6,
     );
 
+  // t=7.4s
+  if (graphicSlash)
+    tl.to(graphicSlash, { y: "-=6", duration: tweenDuration, ease }, 7.4);
+  if (graphicLeft) tl.to(graphicLeft, { x: "+=6", duration: tweenDuration, ease }, 7.4);
+  if (graphicRight)
+    tl.to(graphicRight, { x: "-=6", duration: tweenDuration, ease }, 7.4);
+
+  // t=7.7s
+  if (graphicSlash)
+    tl.to(graphicSlash, { y: "+=6", duration: tweenDuration, ease }, 7.7);
+  if (graphicLeft) tl.to(graphicLeft, { x: "-=6", duration: tweenDuration, ease }, 7.7);
+  if (graphicRight)
+    tl.to(graphicRight, { x: "+=6", duration: tweenDuration, ease }, 7.7);
+
+  // t=8s
+  if (graphicSlash)
+    tl.to(graphicSlash, { y: "-=6", duration: tweenDuration, ease }, 8);
+  if (graphicLeft) tl.to(graphicLeft, { x: "+=6", duration: tweenDuration, ease }, 8);
+  if (graphicRight)
+    tl.to(graphicRight, { x: "-=6", duration: tweenDuration, ease }, 8);
+
+  // t=8.3s
+  if (graphicSlash)
+    tl.to(graphicSlash, { y: "+=6", duration: tweenDuration, ease }, 8.3);
+  if (graphicLeft) tl.to(graphicLeft, { x: "-=6", duration: tweenDuration, ease }, 8.3);
+  if (graphicRight)
+    tl.to(graphicRight, { x: "+=6", duration: tweenDuration, ease }, 8.3);
+
+  // t=8.9s
+  if (graphicSlash)
+    tl.to(
+      graphicSlash,
+      { attr: { d: SLASH_D_ORIGINAL }, duration: tweenDuration, ease },
+      8.9,
+    );
+  if (graphicLeft1)
+    tl.to(
+      graphicLeft1,
+      { attr: { d: LEFT1_D_RESET }, duration: tweenDuration, ease },
+      8.9,
+    );
+  if (graphicLeft2)
+    tl.to(
+      graphicLeft2,
+      { attr: { d: LEFT2_D_RESET }, duration: tweenDuration, ease },
+      8.9,
+    );
+  if (graphicRight1)
+    tl.to(
+      graphicRight1,
+      { attr: { d: RIGHT1_D_RESET }, duration: tweenDuration, ease },
+      8.9,
+    );
+  if (graphicRight2)
+    tl.to(
+      graphicRight2,
+      { attr: { d: RIGHT2_D_RESET }, duration: tweenDuration, ease },
+      8.9,
+    );
+
   // 固定 timeline 結尾，讓 progress 映射穩定
-  const lastEnd = 6.6 + tweenDuration; // 6.9
+  const lastEnd = 8.9 + tweenDuration; // 9.2
   if (TIMELINE_DURATION_SEC > lastEnd) {
     tl.to({}, { duration: TIMELINE_DURATION_SEC - lastEnd }, lastEnd);
   }
@@ -309,7 +373,7 @@ function buildSkillCodingTimeline(
 }
 
 function showCompleteState(root: ParentNode) {
-  // t=6.6 的 tween（duration 0.3）結束時即視為「完成」狀態
+  // t=8.9 的 tween（duration 0.3）結束時即視為「完成」狀態
   const graphicLeft = q<SVGGElement>(root, "graphic-left");
   const graphicRight = q<SVGGElement>(root, "graphic-right");
   const graphicSlash = q<SVGPathElement>(root, "graphic-slash");
@@ -326,13 +390,13 @@ function showCompleteState(root: ParentNode) {
       rotation: 0,
       y: 0,
       svgOrigin: SLASH_SVG_ORIGIN,
-      attr: { d: SLASH_D_FLAT },
+      attr: { d: SLASH_D_ORIGINAL },
     });
   }
-  if (graphicLeft1) gsap.set(graphicLeft1, { attr: { d: LEFT1_D_END } });
-  if (graphicLeft2) gsap.set(graphicLeft2, { attr: { d: LEFT2_D_END } });
-  if (graphicRight1) gsap.set(graphicRight1, { attr: { d: RIGHT1_D_END } });
-  if (graphicRight2) gsap.set(graphicRight2, { attr: { d: RIGHT2_D_END } });
+  if (graphicLeft1) gsap.set(graphicLeft1, { attr: { d: LEFT1_D_RESET } });
+  if (graphicLeft2) gsap.set(graphicLeft2, { attr: { d: LEFT2_D_RESET } });
+  if (graphicRight1) gsap.set(graphicRight1, { attr: { d: RIGHT1_D_RESET } });
+  if (graphicRight2) gsap.set(graphicRight2, { attr: { d: RIGHT2_D_RESET } });
 }
 
 export default function SkillCodingAnimation({
