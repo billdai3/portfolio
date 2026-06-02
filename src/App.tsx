@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import AboutPage from './pages/AboutPage'
 import HomePage from './pages/HomePage'
 import LabPage from './pages/LabPage'
+import LabProjectPage from './pages/LabProjectPage'
 import WorkPage from './pages/WorkPage'
 
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
@@ -15,6 +16,7 @@ export default function App() {
         <Route index element={<HomePage />} />
         <Route path="work" element={<WorkPage />} />
         <Route path="lab" element={<LabPage />} />
+        <Route path="lab/:slug" element={<LabProjectPage />} />
         <Route path="about" element={<AboutPage />} />
         {import.meta.env.DEV ? (
           <Route
