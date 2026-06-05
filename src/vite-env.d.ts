@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { ComponentType, ReactNode } from "react";
-import type { LabProjectMetadata } from "./lab/createLabPage";
+import type { LabProjectMetadata } from "./features/lab/lib/createLabPage";
 
 declare module "*.mdx" {
   export const metadata: LabProjectMetadata;

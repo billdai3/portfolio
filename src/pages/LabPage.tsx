@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import PageShell from "../components/PageShell";
-import { labProjects } from "../lab/registry";
+import { labProjects } from "../features/lab/lib/registry";
 
 export default function LabPage() {
   return (

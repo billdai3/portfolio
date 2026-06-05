@@ -4,12 +4,12 @@
 
 1. 在 `src/components/sketches/` 新增 sketch（PascalCase 檔名，例如 `MySketch.tsx`）。
 2. 在 `src/content/lab/<slug>.mdx` 新增 MDX（slug = 檔名，kebab-case）。
-3. Lab 列表與 `/lab/<slug>` 路由會由 `registry.ts` 自動掃描 MDX。
+3. Lab 列表與 `/lab/<slug>` 路由會由 `lib/registry.ts` 自動掃描 MDX。
 
 ## MDX 範本
 
 ```mdx
-import { createLabPage } from "@/lab/createLabPage";
+import { createLabPage } from "@/features/lab/lib/createLabPage";
 import MySketch from "@/components/sketches/MySketch";
 
 export const metadata = {

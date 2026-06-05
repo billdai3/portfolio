@@ -1,7 +1,7 @@
 import { MDXProvider } from "@mdx-js/react";
 import { Navigate, useParams } from "react-router-dom";
-import { labMdxComponents } from "../lab/mdx-components";
-import { getLabProject } from "../lab/registry";
+import { labMdxComponents } from "../features/lab/components/mdx-components";
+import { getLabProject } from "../features/lab/lib/registry";
 
 export default function LabProjectPage() {
   const { slug } = useParams<{ slug: string }>();

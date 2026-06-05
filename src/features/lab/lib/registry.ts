@@ -6,7 +6,7 @@ type LabMdxModule = {
   metadata: LabProjectMetadata;
 };
 
-const modules = import.meta.glob<LabMdxModule>("../content/lab/*.mdx", {
+const modules = import.meta.glob<LabMdxModule>("../../../content/lab/*.mdx", {
   eager: true,
 });
 

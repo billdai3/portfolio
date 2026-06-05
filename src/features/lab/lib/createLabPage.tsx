@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from "react";
-import LabProjectLayout from "./LabProjectLayout";
+import LabProjectLayout from "../components/LabProjectLayout";
 
 export type LabProjectMetadata = {
   title: string;
