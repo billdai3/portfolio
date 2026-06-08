@@ -1,0 +1,24 @@
+import { MDXProvider } from "@mdx-js/react";
+import StyleguideMdx from "../content/dev/mdx-styleguide.mdx";
+import { labMdxComponents } from "../features/lab/components/mdx-components";
+
+export default function DevMdxStyleguidePage() {
+  return (
+    <div className="bg-bg-page text-text-primary">
+      <div className="mx-auto max-w-2xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
+        <header className="mb-8 border-b border-border-default pb-6">
+          <p className="type-btn text-xs text-text-muted">Dev only</p>
+          <h1 className="type-page-title mt-2">MDX Style Guide</h1>
+          <p className="mt-2 text-sm text-text-secondary">
+            預覽 labMdxComponents；改 mdx-components.tsx 後重新整理此頁。
+          </p>
+        </header>
+        <MDXProvider components={labMdxComponents}>
+          <article className="lab-prose max-w-none">
+            <StyleguideMdx />
+          </article>
+        </MDXProvider>
+      </div>
+    </div>
+  );
+}

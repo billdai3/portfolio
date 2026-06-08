@@ -1,0 +1,78 @@
+# Headings（MDX `#` → `h2` + type-section-title）
+
+第一個 `#` 區塊。在 Lab 頁面裡，頁面大標由 layout 提供；正文 `#` 會渲染成 section 標題。
+
+## 二級標題（`##` → `h3`）
+
+對應 `h2` mapping，用於文章內小節。
+
+### 三級標題（`###` → `h4`）
+
+對應 `h3` mapping，用於更細的分段。
+
+# 第二個一級區塊（驗證 not-first:mt-12）
+
+連續兩個 `#` 區塊時，第二個應有較大的上邊距。
+
+## Paragraphs（`p`）
+
+一般段落使用 `text-text-secondary` 與 `leading-relaxed`。可混用 **粗體（strong，尚未 map）** 與 *斜體（em，尚未 map）*，以及 inline `code` 標記。
+
+## Links（`a`）
+
+站內連結：[回到 Lab](/lab)。外部連結：[MDX 文件](https://mdxjs.com/)（應開新分頁並帶 `rel="noreferrer"`）。
+
+## Lists（`ul` / `ol` / `li`）
+
+無序列表：
+
+- 第一項
+- 第二項
+  - 巢狀無序
+  - 另一巢狀項
+- 第三項
+
+有序列表：
+
+1. 第一步
+2. 第二步
+   1. 巢狀有序
+   2. 另一巢狀項
+3. 第三步
+
+## Blockquote（`blockquote`）
+
+> 引用區塊示範。左側 accent 邊框，文字為 secondary 色。
+
+## Horizontal rule（`hr`）
+
+---
+
+水平線下方應有適當間距。
+
+## Code（`code` / `pre`）
+
+段落內的 `inline code` 使用 card 背景與 mono 字體。
+
+Fenced code block：
+
+```js
+// pre 包住 code；應有圓角、邊框與橫向捲動
+const phase = t * 0.001 + index * 1.2;
+drawGradient(ctx, phase);
+```
+
+## Gaps（尚未 map 的元素）
+
+以下元素目前**沒有**在 `labMdxComponents` 裡自訂，用來觀察預設樣式缺口。
+
+**Table（`table`）**
+
+| 欄位 | 說明 |
+| ---- | ---- |
+| h1   | → h2 |
+| p    | 正文 |
+
+**Image（`img`）**
+
+![佔位圖](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)

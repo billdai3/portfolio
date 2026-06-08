@@ -8,6 +8,7 @@ import LabProjectPage from './pages/LabProjectPage'
 import WorkPage from './pages/WorkPage'
 
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
+const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
 
 export default function App() {
   return (
@@ -19,14 +20,24 @@ export default function App() {
         <Route path="lab/:slug" element={<LabProjectPage />} />
         <Route path="about" element={<AboutPage />} />
         {import.meta.env.DEV ? (
-          <Route
-            path="dev/gsap"
-            element={
-              <Suspense fallback={null}>
-                <DevGsapPlaygroundPage />
-              </Suspense>
-            }
-          />
+          <>
+            <Route
+              path="dev/gsap"
+              element={
+                <Suspense fallback={null}>
+                  <DevGsapPlaygroundPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dev/mdx-styleguide"
+              element={
+                <Suspense fallback={null}>
+                  <DevMdxStyleguidePage />
+                </Suspense>
+              }
+            />
+          </>
         ) : null}
       </Route>
     </Routes>
