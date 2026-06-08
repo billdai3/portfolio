@@ -64,4 +64,24 @@ export const labMdxComponents: MDXComponents = {
     </blockquote>
   ),
   hr: () => <hr className="my-10 border-border-default" />,
+  table: ({ children }: MdxElProps) => (
+    <div className="mb-6 overflow-x-auto">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  ),
+  thead: ({ children }: MdxElProps) => (
+    <thead className="bg-bg-card">{children}</thead>
+  ),
+  tbody: ({ children }: MdxElProps) => <tbody>{children}</tbody>,
+  tr: ({ children }: MdxElProps) => <tr>{children}</tr>,
+  th: ({ children }: MdxElProps) => (
+    <th className="border border-border-default px-3 py-2 text-left font-bold text-text-primary">
+      {children}
+    </th>
+  ),
+  td: ({ children }: MdxElProps) => (
+    <td className="border border-border-default px-3 py-2 text-text-secondary">
+      {children}
+    </td>
+  ),
 };

@@ -1,78 +1,237 @@
-# Headings（MDX `#` → `h2` + type-section-title）
+Lab MDX 元素對照速查。**Maps to** 為實際渲染的 HTML 標籤；**Styles** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。
 
-第一個 `#` 區塊。在 Lab 頁面裡，頁面大標由 layout 提供；正文 `#` 會渲染成 section 標題。
+| MDX | Maps to | Styles |
+| --- | --- | --- |
+| `#` | `h2` | `type-section-title not-first:mt-12` |
+| `##` | `h3` | `font-montserrat-alt text-xl font-bold tracking-tight` |
+| `###` | `h4` | `text-lg font-bold` |
+| `p` | `p` | `text-text-secondary leading-relaxed` |
+| `ul` / `ol` / `li` | `ul` / `ol` / `li` | `list-disc` / `list-decimal space-y-2` |
+| `a` | `a` | `text-accent underline-offset-4 hover:underline` |
+| `blockquote` | `blockquote` | `border-l-4 border-accent` |
+| `hr` | `hr` | `my-10 border-border-default` |
+| `code` | `code` | `bg-bg-card font-mono text-sm` |
+| `pre` | `pre` | `rounded-xl border bg-bg-card overflow-x-auto` |
+| `table` / `th` / `td` | `table` / `th` / `td` | `border-collapse border-border-default bg-bg-card` |
+| `img` | `img` | *尚未 map* |
 
-## 二級標題（`##` → `h3`）
+# Headings（標題）
 
-對應 `h2` mapping，用於文章內小節。
+**Maps to:** `#` → `h2` · **Styles:** `type-section-title mb-6 text-text-primary not-first:mt-12`
 
-### 三級標題（`###` → `h4`）
+Lab 頁面大標由 layout 提供（`h1`）；MDX 的 `#` 渲染為 section 標題（`h2`）。`##`、`###` 依序對應 `h3`、`h4`。
 
-對應 `h3` mapping，用於更細的分段。
+The heading levels below are live examples. Scroll to the next `#` section (Paragraphs) to see `not-first:mt-12` spacing between consecutive `#` blocks.
 
-# 第二個一級區塊（驗證 not-first:mt-12）
+## Section title example
 
-連續兩個 `#` 區塊時，第二個應有較大的上邊距。
+**Maps to:** `##` → `h3` · **Styles:** `font-montserrat-alt mt-10 mb-4 text-xl font-bold`
 
-## Paragraphs（`p`）
+Used for subsections within an article.
 
-一般段落使用 `text-text-secondary` 與 `leading-relaxed`。可混用 **粗體（strong，尚未 map）** 與 *斜體（em，尚未 map）*，以及 inline `code` 標記。
+### Subsection example
 
-## Links（`a`）
+**Maps to:** `###` → `h4` · **Styles:** `mt-8 mb-3 text-lg font-bold`
 
-站內連結：[回到 Lab](/lab)。外部連結：[MDX 文件](https://mdxjs.com/)（應開新分頁並帶 `rel="noreferrer"`）。
+Used for finer-grained grouping.
 
-## Lists（`ul` / `ol` / `li`）
+```md
+# Section title（maps to h2）
 
-無序列表：
+## Subsection title（maps to h3）
 
-- 第一項
-- 第二項
-  - 巢狀無序
-  - 另一巢狀項
-- 第三項
+### Sub-subsection title（maps to h4）
+```
 
-有序列表：
+# Paragraphs（段落）
 
-1. 第一步
-2. 第二步
-   1. 巢狀有序
-   2. 另一巢狀項
-3. 第三步
+**Maps to:** `p` · **Styles:** `mb-4 text-base leading-relaxed text-text-secondary`
 
-## Blockquote（`blockquote`）
+一般段落用於正文內容。
 
-> 引用區塊示範。左側 accent 邊框，文字為 secondary 色。
+This is a sample paragraph. It uses secondary text color and relaxed line height for comfortable reading.
 
-## Horizontal rule（`hr`）
+```md
+This is a sample paragraph. It uses secondary text color and relaxed line height for comfortable reading.
+```
+
+# Text formatting（文字格式）
+
+**Maps to:** `strong` / `em` / `code` · **Styles:** `strong` / `em` 尚未 map；`code` 見下方
+
+行內文字格式對照。`strong` 與 `em` 目前使用瀏覽器預設樣式，尚未在 `labMdxComponents` 自訂。
+
+| Style | Syntax | Output |
+| --- | --- | --- |
+| Bold | `**text**` | **Bold text** |
+| Italic | `*text*` | *Italic text* |
+| Inline code | `` `code` `` | `inline code` |
+
+This sentence mixes **bold**, *italic*, and `inline code` in one line.
+
+```md
+This sentence mixes **bold**, *italic*, and `inline code` in one line.
+```
+
+# Links（連結）
+
+**Maps to:** `a` · **Styles:** `text-accent underline-offset-4 hover:underline`
+
+站內連結維持同頁導覽；外部連結（`http` 開頭）應開新分頁並帶 `rel="noreferrer"`。
+
+Internal: [Back to Lab](/lab). External: [MDX docs](https://mdxjs.com/).
+
+```md
+Internal: [Back to Lab](/lab). External: [MDX docs](https://mdxjs.com/).
+```
+
+# Lists（列表）
+
+**Maps to:** `ul` / `ol` / `li` · **Styles:** `mb-4 list-disc` / `list-decimal space-y-2 pl-5 text-text-secondary`
+
+無序與有序列表，用於步驟或要點條列。
+
+Unordered:
+
+- First item
+- Second item
+- Third item
+
+Ordered:
+
+1. Step one
+2. Step two
+3. Step three
+
+```md
+- First item
+- Second item
+
+1. Step one
+2. Step two
+```
+
+## Nesting（巢狀列表）
+
+**Maps to:** `ul` / `ol` / `li`（巢狀） · **Styles:** 同上
+
+巢狀列表透過縮排建立層級。
+
+- Parent item
+  - Nested unordered
+  - Another nested item
+- Sibling item
+
+1. First step
+   1. Nested ordered
+   2. Another nested step
+2. Second step
+
+```md
+- Parent item
+  - Nested unordered
+  - Another nested item
+
+1. First step
+   1. Nested ordered
+   2. Another nested step
+```
+
+# Blockquote（引用）
+
+**Maps to:** `blockquote` · **Styles:** `mb-6 border-l-4 border-accent pl-4 text-text-secondary`
+
+引用區塊，左側 accent 邊框，文字為 secondary 色。
+
+> Human beings face ever more complex and urgent problems, and their effectiveness in dealing with these problems is a matter that is critical to the stability and continued progress of society.
+
+```md
+> Human beings face ever more complex and urgent problems...
+```
+
+# Horizontal rule（分隔線）
+
+**Maps to:** `hr` · **Styles:** `my-10 border-border-default`
+
+水平線用於區隔大段內容，上下應有適當間距。
+
+Content above the rule.
 
 ---
 
-水平線下方應有適當間距。
+Content below the rule.
 
-## Code（`code` / `pre`）
+```md
+Content above the rule.
 
-段落內的 `inline code` 使用 card 背景與 mono 字體。
+---
 
-Fenced code block：
+Content below the rule.
+```
+
+# Code（程式碼）
+
+**Maps to:** `code` / `pre` · **Styles:** 見各子節
+
+行內程式碼與 fenced code block 的樣式示範。
+
+## Inline code（行內程式碼）
+
+**Maps to:** `code` · **Styles:** `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`
+
+Use `backticks` to format code within a sentence.
+
+```md
+Use `backticks` to format code within a sentence.
+```
+
+## Code blocks（程式碼區塊）
+
+**Maps to:** `pre` > `code` · **Styles:** `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4`
+
+Fenced block with optional language tag for syntax highlighting.
 
 ```js
-// pre 包住 code；應有圓角、邊框與橫向捲動
+// pre wraps code; rounded corners, border, horizontal scroll
 const phase = t * 0.001 + index * 1.2;
 drawGradient(ctx, phase);
 ```
 
-## Gaps（尚未 map 的元素）
+````md
+```js
+const phase = t * 0.001 + index * 1.2;
+drawGradient(ctx, phase);
+```
+````
 
-以下元素目前**沒有**在 `labMdxComponents` 裡自訂，用來觀察預設樣式缺口。
+# Tables（表格）
 
-**Table（`table`）**
+**Maps to:** `table` / `th` / `td` · **Styles:** `border-collapse border-border-default bg-bg-card`
 
-| 欄位 | 說明 |
-| ---- | ---- |
-| h1   | → h2 |
-| p    | 正文 |
+經典格線表：儲存格邊框、表頭加粗與底色區分，配色使用 ash 語意 token。
 
-**Image（`img`）**
+| Column | Description |
+| --- | --- |
+| `#` | → `h2` |
+| `p` | body text |
+| `th` | header cell |
 
-![佔位圖](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)
+```md
+| Column | Description |
+| --- | --- |
+| `#` | → `h2` |
+```
+
+# Gaps（尚未 map）
+
+以下元素目前**沒有**在 `labMdxComponents` 裡自訂，用來觀察預設樣式缺口。Not mapped — showing browser default styles.
+
+## Images（圖片）
+
+**Maps to:** `img` · **Styles:** *not mapped*
+
+![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)
+
+```md
+![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)
+```
