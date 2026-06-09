@@ -15,7 +15,7 @@ export default function LabPage() {
               to={`/lab/${item.slug}`}
               className="group flex items-baseline justify-between gap-4 py-5 transition"
             >
-              <span className="font-medium text-text-primary group-hover:text-accent">
+              <span className="font-extrabold text-text-primary group-hover:text-accent">
                 {item.title}
               </span>
               <span className="text-sm text-text-muted">{item.tag}</span>

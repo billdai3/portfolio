@@ -20,10 +20,10 @@ export default function ShowcaseCard({ item, variant }: ShowcaseCardProps) {
   const inner = (
     <>
       <div className="mb-5 aspect-16/10 rounded-xl bg-ash-600" />
-      <p className="text-xs font-medium uppercase tracking-wider text-text-muted">
+      <p className="text-xs font-normal uppercase tracking-wider text-text-muted">
         {item.tag}
       </p>
-      <h3 className="mt-1.5 text-lg font-medium tracking-tight text-text-primary">
+      <h3 className="mt-1.5 text-lg font-extrabold tracking-tight text-text-primary">
         {item.title}
       </h3>
     </>
