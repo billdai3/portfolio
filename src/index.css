@@ -46,10 +46,17 @@
   --color-nav-hover-hero: var(--color-ash-100);
   --color-nav-hover-default: var(--color-ash-800);
 
-  /* Typography — GlowSans for body & headings; system stack as fallback */
-  --font-sans:
+  /* Typography — body: GlowSans only; display: Montserrat Alternates + GlowSans */
+  --font-body:
     "GlowSansTCEx", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --font-display:
+    "MontserratAlternatesDisplay", "GlowSansTCEx", ui-sans-serif, system-ui,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  --font-sans: var(--font-body);
 }
 
 @layer base {
@@ -58,7 +65,8 @@
   }
 
   body {
-    @apply m-0 min-h-svh bg-bg-page font-sans font-normal text-text-primary;
+    @apply m-0 min-h-svh bg-bg-page font-body font-normal text-text-primary;
+    font-synthesis: none;
   }
 }
 
@@ -67,31 +75,31 @@
   instead of repeating font-family + size + weight in every component.
 */
 @layer components {
-  /* GlowSans 800 — display / section headings */
+  /* Mixed stack — display / section headings */
   .type-hero-title {
-    @apply text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl;
+    @apply font-display text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl;
   }
 
   .type-section-title {
-    @apply text-2xl font-extrabold tracking-tight sm:text-3xl;
+    @apply font-display text-2xl font-extrabold tracking-tight sm:text-3xl;
   }
 
   .type-hero-subtitle {
-    @apply text-2xl font-extrabold tracking-tight sm:text-3xl;
+    @apply font-display text-2xl font-extrabold tracking-tight sm:text-3xl;
   }
 
   .type-page-title {
-    @apply text-3xl font-extrabold tracking-tight md:text-4xl;
+    @apply font-display text-3xl font-extrabold tracking-tight md:text-4xl;
   }
 
-  /* GlowSans 800 — navbar pills */
+  /* Mixed stack — navbar pills */
   .type-nav {
-    @apply text-sm font-extrabold;
+    @apply font-display text-sm font-extrabold;
   }
 
-  /* GlowSans 800 — buttons, text CTAs */
+  /* Mixed stack — buttons, text CTAs */
   .type-btn {
-    @apply text-sm font-extrabold;
+    @apply font-display text-sm font-extrabold;
   }
 
   /* Primary nav pill — theme via .nav-pill--over-hero | .nav-pill--scrolled */

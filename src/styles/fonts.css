@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "MontserratAlternatesDisplay";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("@fontsource/montserrat-alternates/files/montserrat-alternates-latin-400-normal.woff2")
+    format("woff2");
+  ascent-override: 102%;
+  size-adjust: 106%;
+}
+
+@font-face {
+  font-family: "MontserratAlternatesDisplay";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("@fontsource/montserrat-alternates/files/montserrat-alternates-latin-700-normal.woff2")
+    format("woff2");
+  ascent-override: 102%;
+  size-adjust: 106%;
+}

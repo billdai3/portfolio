@@ -1,4 +1,4 @@
-Lab MDX 元素對照速查。**Maps to** 為實際渲染的 HTML 標籤；**Styles** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。
+Lab MDX 元素對照速查。**Maps to** 為實際渲染的 HTML 標籤；**Styles** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。內文繼承 `font-body`（GlowSans 單字型）；`type-section-title`、`type-nav`、`type-btn` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。
 
 | MDX | Maps to | Styles |
 | --- | --- | --- |
@@ -43,13 +43,35 @@ Used for finer-grained grouping.
 ### Sub-subsection title（maps to h4）
 ```
 
+## Mixed script headings（混排標題）
+
+**Maps to:** `#` → `h2` · **Styles:** `type-section-title` + `font-display` · **Weight:** `font-extrabold`（西文 Montserrat 700、中文 GlowSans 800）
+
+以下為標題層雙字型混排測試。西文使用 Montserrat Alternates，中文使用 GlowSans。
+
+# 設計師 Portfolio 作品集
+
+# UI/UX Design 體驗設計
+
+# 2024 Annual Report 年度報告
+
+以下為內文層（`font-body`），非混排：設計師 Designer 的 Portfolio 作品集。
+
+**Maps to:** `##` / `###` → `h3` / `h4` · **Styles:** 僅 `font-body`（GlowSans 單字型對照組）
+
+## 子標題 Subsection 混排測試
+
+### 三級標題 H4 Level 測試
+
 # Paragraphs（段落）
 
 **Maps to:** `p` · **Styles:** `mb-4 text-base leading-relaxed text-text-secondary`
 
-一般段落用於正文內容。
+一般段落用於正文內容。內文走 `font-body`（GlowSans 單字型），英文使用 GlowSans 內建拉丁字母。
 
 This is a sample paragraph. It uses secondary text color and relaxed line height for comfortable reading.
+
+這是內文層範例：UI/UX Designer 專注於 Experience 體驗設計。
 
 ```md
 This is a sample paragraph. It uses secondary text color and relaxed line height for comfortable reading.
