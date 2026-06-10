@@ -10,17 +10,17 @@ export const labMdxComponents: MDXComponents = {
     </h2>
   ),
   h2: ({ children }: MdxElProps) => (
-    <h3 className="mt-10 mb-4 text-xl font-extrabold tracking-tight text-text-primary">
+    <h3 className="mt-10 mb-4 text-[1.5rem] font-extrabold leading-8 tracking-tight text-text-primary">
       {children}
     </h3>
   ),
   h3: ({ children }: MdxElProps) => (
-    <h4 className="mt-8 mb-3 text-lg font-extrabold text-text-primary">{children}</h4>
+    <h4 className="mt-8 mb-3 text-[1.25rem] font-extrabold leading-7 text-text-primary">
+      {children}
+    </h4>
   ),
   p: ({ children }: MdxElProps) => (
-    <p className="mb-4 text-base leading-relaxed text-text-secondary">
-      {children}
-    </p>
+    <p className="mb-4 text-[1rem] leading-7 text-text-secondary">{children}</p>
   ),
   ul: ({ children }: MdxElProps) => (
     <ul className="mb-4 list-disc space-y-2 pl-5 text-text-secondary">
@@ -35,10 +35,7 @@ export const labMdxComponents: MDXComponents = {
   li: ({ children }: MdxElProps) => (
     <li className="leading-relaxed">{children}</li>
   ),
-  a: ({
-    href,
-    children,
-  }: MdxElProps & { href?: string }) => (
+  a: ({ href, children }: MdxElProps & { href?: string }) => (
     <a
       href={href}
       className="text-accent underline-offset-4 hover:underline"
