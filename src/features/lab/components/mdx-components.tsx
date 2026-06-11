@@ -3,6 +3,15 @@ import type { MDXComponents } from "mdx/types";
 
 type MdxElProps = { children?: ReactNode };
 
+type MdxCodeProps = MdxElProps & {
+  className?: string;
+  "data-language"?: string;
+};
+
+function isBlockCode({ className, "data-language": dataLanguage }: MdxCodeProps) {
+  return Boolean(dataLanguage ?? className?.includes("language-"));
+}
+
 export const labMdxComponents: MDXComponents = {
   h1: ({ children }: MdxElProps) => (
     <h2 className="type-section-title mb-6 text-text-primary not-first:mt-12">
@@ -47,13 +56,37 @@ export const labMdxComponents: MDXComponents = {
       {children}
     </a>
   ),
-  code: ({ children }: MdxElProps) => (
-    <code className="rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100">
+  figure: ({ children, ...props }: MdxElProps) => (
+    <figure
+      className="mb-6 overflow-hidden rounded-xl border border-border-default bg-bg-card"
+      {...props}
+    >
       {children}
-    </code>
+    </figure>
   ),
-  pre: ({ children }: MdxElProps) => (
-    <pre className="mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 font-mono text-sm leading-relaxed text-ash-100 [&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0">
+  code: ({ children, className, ...props }: MdxCodeProps) => {
+    if (isBlockCode({ className, ...props })) {
+      return (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    }
+
+    return (
+      <code
+        className="rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100"
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
+  pre: ({ children, ...props }: MdxElProps) => (
+    <pre
+      className="overflow-x-auto p-4 font-mono text-sm leading-relaxed [&>code]:block [&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0 [&>code]:text-inherit"
+      {...props}
+    >
       {children}
     </pre>
   ),

@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import remarkGfm from 'remark-gfm'
+import rehypePrettyCode from 'rehype-pretty-code'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,6 +14,17 @@ export default defineConfig({
       ...mdx({
         providerImportSource: '@mdx-js/react',
         remarkPlugins: [remarkGfm],
+        rehypePlugins: [
+          [
+            rehypePrettyCode,
+            {
+              theme: 'github-dark',
+              keepBackground: false,
+              bypassInlineCode: true,
+              defaultLang: 'plaintext',
+            },
+          ],
+        ],
       }),
     },
     react(),
