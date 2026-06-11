@@ -13,7 +13,6 @@ import { createLabPage } from "@/features/lab/lib/createLabPage";
 import MySketch from "@/components/sketches/MySketch";
 
 export const metadata = {
-  title: "作品標題",
   tag: "Canvas",
   summary: "列表頁簡述",
 };
@@ -23,7 +22,9 @@ export default createLabPage({
   metadata,
 });
 
-# 正文標題
+# 作品標題
+
+正文以單一 `#` 作為頁面標題；Lab 列表會從此 heading 抽取標題。其餘章節用 `##`、`###`。
 
 Markdown 內容…
 ```

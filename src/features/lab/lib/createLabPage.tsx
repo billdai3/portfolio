@@ -2,7 +2,6 @@ import type { ComponentType, ReactNode } from "react";
 import LabProjectLayout from "../components/LabProjectLayout";
 
 export type LabProjectMetadata = {
-  title: string;
   tag: string;
   summary: string;
 };
@@ -13,11 +12,11 @@ type CreateLabPageOptions = {
 };
 
 export function createLabPage({ Sketch, metadata }: CreateLabPageOptions) {
-  const { title, tag } = metadata;
+  const { tag } = metadata;
 
   return function LabMdxPage({ children }: { children?: ReactNode }) {
     return (
-      <LabProjectLayout title={title} tag={tag} demo={<Sketch />}>
+      <LabProjectLayout tag={tag} demo={<Sketch />}>
         {children}
       </LabProjectLayout>
     );

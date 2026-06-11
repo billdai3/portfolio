@@ -2,7 +2,6 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 type LabProjectLayoutProps = {
-  title: string;
   tag?: string;
   demo: ReactNode;
   children: ReactNode;
@@ -38,7 +37,6 @@ function TabButton({
 }
 
 export default function LabProjectLayout({
-  title,
   tag,
   demo,
   children,
@@ -69,14 +67,13 @@ export default function LabProjectLayout({
           >
             <span aria-hidden>←</span> Lab
           </Link>
-          <div className="mt-4 flex flex-wrap items-end gap-3">
-            <h1 className="type-page-title">{title}</h1>
-            {tag ? (
+          {tag ? (
+            <div className="mt-4">
               <span className="type-btn rounded-full border border-border-default px-3 py-1 text-xs text-text-secondary">
                 {tag}
               </span>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </header>
 
         <div className="mb-4 lg:hidden">

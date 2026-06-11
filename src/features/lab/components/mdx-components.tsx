@@ -17,16 +17,19 @@ function isBlockCode({
 
 export const labMdxComponents: MDXComponents = {
   h1: ({ children }: MdxElProps) => (
+    <h1 className="type-page-title mb-6 text-text-primary">{children}</h1>
+  ),
+  h2: ({ children }: MdxElProps) => (
     <h2 className="type-section-title mb-5 text-text-primary not-first:mt-12">
       {children}
     </h2>
   ),
-  h2: ({ children }: MdxElProps) => (
+  h3: ({ children }: MdxElProps) => (
     <h3 className="mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary">
       {children}
     </h3>
   ),
-  h3: ({ children }: MdxElProps) => (
+  h4: ({ children }: MdxElProps) => (
     <h4 className="mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary">
       {children}
     </h4>
