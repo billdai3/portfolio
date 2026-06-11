@@ -8,13 +8,16 @@ type MdxCodeProps = MdxElProps & {
   "data-language"?: string;
 };
 
-function isBlockCode({ className, "data-language": dataLanguage }: MdxCodeProps) {
+function isBlockCode({
+  className,
+  "data-language": dataLanguage,
+}: MdxCodeProps) {
   return Boolean(dataLanguage ?? className?.includes("language-"));
 }
 
 export const labMdxComponents: MDXComponents = {
   h1: ({ children }: MdxElProps) => (
-    <h2 className="type-section-title mb-6 text-text-primary not-first:mt-12">
+    <h2 className="type-section-title mb-5 text-text-primary not-first:mt-12">
       {children}
     </h2>
   ),
@@ -29,22 +32,22 @@ export const labMdxComponents: MDXComponents = {
     </h4>
   ),
   p: ({ children }: MdxElProps) => (
-    <p className="mb-4 text-[1rem] leading-[1.75] text-text-secondary">
+    <p className="mb-2 text-[1rem] leading-[1.75] text-text-secondary">
       {children}
     </p>
   ),
   ul: ({ children }: MdxElProps) => (
-    <ul className="mb-4 list-disc space-y-2 pl-5 text-text-secondary">
+    <ul className="mb-4 list-disc space-y-2 pl-6 text-text-secondary">
       {children}
     </ul>
   ),
   ol: ({ children }: MdxElProps) => (
-    <ol className="mb-4 list-decimal space-y-2 pl-5 text-text-secondary">
+    <ol className="mb-4 list-decimal space-y-2 pl-6 text-text-secondary">
       {children}
     </ol>
   ),
   li: ({ children }: MdxElProps) => (
-    <li className="leading-relaxed">{children}</li>
+    <li className="leading-relaxed [&>ul]:mt-2 [&>ol]:mt-2">{children}</li>
   ),
   a: ({ href, children }: MdxElProps & { href?: string }) => (
     <a
@@ -91,7 +94,7 @@ export const labMdxComponents: MDXComponents = {
     </pre>
   ),
   blockquote: ({ children }: MdxElProps) => (
-    <blockquote className="mb-6 border-l-4 border-accent pl-4 text-text-secondary">
+    <blockquote className="mb-6 border-l-4 border-border-strong pl-4 text-text-secondary">
       {children}
     </blockquote>
   ),

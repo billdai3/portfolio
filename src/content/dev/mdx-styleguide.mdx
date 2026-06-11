@@ -4,13 +4,13 @@ Lab MDX 元素對照速查。\
 
 | MDX                   | Maps to                   | Styles                                                                                                                                                                                                                                          |
 | --------------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `#`                   | `h2`                      | `type-section-title mb-6 text-text-primary not-first:mt-12`                                                                                                                                                                                     |
+| `#`                   | `h2`                      | `type-section-title mb-5 text-text-primary not-first:mt-12`                                                                                                                                                                                     |
 | `##`                  | `h3`                      | `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary`                                                                                                                                                        |
 | `###`                 | `h4`                      | `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`                                                                                                                                                        |
-| `p`                   | `p`                       | `mb-4 text-[1rem] leading-[1.75] text-text-secondary`                                                                                                                                                                                           |
-| `ul` / `ol` / `li`    | `ul` / `ol` / `li`        | `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed`                                                                                                          |
+| `p`                   | `p`                       | `mb-2 text-[1rem] leading-[1.75] text-text-secondary`                                                                                                                                                                                           |
+| `ul` / `ol` / `li`    | `ul` / `ol` / `li`        | `mb-4 list-disc space-y-2 pl-6 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-6 text-text-secondary` · `li`: `leading-relaxed [&>ul]:mt-2 [&>ol]:mt-2`                                                                                  |
 | `a`                   | `a`                       | `text-accent underline-offset-4 hover:underline`                                                                                                                                                                                                |
-| `blockquote`          | `blockquote`              | `mb-6 border-l-4 border-accent pl-4 text-text-secondary`                                                                                                                                                                                        |
+| `blockquote`          | `blockquote`              | `mb-6 border-l-4 border-border-strong pl-4 text-text-secondary`                                                                                                                                                                                 |
 | `hr`                  | `hr`                      | `my-10 border-border-default`                                                                                                                                                                                                                   |
 | `code`                | `code`                    | 行內：`rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100` · 區塊：由 `rehype-pretty-code`（`github-dark`）上色，component 透傳 class                                                                                              |
 | `pre`                 | `figure` > `pre` > `code` | `figure`: `mb-6 overflow-hidden rounded-xl border border-border-default bg-bg-card` · `pre`: `overflow-x-auto p-4 font-mono text-sm leading-relaxed` · 內層 `code`：`[&>code]:block [&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0` |
@@ -20,7 +20,7 @@ Lab MDX 元素對照速查。\
 # Headings（標題）
 
 **Maps to:** `#` → `h2`\
-**Styles:** `type-section-title mb-6 text-text-primary not-first:mt-12`
+**Styles:** `type-section-title mb-5 text-text-primary not-first:mt-12`
 
 Lab 頁面大標由 layout 提供（`h1`）；MDX 的 `#` 渲染為 section 標題（`h2`）。`##`、`###` 依序對應 `h3`、`h4`。
 
@@ -51,7 +51,7 @@ Used for finer-grained grouping.
 ## Mixed script headings（混排標題）
 
 **Maps to:** `#` → `<h2>`\
-**Styles:** `type-section-title`（`font-display text-[1.75rem] font-extrabold leading-tight tracking-tight`）+ `mb-6 text-text-primary not-first:mt-12` · **Weight:** `font-extrabold`（西文 Montserrat 700、中文 GlowSans 800）
+**Styles:** `type-section-title`（`font-display text-[1.75rem] font-extrabold leading-tight tracking-tight`）+ `mb-5 text-text-primary not-first:mt-12` · **Weight:** `font-extrabold`（西文 Montserrat 700、中文 GlowSans 800）
 
 以下為標題層雙字型混排測試。西文使用 Montserrat Alternates，中文使用 GlowSans。
 
@@ -73,7 +73,7 @@ Used for finer-grained grouping.
 # Paragraphs（段落）
 
 **Maps to:** `p`\
-**Styles:** `mb-4 text-[1rem] leading-[1.75] text-text-secondary`
+**Styles:** `mb-2 text-[1rem] leading-[1.75] text-text-secondary`
 
 一般段落用於正文內容。內文走 `font-body`（GlowSans 單字型），英文使用 GlowSans 內建拉丁字母。
 
@@ -92,11 +92,13 @@ This is a sample paragraph. It uses secondary text color and `leading-[1.75]` li
 
 行內文字格式對照。`strong` 與 `em` 目前使用瀏覽器預設樣式，尚未在 `labMdxComponents` 自訂。
 
-| Style       | Syntax       | Output        |
-| ----------- | ------------ | ------------- |
-| Bold        | `**text**`   | **Bold text** |
-| Italic      | `*text*`     | _Italic text_ |
-| Inline code | `` `code` `` | `inline code` |
+**Italic（`em`）刻意不處理：** 本站以中文內容為主，排版上不依賴斜體強調；GlowSans 僅載入 `font-style: normal` 字重，且 `body` 設有 `font-synthesis: none`，即使 MDX 寫 `*italic*` 渲染為 `<em>` 也幾乎看不出斜體效果。此為預期行為，不在 `labMdxComponents` 另做樣式或載入 italic 字型。
+
+| Style       | Syntax       | Output        | Notes                          |
+| ----------- | ------------ | ------------- | ------------------------------ |
+| Bold        | `**text**`   | **Bold text** | 瀏覽器預設；可切換至 GlowSans 800 |
+| Italic      | `*text*`     | _Italic text_ | 視覺上與正文相同（見上）         |
+| Inline code | `` `code` `` | `inline code` | 見 `code` map                  |
 
 This sentence mixes **bold**, _italic_, and `inline code` in one line.
 
@@ -120,7 +122,7 @@ Internal: [Back to Lab](/lab). External: [MDX docs](https://mdxjs.com/).
 # Lists（列表）
 
 **Maps to:** `ul` / `ol` / `li`\
-**Styles:** `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed`
+**Styles:** `mb-4 list-disc space-y-2 pl-6 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-6 text-text-secondary` · `li`: `leading-relaxed [&>ul]:mt-2 [&>ol]:mt-2`
 
 無序與有序列表，用於步驟或要點條列。
 
@@ -147,9 +149,9 @@ Ordered:
 ## Nesting（巢狀列表）
 
 **Maps to:** `ul` / `ol` / `li`（巢狀）\
-**Styles:** 同上
+**Styles:** 同上 · 父項與子列表間距：`li` 的 `[&>ul]:mt-2` / `[&>ol]:mt-2`
 
-巢狀列表透過縮排建立層級。
+巢狀列表透過縮排建立層級；子列表與上一級項目文字之間由 `li` 的上邊距拉開。
 
 - Parent item
   - Nested unordered
@@ -174,9 +176,9 @@ Ordered:
 # Blockquote（引用）
 
 **Maps to:** `blockquote`\
-**Styles:** `mb-6 border-l-4 border-accent pl-4 text-text-secondary`
+**Styles:** `mb-6 border-l-4 border-border-strong pl-4 text-text-secondary`
 
-引用區塊，左側 accent 邊框，文字為 secondary 色。
+引用區塊，左側 `border-strong` 邊框，文字為 secondary 色。
 
 > Human beings face ever more complex and urgent problems, and their effectiveness in dealing with these problems is a matter that is critical to the stability and continued progress of society.
 
