@@ -10,17 +10,19 @@ export const labMdxComponents: MDXComponents = {
     </h2>
   ),
   h2: ({ children }: MdxElProps) => (
-    <h3 className="mt-10 mb-4 text-[1.5rem] font-extrabold leading-8 tracking-tight text-text-primary">
+    <h3 className="mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary">
       {children}
     </h3>
   ),
   h3: ({ children }: MdxElProps) => (
-    <h4 className="mt-8 mb-3 text-[1.25rem] font-extrabold leading-7 text-text-primary">
+    <h4 className="mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary">
       {children}
     </h4>
   ),
   p: ({ children }: MdxElProps) => (
-    <p className="mb-4 text-[1rem] leading-7 text-text-secondary">{children}</p>
+    <p className="mb-4 text-[1rem] leading-[1.75] text-text-secondary">
+      {children}
+    </p>
   ),
   ul: ({ children }: MdxElProps) => (
     <ul className="mb-4 list-disc space-y-2 pl-5 text-text-secondary">

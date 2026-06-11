@@ -1,51 +1,51 @@
-Lab MDX 元素對照速查。**Maps to** 為實際渲染的 HTML 標籤；**Styles** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。內文繼承 `font-body`（GlowSans 單字型）；`type-page-title`、`type-section-title`、`type-nav`、`type-btn` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。頁面 `<h1>` 由 layout 提供（`type-page-title`），不在 MDX map 內。
+Lab MDX 元素對照速查。<br />**Maps to:** 為實際渲染的 HTML 標籤；<br />**Styles:** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。內文繼承 `font-body`（GlowSans 單字型）；`type-page-title`、`type-section-title`、`type-nav`、`type-btn` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。頁面 `<h1>` 由 layout 提供（`type-page-title`），不在 MDX map 內。
 
-| MDX                   | Maps to               | Styles                                                                                      |
-| --------------------- | --------------------- | ------------------------------------------------------------------------------------------- |
-| `#`                   | `h2`                  | `type-section-title mb-6 text-text-primary not-first:mt-12`                                 |
-| `##`                  | `h3`                  | `mt-10 mb-4 text-[1.5rem] font-extrabold leading-8 tracking-tight text-text-primary`        |
-| `###`                 | `h4`                  | `mt-8 mb-3 text-[1.25rem] font-extrabold leading-7 text-text-primary`                       |
-| `p`                   | `p`                   | `mb-4 text-[1rem] leading-7 text-text-secondary`                                            |
-| `ul` / `ol` / `li`    | `ul` / `ol` / `li`    | `mb-4 list-disc` / `list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed` |
-| `a`                   | `a`                   | `text-accent underline-offset-4 hover:underline`                                            |
-| `blockquote`          | `blockquote`          | `mb-6 border-l-4 border-accent pl-4 text-text-secondary`                                    |
-| `hr`                  | `hr`                  | `my-10 border-border-default`                                                               |
-| `code`                | `code`                | `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`                           |
-| `pre`                 | `pre`                 | `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100` |
-| `table` / `th` / `td` | `table` / `th` / `td` | wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `th`/`td`: `border border-border-default px-3 py-2` |
-| `img`                 | `img`                 | _尚未 map_                                                                                  |
+| MDX                   | Maps to               | Styles                                                                                                                                 |
+| --------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `#`                   | `h2`                  | `type-section-title mb-6 text-text-primary not-first:mt-12`                                                                            |
+| `##`                  | `h3`                  | `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary`                                               |
+| `###`                 | `h4`                  | `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`                                               |
+| `p`                   | `p`                   | `mb-4 text-[1rem] leading-[1.75] text-text-secondary`                                                                                  |
+| `ul` / `ol` / `li`    | `ul` / `ol` / `li`    | `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed` |
+| `a`                   | `a`                   | `text-accent underline-offset-4 hover:underline`                                                                                       |
+| `blockquote`          | `blockquote`          | `mb-6 border-l-4 border-accent pl-4 text-text-secondary`                                                                               |
+| `hr`                  | `hr`                  | `my-10 border-border-default`                                                                                                          |
+| `code`                | `code`                | `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`                                                                      |
+| `pre`                 | `pre`                 | `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100`                     |
+| `table` / `th` / `td` | `table` / `th` / `td` | wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `th`/`td`: `border border-border-default px-3 py-2`       |
+| `img`                 | `img`                 | _尚未 map_                                                                                                                             |
 
 # Headings（標題）
 
-**Maps to:** `#` → `<h2>` · **Styles:** `type-section-title mb-6 text-text-primary not-first:mt-12`
+**Maps to:** `#` → `h2`<br />**Styles:** `type-section-title mb-6 text-text-primary not-first:mt-12`
 
-Lab 頁面大標由 layout 提供（`<h1>`）；MDX 的 `#` 渲染為 section 標題（`<h2>`）。`##`、`###` 依序對應 `<h3>`、`<h4>`。
+Lab 頁面大標由 layout 提供（`h1`）；MDX 的 `#` 渲染為 section 標題（`h2`）。`##`、`###` 依序對應 `h3`、`h4`。
 
 The heading levels below are live examples. Scroll to the next `#` section (Paragraphs) to see `not-first:mt-12` spacing between consecutive `#` blocks.
 
 ## Section title example
 
-**Maps to:** `##` → `<h3>` · **Styles:** `mt-10 mb-4 text-[1.5rem] font-extrabold leading-8 tracking-tight text-text-primary`
+**Maps to:** `##` → `<h3>`<br />**Styles:** `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary`
 
 Used for subsections within an article.
 
 ### Subsection example
 
-**Maps to:** `###` → `<h4>` · **Styles:** `mt-8 mb-3 text-[1.25rem] font-extrabold leading-7 text-text-primary`
+**Maps to:** `###` → `<h4>`<br />**Styles:** `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`
 
 Used for finer-grained grouping.
 
 ```md
-# Section title（maps to <h2>）
+# Section title（maps to h2）
 
-## Subsection title（maps to <h3>）
+## Subsection title（maps to h3）
 
-### Sub-subsection title（maps to <h4>）
+### Sub-subsection title（maps to h4）
 ```
 
 ## Mixed script headings（混排標題）
 
-**Maps to:** `#` → `<h2>` · **Styles:** `type-section-title`（`font-display text-[1.75rem] font-extrabold leading-9 tracking-tight`）+ `mb-6 text-text-primary not-first:mt-12` · **Weight:** `font-extrabold`（西文 Montserrat 700、中文 GlowSans 800）
+**Maps to:** `#` → `<h2>`<br />**Styles:** `type-section-title`（`font-display text-[1.75rem] font-extrabold leading-tight tracking-tight`）+ `mb-6 text-text-primary not-first:mt-12` · **Weight:** `font-extrabold`（西文 Montserrat 700、中文 GlowSans 800）
 
 以下為標題層雙字型混排測試。西文使用 Montserrat Alternates，中文使用 GlowSans。
 
@@ -57,7 +57,7 @@ Used for finer-grained grouping.
 
 以下為內文層（`font-body`），非混排：設計師 Designer 的 Portfolio 作品集。
 
-**Maps to:** `##` / `###` → `<h3>` / `<h4>` · **Styles:** 僅 `font-body`（GlowSans 單字型對照組）
+**Maps to:** `##` / `###` → `<h3>` / `<h4>` <br />**Styles:** `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary` / `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`（`font-body` 繼承對照組）
 
 ## 子標題 Subsection 混排測試
 
@@ -65,21 +65,21 @@ Used for finer-grained grouping.
 
 # Paragraphs（段落）
 
-**Maps to:** `p` · **Styles:** `mb-4 text-[1rem] leading-7 text-text-secondary`
+**Maps to:** `p`<br />**Styles:** `mb-4 text-[1rem] leading-[1.75] text-text-secondary`
 
 一般段落用於正文內容。內文走 `font-body`（GlowSans 單字型），英文使用 GlowSans 內建拉丁字母。
 
-This is a sample paragraph. It uses secondary text color and `leading-7` line height for comfortable reading.
+This is a sample paragraph. It uses secondary text color and `leading-[1.75]` line height for comfortable reading.
 
 這是內文層範例：UI/UX Designer 專注於 Experience 體驗設計。
 
 ```md
-This is a sample paragraph. It uses secondary text color and `leading-7` line height for comfortable reading.
+This is a sample paragraph. It uses secondary text color and `leading-[1.75]` line height for comfortable reading.
 ```
 
 # Text formatting（文字格式）
 
-**Maps to:** `strong` / `em` / `code` · **Styles:** `strong` / `em` 尚未 map；`code` 見下方
+**Maps to:** `strong` / `em` / `code`<br />**Styles:** `strong` / `em` 尚未 map；`code` 見下方
 
 行內文字格式對照。`strong` 與 `em` 目前使用瀏覽器預設樣式，尚未在 `labMdxComponents` 自訂。
 
@@ -97,7 +97,7 @@ This sentence mixes **bold**, _italic_, and `inline code` in one line.
 
 # Links（連結）
 
-**Maps to:** `a` · **Styles:** `text-accent underline-offset-4 hover:underline`
+**Maps to:** `a`<br />**Styles:** `text-accent underline-offset-4 hover:underline`
 
 站內連結維持同頁導覽；外部連結（`http` 開頭）應開新分頁並帶 `rel="noreferrer"`。
 
@@ -109,7 +109,7 @@ Internal: [Back to Lab](/lab). External: [MDX docs](https://mdxjs.com/).
 
 # Lists（列表）
 
-**Maps to:** `ul` / `ol` / `li` · **Styles:** `mb-4 list-disc` / `list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed`
+**Maps to:** `ul` / `ol` / `li`<br />**Styles:** `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed`
 
 無序與有序列表，用於步驟或要點條列。
 
@@ -135,7 +135,7 @@ Ordered:
 
 ## Nesting（巢狀列表）
 
-**Maps to:** `ul` / `ol` / `li`（巢狀） · **Styles:** 同上
+**Maps to:** `ul` / `ol` / `li`（巢狀）<br />**Styles:** 同上
 
 巢狀列表透過縮排建立層級。
 
@@ -161,7 +161,7 @@ Ordered:
 
 # Blockquote（引用）
 
-**Maps to:** `blockquote` · **Styles:** `mb-6 border-l-4 border-accent pl-4 text-text-secondary`
+**Maps to:** `blockquote`<br />**Styles:** `mb-6 border-l-4 border-accent pl-4 text-text-secondary`
 
 引用區塊，左側 accent 邊框，文字為 secondary 色。
 
@@ -173,7 +173,7 @@ Ordered:
 
 # Horizontal rule（分隔線）
 
-**Maps to:** `hr` · **Styles:** `my-10 border-border-default`
+**Maps to:** `hr`<br />**Styles:** `my-10 border-border-default`
 
 水平線用於區隔大段內容，上下應有適當間距。
 
@@ -193,13 +193,13 @@ Content below the rule.
 
 # Code（程式碼）
 
-**Maps to:** `code` / `pre` · **Styles:** 見各子節
+**Maps to:** `code` / `pre`<br />**Styles:** 見各子節
 
 行內程式碼與 fenced code block 的樣式示範。
 
 ## Inline code（行內程式碼）
 
-**Maps to:** `code` · **Styles:** `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`
+**Maps to:** `code`<br />**Styles:** `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`
 
 Use `backticks` to format code within a sentence.
 
@@ -209,7 +209,7 @@ Use `backticks` to format code within a sentence.
 
 ## Code blocks（程式碼區塊）
 
-**Maps to:** `pre` > `code` · **Styles:** `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100`
+**Maps to:** `pre` > `code`<br />**Styles:** `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100`
 
 Fenced block with optional language tag for syntax highlighting.
 
@@ -228,7 +228,7 @@ drawGradient(ctx, phase);
 
 # Tables（表格）
 
-**Maps to:** `table` / `thead` / `th` / `td` · **Styles:** wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `thead`: `bg-bg-card` · `th`: `border border-border-default px-3 py-2 text-left font-extrabold text-text-primary` · `td`: `border border-border-default px-3 py-2 text-text-secondary`
+**Maps to:** `table` / `thead` / `th` / `td`<br />**Styles:** wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `thead`: `bg-bg-card` · `th`: `border border-border-default px-3 py-2 text-left font-extrabold text-text-primary` · `td`: `border border-border-default px-3 py-2 text-text-secondary`
 
 經典格線表：外層可橫向捲動；儲存格邊框、表頭加粗與 `bg-bg-card` 底色區分，配色使用 ash 語意 token。
 
@@ -250,7 +250,7 @@ drawGradient(ctx, phase);
 
 ## Images（圖片）
 
-**Maps to:** `img` · **Styles:** _not mapped_
+**Maps to:** `img`<br />**Styles:** _not mapped_
 
 ![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)
 

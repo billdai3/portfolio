@@ -81,7 +81,7 @@
   }
 
   .type-section-title {
-    @apply font-display text-[1.75rem] font-extrabold leading-9 tracking-tight;
+    @apply font-display text-[1.75rem] font-extrabold leading-tight tracking-tight;
   }
 
   .type-hero-subtitle {
@@ -89,7 +89,7 @@
   }
 
   .type-page-title {
-    @apply font-display text-[2rem] font-extrabold leading-10 tracking-tight;
+    @apply font-display text-[2rem] font-extrabold leading-tight tracking-tight;
   }
 
   /* Mixed stack — navbar pills */
