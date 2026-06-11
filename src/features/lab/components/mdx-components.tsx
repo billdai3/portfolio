@@ -53,7 +53,7 @@ export const labMdxComponents: MDXComponents = {
     </code>
   ),
   pre: ({ children }: MdxElProps) => (
-    <pre className="mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100">
+    <pre className="mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 font-mono text-sm leading-relaxed text-ash-100 [&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0">
       {children}
     </pre>
   ),

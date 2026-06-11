@@ -1,19 +1,19 @@
 Lab MDX 元素對照速查。<br />**Maps to:** 為實際渲染的 HTML 標籤；<br />**Styles:** 為 `labMdxComponents`（`mdx-components.tsx`）中的主要 class。內文繼承 `font-body`（GlowSans 單字型）；`type-page-title`、`type-section-title`、`type-nav`、`type-btn` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。頁面 `<h1>` 由 layout 提供（`type-page-title`），不在 MDX map 內。
 
-| MDX                   | Maps to               | Styles                                                                                                                                 |
-| --------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `#`                   | `h2`                  | `type-section-title mb-6 text-text-primary not-first:mt-12`                                                                            |
-| `##`                  | `h3`                  | `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary`                                               |
-| `###`                 | `h4`                  | `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`                                               |
-| `p`                   | `p`                   | `mb-4 text-[1rem] leading-[1.75] text-text-secondary`                                                                                  |
-| `ul` / `ol` / `li`    | `ul` / `ol` / `li`    | `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed` |
-| `a`                   | `a`                   | `text-accent underline-offset-4 hover:underline`                                                                                       |
-| `blockquote`          | `blockquote`          | `mb-6 border-l-4 border-accent pl-4 text-text-secondary`                                                                               |
-| `hr`                  | `hr`                  | `my-10 border-border-default`                                                                                                          |
-| `code`                | `code`                | `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`                                                                      |
-| `pre`                 | `pre`                 | `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100`                     |
-| `table` / `th` / `td` | `table` / `th` / `td` | wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `th`/`td`: `border border-border-default px-3 py-2`       |
-| `img`                 | `img`                 | _尚未 map_                                                                                                                             |
+| MDX                   | Maps to               | Styles                                                                                                                                                                                                                  |
+| --------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `#`                   | `h2`                  | `type-section-title mb-6 text-text-primary not-first:mt-12`                                                                                                                                                             |
+| `##`                  | `h3`                  | `mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary`                                                                                                                                |
+| `###`                 | `h4`                  | `mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary`                                                                                                                                |
+| `p`                   | `p`                   | `mb-4 text-[1rem] leading-[1.75] text-text-secondary`                                                                                                                                                                   |
+| `ul` / `ol` / `li`    | `ul` / `ol` / `li`    | `mb-4 list-disc space-y-2 pl-5 text-text-secondary` / `mb-4 list-decimal space-y-2 pl-5 text-text-secondary` · `li`: `leading-relaxed`                                                                                  |
+| `a`                   | `a`                   | `text-accent underline-offset-4 hover:underline`                                                                                                                                                                        |
+| `blockquote`          | `blockquote`          | `mb-6 border-l-4 border-accent pl-4 text-text-secondary`                                                                                                                                                                |
+| `hr`                  | `hr`                  | `my-10 border-border-default`                                                                                                                                                                                           |
+| `code`                | `code`                | `rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100`                                                                                                                                                       |
+| `pre`                 | `pre`                 | `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 font-mono text-sm leading-relaxed text-ash-100` · 內層 `code` 以 `[&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0` 重置行內樣式 |
+| `table` / `th` / `td` | `table` / `th` / `td` | wrapper `mb-6 overflow-x-auto` · `table`: `w-full border-collapse text-sm` · `th`/`td`: `border border-border-default px-3 py-2`                                                                                        |
+| `img`                 | `img`                 | _尚未 map_                                                                                                                                                                                                              |
 
 # Headings（標題）
 
@@ -209,7 +209,7 @@ Use `backticks` to format code within a sentence.
 
 ## Code blocks（程式碼區塊）
 
-**Maps to:** `pre` > `code`<br />**Styles:** `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 text-sm leading-relaxed text-ash-100`
+**Maps to:** `pre` > `code`<br />**Styles:** `pre`: `mb-6 overflow-x-auto rounded-xl border border-border-default bg-bg-card p-4 font-mono text-sm leading-relaxed text-ash-100` · 內層 `code` 重置：`[&>code]:rounded-none [&>code]:bg-transparent [&>code]:p-0`
 
 Fenced block with optional language tag for syntax highlighting.
 
