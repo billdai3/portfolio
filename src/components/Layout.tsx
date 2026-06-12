@@ -8,6 +8,7 @@ import {
   type RefObject,
 } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { devPages } from "@/config/dev-pages";
 
 const SCROLL_THRESHOLD = 8;
 const TOP_REVEAL_OFFSET = 16;
@@ -217,6 +218,22 @@ export default function Layout() {
 
       <footer className="border-t border-border-default">
         <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-text-muted">
+          {import.meta.env.DEV ? (
+            <nav
+              aria-label="Dev pages"
+              className="mb-3 flex flex-wrap gap-x-4 gap-y-1"
+            >
+              {devPages.map(({ to, label }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  className="transition-colors hover:text-text-primary"
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </nav>
+          ) : null}
           © {new Date().getFullYear()} Your Name
         </div>
       </footer>

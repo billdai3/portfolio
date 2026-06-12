@@ -9,6 +9,7 @@ import WorkPage from './pages/WorkPage'
 
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
 const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
+const DevSandboxPage = lazy(() => import('./pages/DevSandboxPage'))
 
 export default function App() {
   return (
@@ -34,6 +35,14 @@ export default function App() {
               element={
                 <Suspense fallback={null}>
                   <DevMdxStyleguidePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dev/sandbox"
+              element={
+                <Suspense fallback={null}>
+                  <DevSandboxPage />
                 </Suspense>
               }
             />
