@@ -5,7 +5,7 @@ import { Leva, useControls } from "leva";
 const updateFps = 30;
 const showMouse = true;
 
-export default function CanvasParticles57() {
+export default function CanvasParticleFlame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const controlsRef = useRef({
     value: 0,
@@ -193,13 +193,20 @@ export default function CanvasParticles57() {
       this.lineTo(v2.x, v2.y);
     };
 
-    let ww: number;
-    let wh: number;
+    // let ww: number;
+    // let wh: number;
 
     // canvas 初始化
     function initCanvas() {
-      ww = canvas.width = window.innerWidth;
-      wh = canvas.height = window.innerHeight;
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      const { width, height } = parent.getBoundingClientRect();
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     initCanvas();
 
@@ -244,8 +251,9 @@ export default function CanvasParticles57() {
     let frameId = 0;
     function draw() {
       // 清空背景
+      const { width, height } = canvas.getBoundingClientRect();
       ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, ww, wh);
+      ctx.fillRect(0, 0, width, height);
 
       // ====================
       // 在這裡繪製
@@ -264,7 +272,11 @@ export default function CanvasParticles57() {
       ctx.strokeStyle = "red";
       const len = 20;
       ctx.line(new Vec2(-len, 0), new Vec2(len, 0));
-      ctx.fillText(String(mousePos), 10, -10);
+      ctx.fillText(
+        `${Math.round(mousePos.x)}, ${Math.round(mousePos.y)}`,
+        10,
+        10,
+      );
       ctx.rotate(Math.PI / 2);
       ctx.line(new Vec2(-len, 0), new Vec2(len, 0));
       ctx.stroke();
@@ -282,31 +294,39 @@ export default function CanvasParticles57() {
     }
 
     // 滑鼠事件跟紀錄
-    const mousePos = new Vec2(canvas.width / 2, canvas.height / 2);
+    function getMousePos(evt: MouseEvent) {
+      const rect = canvas.getBoundingClientRect();
+      return new Vec2(evt.clientX - rect.left, evt.clientY - rect.top);
+    }
+    const rect = canvas.getBoundingClientRect();
+    const mousePos = new Vec2(rect.width / 2, rect.height / 2);
     let mousePosDown = new Vec2(0, 0);
     let mousePosUp = new Vec2(0, 0);
     void mousePosDown;
     void mousePosUp;
 
     function mousemove(evt: MouseEvent) {
-      mousePos.set(evt.x, evt.y);
+      const pos = getMousePos(evt);
+      mousePos.set(pos.x, pos.y);
       // console.log(mousePos)
     }
     function mouseup(evt: MouseEvent) {
-      mousePos.set(evt.x, evt.y);
+      const pos = getMousePos(evt);
+      mousePos.set(pos.x, pos.y);
       mousePosUp = mousePos.clone();
     }
     function mousedown(evt: MouseEvent) {
-      mousePos.set(evt.x, evt.y);
+      const pos = getMousePos(evt);
+      mousePos.set(pos.x, pos.y);
       mousePosDown = mousePos.clone();
     }
 
     // 載入、縮放的事件
     let intervalId: ReturnType<typeof setInterval>;
     window.addEventListener("resize", initCanvas);
-    window.addEventListener("mousemove", mousemove);
-    window.addEventListener("mouseup", mouseup);
-    window.addEventListener("mousedown", mousedown);
+    canvas.addEventListener("mousemove", mousemove);
+    canvas.addEventListener("mouseup", mouseup);
+    canvas.addEventListener("mousedown", mousedown);
 
     loaded();
 
@@ -316,9 +336,9 @@ export default function CanvasParticles57() {
       cancelAnimationFrame(frameId);
       clearInterval(intervalId);
       window.removeEventListener("resize", initCanvas);
-      window.removeEventListener("mousemove", mousemove);
-      window.removeEventListener("mouseup", mouseup);
-      window.removeEventListener("mousedown", mousedown);
+      canvas.removeEventListener("mousemove", mousemove);
+      canvas.removeEventListener("mouseup", mouseup);
+      canvas.removeEventListener("mousedown", mousedown);
     };
   }, []);
 
