@@ -17,22 +17,17 @@ function isBlockCode({
 
 export const labMdxComponents: MDXComponents = {
   h1: ({ children }: MdxElProps) => (
-    <h1 className="type-page-title mb-6 text-text-primary">{children}</h1>
+    <h1 className="type-page-title mb-4 text-text-primary">{children}</h1>
   ),
   h2: ({ children }: MdxElProps) => (
-    <h2 className="type-section-title mb-5 text-text-primary not-first:mt-12">
+    <h2 className="font-display text-[1.5rem] font-extrabold leading-tight tracking-tight mb-3 text-text-primary not-first:mt-8">
       {children}
     </h2>
   ),
   h3: ({ children }: MdxElProps) => (
-    <h3 className="mt-10 mb-4 text-[1.5rem] leading-tight font-extrabold tracking-tight text-text-primary">
+    <h3 className="font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-10 mb-3 text-text-primary">
       {children}
     </h3>
-  ),
-  h4: ({ children }: MdxElProps) => (
-    <h4 className="mt-8 mb-3 text-[1.25rem] leading-tight font-extrabold tracking-tight text-text-primary">
-      {children}
-    </h4>
   ),
   p: ({ children }: MdxElProps) => (
     <p className="mb-2 text-[1rem] leading-[1.75] text-text-secondary">
@@ -113,12 +108,12 @@ export const labMdxComponents: MDXComponents = {
   tbody: ({ children }: MdxElProps) => <tbody>{children}</tbody>,
   tr: ({ children }: MdxElProps) => <tr>{children}</tr>,
   th: ({ children }: MdxElProps) => (
-    <th className="border border-border-default px-3 py-2 text-left font-extrabold text-text-primary">
+    <th className="border border-border-default px-3 py-2 text-left align-top font-extrabold text-text-primary">
       {children}
     </th>
   ),
   td: ({ children }: MdxElProps) => (
-    <td className="border border-border-default px-3 py-2 text-text-secondary">
+    <td className="border border-border-default px-3 py-2 align-top text-text-secondary">
       {children}
     </td>
   ),
