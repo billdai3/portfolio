@@ -147,47 +147,47 @@
     @apply bg-nav-hover-default;
   }
 
-  /* Lab project — back button (top-left) */
-  .lab-back-btn {
+  /* Detail page — back button (top-left) */
+  .detail-back-btn {
     @apply fixed top-0 left-0 z-60 flex cursor-pointer items-stretch overflow-hidden rounded-br-3xl font-display text-base font-extrabold text-ash-400 bg-ash-800 transition-colors hover:text-ash-200 hover:bg-ash-700;
   }
 
-  .lab-back-btn:hover .lab-back-btn__icon {
+  .detail-back-btn:hover .detail-back-btn__icon {
     @apply bg-ash-600;
   }
 
-  .lab-back-btn__icon {
+  .detail-back-btn__icon {
     @apply flex items-center justify-center bg-ash-700 rounded-br-3xl px-4 py-3 transition-colors;
   }
 
-  .lab-back-btn__label {
+  .detail-back-btn__label {
     @apply flex items-center pr-4 pl-3 py-3;
   }
 
-  /* Lab project — collapsed nav tab (top-center) */
-  .nav-lab-host {
+  /* Detail page — collapsed nav tab (top-center) */
+  .nav-detail-host {
     @apply pointer-events-none fixed top-0 right-0 left-0 z-50 flex justify-center;
   }
 
-  .nav-lab-interactive {
+  .nav-detail-interactive {
     @apply pointer-events-auto relative flex flex-col items-center;
   }
 
-  .nav-lab-interactive--expanded .nav-lab-stage {
+  .nav-detail-interactive--expanded .nav-detail-stage {
     min-height: calc(1.5rem + 3rem);
     transition: min-height 200ms ease-out;
   }
 
-  .nav-lab-stage {
+  .nav-detail-stage {
     @apply relative px-4 pb-2 sm:px-6;
     transition: min-height 200ms ease-out 80ms;
   }
 
-  .nav-lab-measure {
+  .nav-detail-measure {
     @apply pointer-events-none fixed top-0 left-0 -z-10 opacity-0;
   }
 
-  .nav-lab-shell {
+  .nav-detail-shell {
     @apply relative flex flex-col items-stretch overflow-hidden;
     width: var(--nav-tab-width, fit-content);
     border-radius: 0 0 1.5rem 1.5rem;
@@ -199,7 +199,7 @@
       min-height 200ms ease-out 50ms;
   }
 
-  .nav-lab-shell--expanded {
+  .nav-detail-shell--expanded {
     transform: translateY(1.5rem);
     width: var(--nav-pill-width, 18rem);
     min-height: 2.75rem;
@@ -211,25 +211,25 @@
       min-height 200ms ease-out;
   }
 
-  .nav-lab-shell__bars {
+  .nav-detail-shell__bars {
     transition: opacity 150ms ease-out 60ms;
   }
 
-  .nav-lab-shell--expanded .nav-lab-shell__bars {
+  .nav-detail-shell--expanded .nav-detail-shell__bars {
     @apply pointer-events-none absolute inset-0 opacity-0;
     transition: opacity 120ms ease-out;
   }
 
-  .nav-lab-shell__hit {
+  .nav-detail-shell__hit {
     @apply absolute inset-0 cursor-pointer border-0 bg-transparent p-0;
   }
 
-  .nav-lab-shell__nav {
+  .nav-detail-shell__nav {
     @apply pointer-events-none absolute inset-0 flex items-center justify-center opacity-0;
     transition: opacity 120ms ease-out;
   }
 
-  .nav-lab-shell__nav--visible {
+  .nav-detail-shell__nav--visible {
     @apply pointer-events-auto opacity-100;
     transition: opacity 160ms ease-out 40ms;
   }
@@ -243,9 +243,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-lab-shell,
-    .nav-lab-shell__bars,
-    .nav-lab-shell__nav {
+    .nav-detail-shell,
+    .nav-detail-shell__bars,
+    .nav-detail-shell__nav {
       transition: none;
     }
   }

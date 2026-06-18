@@ -31,7 +31,7 @@ type IndicatorState = {
   ready: boolean;
 };
 
-function isLabProjectPath(pathname: string) {
+function isDetailPagePath(pathname: string) {
   return /^\/lab\/[^/]+$/.test(pathname);
 }
 
@@ -88,7 +88,7 @@ function useCanHover() {
   );
 }
 
-function LabNavShell({
+function DetailNavShell({
   expanded,
   canHover,
   pillWidth,
@@ -113,20 +113,20 @@ function LabNavShell({
   return (
     <div
       className={[
-        "nav-lab-shell",
-        expanded ? "nav-lab-shell--expanded" : "",
+        "nav-detail-shell",
+        expanded ? "nav-detail-shell--expanded" : "",
       ].join(" ")}
       style={shellStyle}
     >
       <div
-        className="nav-lab-shell__bars nav-collapsed-tab"
+        className="nav-detail-shell__bars nav-collapsed-tab"
         aria-hidden={expanded}
         onMouseEnter={canHover && !expanded ? onHoverEnter : undefined}
       >
         {!canHover ? (
           <button
             type="button"
-            className="nav-lab-shell__hit"
+            className="nav-detail-shell__hit"
             aria-label="展開導航"
             aria-expanded={expanded}
             onClick={onCollapsedClick}
@@ -138,8 +138,8 @@ function LabNavShell({
 
       <div
         className={[
-          "nav-lab-shell__nav",
-          expanded ? "nav-lab-shell__nav--visible" : "",
+          "nav-detail-shell__nav",
+          expanded ? "nav-detail-shell__nav--visible" : "",
         ].join(" ")}
       >
         {children}
@@ -151,7 +151,7 @@ function LabNavShell({
 export default function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
-  const isLabProject = isLabProjectPath(location.pathname);
+  const isDetailPage = isDetailPagePath(location.pathname);
   const hidePrimaryNav =
     import.meta.env.DEV && location.pathname === "/dev/gsap";
   const canHover = useCanHover();
@@ -169,7 +169,7 @@ export default function Layout() {
   const [tabWidth, setTabWidth] = useState(0);
   const pillMeasureRef = useRef<HTMLDivElement>(null);
   const tabMeasureRef = useRef<HTMLDivElement>(null);
-  const labInteractiveRef = useRef<HTMLDivElement>(null);
+  const detailNavInteractiveRef = useRef<HTMLDivElement>(null);
 
   const navTheme: NavVisualTheme =
     isHome && navOverHero ? "over-hero" : "scrolled";
@@ -215,7 +215,7 @@ export default function Layout() {
   }, [updateIndicator]);
 
   useLayoutEffect(() => {
-    if (!isLabProject) return;
+    if (!isDetailPage) return;
 
     const measureRoot = pillMeasureRef.current;
     if (!measureRoot) return;
@@ -234,10 +234,10 @@ export default function Layout() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measurePill);
     };
-  }, [isLabProject, location.pathname, navTheme]);
+  }, [isDetailPage, location.pathname, navTheme]);
 
   useLayoutEffect(() => {
-    if (!isLabProject) return;
+    if (!isDetailPage) return;
 
     const tab = tabMeasureRef.current?.firstElementChild;
     if (!tab) return;
@@ -253,7 +253,7 @@ export default function Layout() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measureTab);
     };
-  }, [isLabProject]);
+  }, [isDetailPage]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -267,7 +267,7 @@ export default function Layout() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (isLabProject) return;
+    if (isDetailPage) return;
 
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (media.matches) return;
@@ -299,19 +299,19 @@ export default function Layout() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isLabProject]);
+  }, [isDetailPage]);
 
-  const handleLabNavEnter = () => {
+  const handleDetailNavEnter = () => {
     if (canHover) setNavExpanded(true);
   };
 
-  const handleLabNavLeave = (event: MouseEvent<HTMLDivElement>) => {
+  const handleDetailNavLeave = (event: MouseEvent<HTMLDivElement>) => {
     if (!canHover) return;
 
     const related = event.relatedTarget;
     if (related instanceof Node && event.currentTarget.contains(related)) return;
 
-    const interactive = labInteractiveRef.current;
+    const interactive = detailNavInteractiveRef.current;
     requestAnimationFrame(() => {
       if (!interactive?.matches(":hover")) {
         setNavExpanded(false);
@@ -331,7 +331,7 @@ export default function Layout() {
       ref={options?.ref}
       className={[
         "nav-pill",
-        isLabProject || navTheme === "scrolled"
+        isDetailPage || navTheme === "scrolled"
           ? "nav-pill--scrolled"
           : "nav-pill--over-hero",
       ].join(" ")}
@@ -368,35 +368,35 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      {hidePrimaryNav ? null : isLabProject ? (
-        <div className="nav-lab-host">
+      {hidePrimaryNav ? null : isDetailPage ? (
+        <div className="nav-detail-host">
           <div
-            ref={labInteractiveRef}
+            ref={detailNavInteractiveRef}
             className={[
-              "nav-lab-interactive",
-              navExpanded ? "nav-lab-interactive--expanded" : "",
+              "nav-detail-interactive",
+              navExpanded ? "nav-detail-interactive--expanded" : "",
             ].join(" ")}
-            onMouseLeave={canHover ? handleLabNavLeave : undefined}
+            onMouseLeave={canHover ? handleDetailNavLeave : undefined}
           >
-            <div className="nav-lab-stage">
-              <LabNavShell
+            <div className="nav-detail-stage">
+              <DetailNavShell
                 expanded={navExpanded}
                 canHover={canHover}
                 pillWidth={pillWidth}
                 tabWidth={tabWidth}
                 onCollapsedClick={handleCollapsedTabClick}
-                onHoverEnter={handleLabNavEnter}
+                onHoverEnter={handleDetailNavEnter}
               >
                 {renderNavPill({ ref: navRef })}
-              </LabNavShell>
+              </DetailNavShell>
             </div>
           </div>
 
-          <div ref={pillMeasureRef} className="nav-lab-measure" aria-hidden>
+          <div ref={pillMeasureRef} className="nav-detail-measure" aria-hidden>
             {renderNavPill({ measure: true })}
           </div>
 
-          <div ref={tabMeasureRef} className="nav-lab-measure" aria-hidden>
+          <div ref={tabMeasureRef} className="nav-detail-measure" aria-hidden>
             <div className="nav-collapsed-tab">
               <span className="nav-collapsed-tab__bar" />
               <span className="nav-collapsed-tab__bar" />

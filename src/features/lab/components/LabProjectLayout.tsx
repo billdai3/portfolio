@@ -51,13 +51,13 @@ function GoBackButton() {
     <button
       type="button"
       onClick={handleGoBack}
-      className="lab-back-btn"
+      className="detail-back-btn"
       aria-label="Go Back"
     >
-      <span className="lab-back-btn__icon" aria-hidden>
+      <span className="detail-back-btn__icon" aria-hidden>
         ←
       </span>
-      <span className="lab-back-btn__label">Go Back</span>
+      <span className="detail-back-btn__label">Go Back</span>
     </button>
   );
 }
