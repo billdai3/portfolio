@@ -165,11 +165,20 @@
   }
 
   /* Lab project — collapsed nav tab (top-center) */
-  .nav-lab-hover-zone {
-    @apply fixed top-0 right-0 left-0 z-50 flex flex-col items-center;
-    min-height: 5rem;
-    /* Exclude top-left back button from hit area so it stays clickable */
-    clip-path: inset(0 0 0 10rem);
+  .nav-lab-host {
+    @apply pointer-events-none fixed top-0 right-0 left-0 z-50 flex justify-center;
+  }
+
+  .nav-lab-interactive {
+    @apply pointer-events-auto relative flex flex-col items-center;
+  }
+
+  .nav-lab-interactive--expanded {
+    @apply pt-6;
+  }
+
+  .nav-lab-interactive--expanded .nav-collapsed-tab {
+    @apply absolute top-0 h-0 overflow-hidden p-0 opacity-0;
   }
 
   .nav-collapsed-tab {

@@ -87,10 +87,14 @@ function useCanHover() {
 
 function NavCollapsedTab({
   expanded,
+  canHover,
   onClick,
+  onHoverEnter,
 }: {
   expanded: boolean;
+  canHover: boolean;
   onClick: () => void;
+  onHoverEnter: () => void;
 }) {
   return (
     <button
@@ -102,6 +106,7 @@ function NavCollapsedTab({
       aria-label="展開導航"
       aria-expanded={expanded}
       onClick={onClick}
+      onMouseEnter={canHover && !expanded ? onHoverEnter : undefined}
     >
       <span className="nav-collapsed-tab__bar" />
       <span className="nav-collapsed-tab__bar" />
@@ -268,25 +273,31 @@ export default function Layout() {
   return (
     <div className="flex min-h-svh flex-col">
       {hidePrimaryNav ? null : isLabProject ? (
-        <div
-          className="nav-lab-hover-zone"
-          onMouseEnter={handleLabNavEnter}
-          onMouseLeave={handleLabNavLeave}
-        >
-          <NavCollapsedTab
-            expanded={navExpanded}
-            onClick={handleCollapsedTabClick}
-          />
-
+        <div className="nav-lab-host">
           <div
             className={[
-              "mx-auto flex w-full max-w-6xl justify-center px-4 pb-2 transition-all duration-200 ease-out sm:px-6",
-              navExpanded
-                ? "pointer-events-auto pt-6 opacity-100"
-                : "pointer-events-none h-0 overflow-hidden opacity-0",
+              "nav-lab-interactive",
+              navExpanded ? "nav-lab-interactive--expanded" : "",
             ].join(" ")}
+            onMouseLeave={canHover ? handleLabNavLeave : undefined}
           >
-            {navPill}
+            <NavCollapsedTab
+              expanded={navExpanded}
+              canHover={canHover}
+              onClick={handleCollapsedTabClick}
+              onHoverEnter={handleLabNavEnter}
+            />
+
+            <div
+              className={[
+                "flex justify-center px-4 pb-2 transition-all duration-200 ease-out sm:px-6",
+                navExpanded
+                  ? "pointer-events-auto opacity-100"
+                  : "pointer-events-none h-0 overflow-hidden opacity-0",
+              ].join(" ")}
+            >
+              {navPill}
+            </div>
           </div>
         </div>
       ) : (
