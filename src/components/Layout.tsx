@@ -35,6 +35,10 @@ function isDetailPagePath(pathname: string) {
   return /^\/lab\/[^/]+$/.test(pathname);
 }
 
+function isEnteringDetail(prev: string, next: string) {
+  return !isDetailPagePath(prev) && isDetailPagePath(next);
+}
+
 function subscribeNavOverHero(onStoreChange: () => void) {
   window.addEventListener("scroll", onStoreChange, { passive: true });
   window.addEventListener("resize", onStoreChange);
@@ -158,8 +162,12 @@ export default function Layout() {
   const navRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
   const [navVisible, setNavVisible] = useState(true);
-  const [navExpanded, setNavExpanded] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  const [navExpanded, setNavExpanded] = useState(
+    () => !isDetailPagePath(location.pathname),
+  );
   const navOverHero = useNavOverHero(isHome, navRef);
+  const [entryCollapsePending, setEntryCollapsePending] = useState(false);
   const [indicator, setIndicator] = useState<IndicatorState>({
     left: 0,
     width: 0,
@@ -173,6 +181,31 @@ export default function Layout() {
 
   const navTheme: NavVisualTheme =
     isHome && navOverHero ? "over-hero" : "scrolled";
+
+  if (location.pathname !== prevPathname) {
+    const nextPath = location.pathname;
+    const enteringDetail = isEnteringDetail(prevPathname, nextPath);
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    setPrevPathname(nextPath);
+
+    if (isDetailPagePath(nextPath)) {
+      if (enteringDetail && !reducedMotion) {
+        setEntryCollapsePending(true);
+      } else {
+        setNavExpanded(false);
+        setEntryCollapsePending(false);
+      }
+    } else {
+      setEntryCollapsePending(false);
+    }
+  }
+
+  const shellExpanded = isDetailPage
+    ? entryCollapsePending || navExpanded
+    : true;
 
   const updateIndicator = useCallback(() => {
     const nav = navRef.current;
@@ -195,7 +228,7 @@ export default function Layout() {
     updateIndicator();
     const frame = requestAnimationFrame(() => updateIndicator());
     return () => cancelAnimationFrame(frame);
-  }, [location.pathname, navTheme, navExpanded, updateIndicator]);
+  }, [location.pathname, navTheme, shellExpanded, updateIndicator]);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -215,8 +248,6 @@ export default function Layout() {
   }, [updateIndicator]);
 
   useLayoutEffect(() => {
-    if (!isDetailPage) return;
-
     const measureRoot = pillMeasureRef.current;
     if (!measureRoot) return;
 
@@ -234,11 +265,9 @@ export default function Layout() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measurePill);
     };
-  }, [isDetailPage, location.pathname, navTheme]);
+  }, [location.pathname, navTheme]);
 
   useLayoutEffect(() => {
-    if (!isDetailPage) return;
-
     const tab = tabMeasureRef.current?.firstElementChild;
     if (!tab) return;
 
@@ -253,16 +282,31 @@ export default function Layout() {
       resizeObserver.disconnect();
       window.removeEventListener("resize", measureTab);
     };
-  }, [isDetailPage]);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!entryCollapsePending) return;
+    if (pillWidth <= 0 || tabWidth <= 0) return;
+
+    let frame2 = 0;
+    const frame1 = requestAnimationFrame(() => {
+      frame2 = requestAnimationFrame(() => {
+        setNavExpanded(false);
+        setEntryCollapsePending(false);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(frame1);
+      if (frame2) cancelAnimationFrame(frame2);
+    };
+  }, [entryCollapsePending, pillWidth, tabWidth]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    lastScrollY.current = 0;
 
-    const frame = requestAnimationFrame(() => {
-      setNavVisible(true);
-      setNavExpanded(false);
-      lastScrollY.current = 0;
-    });
+    const frame = requestAnimationFrame(() => setNavVisible(true));
     return () => cancelAnimationFrame(frame);
   }, [location.pathname]);
 
@@ -302,11 +346,11 @@ export default function Layout() {
   }, [isDetailPage]);
 
   const handleDetailNavEnter = () => {
-    if (canHover) setNavExpanded(true);
+    if (isDetailPage && canHover) setNavExpanded(true);
   };
 
   const handleDetailNavLeave = (event: MouseEvent<HTMLDivElement>) => {
-    if (!canHover) return;
+    if (!isDetailPage || !canHover) return;
 
     const related = event.relatedTarget;
     if (related instanceof Node && event.currentTarget.contains(related)) return;
@@ -320,7 +364,7 @@ export default function Layout() {
   };
 
   const handleCollapsedTabClick = () => {
-    if (!canHover) setNavExpanded((prev) => !prev);
+    if (isDetailPage && !canHover) setNavExpanded((prev) => !prev);
   };
 
   const renderNavPill = (options?: {
@@ -368,20 +412,32 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-svh flex-col">
-      {hidePrimaryNav ? null : isDetailPage ? (
-        <div className="nav-detail-host">
+      {hidePrimaryNav ? null : (
+        <div
+          className={[
+            "nav-detail-host",
+            !isDetailPage ? "nav-detail-host--list" : "",
+            !isDetailPage
+              ? navVisible
+                ? "translate-y-0"
+                : "-translate-y-full"
+              : "",
+          ].join(" ")}
+        >
           <div
             ref={detailNavInteractiveRef}
             className={[
               "nav-detail-interactive",
-              navExpanded ? "nav-detail-interactive--expanded" : "",
+              shellExpanded ? "nav-detail-interactive--expanded" : "",
             ].join(" ")}
-            onMouseLeave={canHover ? handleDetailNavLeave : undefined}
+            onMouseLeave={
+              isDetailPage && canHover ? handleDetailNavLeave : undefined
+            }
           >
             <div className="nav-detail-stage">
               <DetailNavShell
-                expanded={navExpanded}
-                canHover={canHover}
+                expanded={shellExpanded}
+                canHover={isDetailPage && canHover}
                 pillWidth={pillWidth}
                 tabWidth={tabWidth}
                 onCollapsedClick={handleCollapsedTabClick}
@@ -403,17 +459,6 @@ export default function Layout() {
             </div>
           </div>
         </div>
-      ) : (
-        <header
-          className={[
-            "fixed top-0 right-0 left-0 z-50 px-4 pt-6 pb-2 transition-transform duration-300 ease-out sm:px-6",
-            navVisible ? "translate-y-0" : "-translate-y-full",
-          ].join(" ")}
-        >
-          <div className="mx-auto flex max-w-6xl justify-center">
-            {renderNavPill({ ref: navRef })}
-          </div>
-        </header>
       )}
 
       <main className="flex-1">
