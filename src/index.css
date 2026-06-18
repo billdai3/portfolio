@@ -173,19 +173,80 @@
     @apply pointer-events-auto relative flex flex-col items-center;
   }
 
-  .nav-lab-interactive--expanded {
-    @apply pt-6;
+  .nav-lab-interactive--expanded .nav-lab-stage {
+    min-height: calc(1.5rem + 3rem);
+    transition: min-height 200ms ease-out;
   }
 
-  .nav-lab-interactive--expanded .nav-collapsed-tab {
-    @apply absolute top-0 h-0 overflow-hidden p-0 opacity-0;
+  .nav-lab-stage {
+    @apply relative px-4 pb-2 sm:px-6;
+    transition: min-height 200ms ease-out 80ms;
+  }
+
+  .nav-lab-measure {
+    @apply pointer-events-none fixed top-0 left-0 -z-10 opacity-0;
+  }
+
+  .nav-lab-shell {
+    @apply relative flex flex-col items-stretch overflow-hidden;
+    width: var(--nav-tab-width, fit-content);
+    border-radius: 0 0 1.5rem 1.5rem;
+    background: transparent;
+    transition:
+      transform 200ms ease-out 50ms,
+      width 200ms ease-out 50ms,
+      border-radius 200ms ease-out 50ms,
+      min-height 200ms ease-out 50ms;
+  }
+
+  .nav-lab-shell--expanded {
+    transform: translateY(1.5rem);
+    width: var(--nav-pill-width, 18rem);
+    min-height: 2.75rem;
+    border-radius: 9999px;
+    transition:
+      transform 200ms ease-out,
+      width 200ms ease-out,
+      border-radius 200ms ease-out,
+      min-height 200ms ease-out;
+  }
+
+  .nav-lab-shell__bars {
+    transition: opacity 150ms ease-out 60ms;
+  }
+
+  .nav-lab-shell--expanded .nav-lab-shell__bars {
+    @apply pointer-events-none absolute inset-0 opacity-0;
+    transition: opacity 120ms ease-out;
+  }
+
+  .nav-lab-shell__hit {
+    @apply absolute inset-0 cursor-pointer border-0 bg-transparent p-0;
+  }
+
+  .nav-lab-shell__nav {
+    @apply pointer-events-none absolute inset-0 flex items-center justify-center opacity-0;
+    transition: opacity 120ms ease-out;
+  }
+
+  .nav-lab-shell__nav--visible {
+    @apply pointer-events-auto opacity-100;
+    transition: opacity 160ms ease-out 40ms;
   }
 
   .nav-collapsed-tab {
-    @apply flex flex-col items-center justify-center gap-2 rounded-b-2xl bg-ash-800 px-6 pt-3.5 pb-4.5 transition-opacity duration-200;
+    @apply flex flex-col items-center justify-center gap-2 rounded-b-2xl bg-ash-800 px-6 pt-3.5 pb-4.5;
   }
 
   .nav-collapsed-tab__bar {
     @apply h-1 w-8 bg-ash-400;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-lab-shell,
+    .nav-lab-shell__bars,
+    .nav-lab-shell__nav {
+      transition: none;
+    }
   }
 }

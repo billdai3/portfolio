@@ -5,6 +5,9 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
   type RefObject,
 } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
@@ -85,32 +88,63 @@ function useCanHover() {
   );
 }
 
-function NavCollapsedTab({
+function LabNavShell({
   expanded,
   canHover,
-  onClick,
+  pillWidth,
+  tabWidth,
+  onCollapsedClick,
   onHoverEnter,
+  children,
 }: {
   expanded: boolean;
   canHover: boolean;
-  onClick: () => void;
+  pillWidth: number;
+  tabWidth: number;
+  onCollapsedClick: () => void;
   onHoverEnter: () => void;
+  children: ReactNode;
 }) {
+  const shellStyle = {
+    ...(pillWidth > 0 ? { "--nav-pill-width": `${pillWidth}px` } : {}),
+    ...(tabWidth > 0 ? { "--nav-tab-width": `${tabWidth}px` } : {}),
+  } as CSSProperties;
+
   return (
-    <button
-      type="button"
+    <div
       className={[
-        "nav-collapsed-tab",
-        expanded ? "pointer-events-none opacity-0" : "opacity-100",
+        "nav-lab-shell",
+        expanded ? "nav-lab-shell--expanded" : "",
       ].join(" ")}
-      aria-label="展開導航"
-      aria-expanded={expanded}
-      onClick={onClick}
-      onMouseEnter={canHover && !expanded ? onHoverEnter : undefined}
+      style={shellStyle}
     >
-      <span className="nav-collapsed-tab__bar" />
-      <span className="nav-collapsed-tab__bar" />
-    </button>
+      <div
+        className="nav-lab-shell__bars nav-collapsed-tab"
+        aria-hidden={expanded}
+        onMouseEnter={canHover && !expanded ? onHoverEnter : undefined}
+      >
+        {!canHover ? (
+          <button
+            type="button"
+            className="nav-lab-shell__hit"
+            aria-label="展開導航"
+            aria-expanded={expanded}
+            onClick={onCollapsedClick}
+          />
+        ) : null}
+        <span className="nav-collapsed-tab__bar" />
+        <span className="nav-collapsed-tab__bar" />
+      </div>
+
+      <div
+        className={[
+          "nav-lab-shell__nav",
+          expanded ? "nav-lab-shell__nav--visible" : "",
+        ].join(" ")}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -131,6 +165,11 @@ export default function Layout() {
     width: 0,
     ready: false,
   });
+  const [pillWidth, setPillWidth] = useState(0);
+  const [tabWidth, setTabWidth] = useState(0);
+  const pillMeasureRef = useRef<HTMLDivElement>(null);
+  const tabMeasureRef = useRef<HTMLDivElement>(null);
+  const labInteractiveRef = useRef<HTMLDivElement>(null);
 
   const navTheme: NavVisualTheme =
     isHome && navOverHero ? "over-hero" : "scrolled";
@@ -174,6 +213,47 @@ export default function Layout() {
       window.removeEventListener("resize", updateIndicator);
     };
   }, [updateIndicator]);
+
+  useLayoutEffect(() => {
+    if (!isLabProject) return;
+
+    const measureRoot = pillMeasureRef.current;
+    if (!measureRoot) return;
+
+    const nav = measureRoot.querySelector<HTMLElement>("nav");
+    if (!nav) return;
+
+    const measurePill = () => setPillWidth(nav.offsetWidth);
+    measurePill();
+
+    const resizeObserver = new ResizeObserver(measurePill);
+    resizeObserver.observe(nav);
+    window.addEventListener("resize", measurePill);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measurePill);
+    };
+  }, [isLabProject, location.pathname, navTheme]);
+
+  useLayoutEffect(() => {
+    if (!isLabProject) return;
+
+    const tab = tabMeasureRef.current?.firstElementChild;
+    if (!tab) return;
+
+    const measureTab = () => setTabWidth(tab.getBoundingClientRect().width);
+    measureTab();
+
+    const resizeObserver = new ResizeObserver(measureTab);
+    resizeObserver.observe(tab);
+    window.addEventListener("resize", measureTab);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", measureTab);
+    };
+  }, [isLabProject]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -225,36 +305,51 @@ export default function Layout() {
     if (canHover) setNavExpanded(true);
   };
 
-  const handleLabNavLeave = () => {
-    if (canHover) setNavExpanded(false);
+  const handleLabNavLeave = (event: MouseEvent<HTMLDivElement>) => {
+    if (!canHover) return;
+
+    const related = event.relatedTarget;
+    if (related instanceof Node && event.currentTarget.contains(related)) return;
+
+    const interactive = labInteractiveRef.current;
+    requestAnimationFrame(() => {
+      if (!interactive?.matches(":hover")) {
+        setNavExpanded(false);
+      }
+    });
   };
 
   const handleCollapsedTabClick = () => {
     if (!canHover) setNavExpanded((prev) => !prev);
   };
 
-  const navPill = (
+  const renderNavPill = (options?: {
+    ref?: RefObject<HTMLElement | null>;
+    measure?: boolean;
+  }) => (
     <nav
-      ref={navRef}
+      ref={options?.ref}
       className={[
         "nav-pill",
         isLabProject || navTheme === "scrolled"
           ? "nav-pill--scrolled"
           : "nav-pill--over-hero",
       ].join(" ")}
-      aria-label="Primary"
+      aria-label={options?.measure ? undefined : "Primary"}
     >
-      <div
-        aria-hidden
-        className={[
-          "nav-pill__indicator",
-          indicator.ready ? "opacity-100" : "opacity-0",
-        ].join(" ")}
-        style={{
-          left: indicator.left,
-          width: indicator.width,
-        }}
-      />
+      {options?.measure ? null : (
+        <div
+          aria-hidden
+          className={[
+            "nav-pill__indicator",
+            indicator.ready ? "opacity-100" : "opacity-0",
+          ].join(" ")}
+          style={{
+            left: indicator.left,
+            width: indicator.width,
+          }}
+        />
+      )}
 
       {navItems.map(({ to, label, isHome: isHomeLink, ...rest }) => (
         <NavLink
@@ -262,6 +357,7 @@ export default function Layout() {
           to={to}
           data-home={isHomeLink ? "true" : "false"}
           className="nav-pill__link type-nav"
+          tabIndex={options?.measure ? -1 : undefined}
           {...rest}
         >
           {label}
@@ -275,28 +371,35 @@ export default function Layout() {
       {hidePrimaryNav ? null : isLabProject ? (
         <div className="nav-lab-host">
           <div
+            ref={labInteractiveRef}
             className={[
               "nav-lab-interactive",
               navExpanded ? "nav-lab-interactive--expanded" : "",
             ].join(" ")}
             onMouseLeave={canHover ? handleLabNavLeave : undefined}
           >
-            <NavCollapsedTab
-              expanded={navExpanded}
-              canHover={canHover}
-              onClick={handleCollapsedTabClick}
-              onHoverEnter={handleLabNavEnter}
-            />
+            <div className="nav-lab-stage">
+              <LabNavShell
+                expanded={navExpanded}
+                canHover={canHover}
+                pillWidth={pillWidth}
+                tabWidth={tabWidth}
+                onCollapsedClick={handleCollapsedTabClick}
+                onHoverEnter={handleLabNavEnter}
+              >
+                {renderNavPill({ ref: navRef })}
+              </LabNavShell>
+            </div>
+          </div>
 
-            <div
-              className={[
-                "flex justify-center px-4 pb-2 transition-all duration-200 ease-out sm:px-6",
-                navExpanded
-                  ? "pointer-events-auto opacity-100"
-                  : "pointer-events-none h-0 overflow-hidden opacity-0",
-              ].join(" ")}
-            >
-              {navPill}
+          <div ref={pillMeasureRef} className="nav-lab-measure" aria-hidden>
+            {renderNavPill({ measure: true })}
+          </div>
+
+          <div ref={tabMeasureRef} className="nav-lab-measure" aria-hidden>
+            <div className="nav-collapsed-tab">
+              <span className="nav-collapsed-tab__bar" />
+              <span className="nav-collapsed-tab__bar" />
             </div>
           </div>
         </div>
@@ -307,7 +410,9 @@ export default function Layout() {
             navVisible ? "translate-y-0" : "-translate-y-full",
           ].join(" ")}
         >
-          <div className="mx-auto flex max-w-6xl justify-center">{navPill}</div>
+          <div className="mx-auto flex max-w-6xl justify-center">
+            {renderNavPill({ ref: navRef })}
+          </div>
         </header>
       )}
 
