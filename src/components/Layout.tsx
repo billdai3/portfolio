@@ -28,6 +28,10 @@ type IndicatorState = {
   ready: boolean;
 };
 
+function isLabProjectPath(pathname: string) {
+  return /^\/lab\/[^/]+$/.test(pathname);
+}
+
 function subscribeNavOverHero(onStoreChange: () => void) {
   window.addEventListener("scroll", onStoreChange, { passive: true });
   window.addEventListener("resize", onStoreChange);
@@ -52,6 +56,16 @@ function getNavOverHeroSnapshot(
   return heroRect.bottom > navBottom;
 }
 
+function subscribeCanHover(onStoreChange: () => void) {
+  const media = window.matchMedia("(hover: hover)");
+  media.addEventListener("change", onStoreChange);
+  return () => media.removeEventListener("change", onStoreChange);
+}
+
+function getCanHoverSnapshot() {
+  return window.matchMedia("(hover: hover)").matches;
+}
+
 function useNavOverHero(
   isHome: boolean,
   navRef: RefObject<HTMLElement | null>,
@@ -63,14 +77,49 @@ function useNavOverHero(
   );
 }
 
+function useCanHover() {
+  return useSyncExternalStore(
+    subscribeCanHover,
+    getCanHoverSnapshot,
+    () => true,
+  );
+}
+
+function NavCollapsedTab({
+  expanded,
+  onClick,
+}: {
+  expanded: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={[
+        "nav-collapsed-tab",
+        expanded ? "pointer-events-none opacity-0" : "opacity-100",
+      ].join(" ")}
+      aria-label="展開導航"
+      aria-expanded={expanded}
+      onClick={onClick}
+    >
+      <span className="nav-collapsed-tab__bar" />
+      <span className="nav-collapsed-tab__bar" />
+    </button>
+  );
+}
+
 export default function Layout() {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const isLabProject = isLabProjectPath(location.pathname);
   const hidePrimaryNav =
     import.meta.env.DEV && location.pathname === "/dev/gsap";
+  const canHover = useCanHover();
   const navRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);
   const [navVisible, setNavVisible] = useState(true);
+  const [navExpanded, setNavExpanded] = useState(false);
   const navOverHero = useNavOverHero(isHome, navRef);
   const [indicator, setIndicator] = useState<IndicatorState>({
     left: 0,
@@ -102,7 +151,7 @@ export default function Layout() {
     updateIndicator();
     const frame = requestAnimationFrame(() => updateIndicator());
     return () => cancelAnimationFrame(frame);
-  }, [location.pathname, navTheme, updateIndicator]);
+  }, [location.pathname, navTheme, navExpanded, updateIndicator]);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -126,12 +175,15 @@ export default function Layout() {
 
     const frame = requestAnimationFrame(() => {
       setNavVisible(true);
+      setNavExpanded(false);
       lastScrollY.current = 0;
     });
     return () => cancelAnimationFrame(frame);
   }, [location.pathname]);
 
   useEffect(() => {
+    if (isLabProject) return;
+
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (media.matches) return;
 
@@ -162,53 +214,89 @@ export default function Layout() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isLabProject]);
+
+  const handleLabNavEnter = () => {
+    if (canHover) setNavExpanded(true);
+  };
+
+  const handleLabNavLeave = () => {
+    if (canHover) setNavExpanded(false);
+  };
+
+  const handleCollapsedTabClick = () => {
+    if (!canHover) setNavExpanded((prev) => !prev);
+  };
+
+  const navPill = (
+    <nav
+      ref={navRef}
+      className={[
+        "nav-pill",
+        isLabProject || navTheme === "scrolled"
+          ? "nav-pill--scrolled"
+          : "nav-pill--over-hero",
+      ].join(" ")}
+      aria-label="Primary"
+    >
+      <div
+        aria-hidden
+        className={[
+          "nav-pill__indicator",
+          indicator.ready ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+        style={{
+          left: indicator.left,
+          width: indicator.width,
+        }}
+      />
+
+      {navItems.map(({ to, label, isHome: isHomeLink, ...rest }) => (
+        <NavLink
+          key={to}
+          to={to}
+          data-home={isHomeLink ? "true" : "false"}
+          className="nav-pill__link type-nav"
+          {...rest}
+        >
+          {label}
+        </NavLink>
+      ))}
+    </nav>
+  );
 
   return (
     <div className="flex min-h-svh flex-col">
-      {hidePrimaryNav ? null : (
+      {hidePrimaryNav ? null : isLabProject ? (
+        <div
+          className="nav-lab-hover-zone"
+          onMouseEnter={handleLabNavEnter}
+          onMouseLeave={handleLabNavLeave}
+        >
+          <NavCollapsedTab
+            expanded={navExpanded}
+            onClick={handleCollapsedTabClick}
+          />
+
+          <div
+            className={[
+              "mx-auto flex w-full max-w-6xl justify-center px-4 pb-2 transition-all duration-200 ease-out sm:px-6",
+              navExpanded
+                ? "pointer-events-auto pt-6 opacity-100"
+                : "pointer-events-none h-0 overflow-hidden opacity-0",
+            ].join(" ")}
+          >
+            {navPill}
+          </div>
+        </div>
+      ) : (
         <header
           className={[
             "fixed top-0 right-0 left-0 z-50 px-4 pt-6 pb-2 transition-transform duration-300 ease-out sm:px-6",
             navVisible ? "translate-y-0" : "-translate-y-full",
           ].join(" ")}
         >
-          <div className="mx-auto flex max-w-6xl justify-center">
-            <nav
-              ref={navRef}
-              className={[
-                "nav-pill",
-                navTheme === "over-hero"
-                  ? "nav-pill--over-hero"
-                  : "nav-pill--scrolled",
-              ].join(" ")}
-              aria-label="Primary"
-            >
-              <div
-                aria-hidden
-                className={[
-                  "nav-pill__indicator",
-                  indicator.ready ? "opacity-100" : "opacity-0",
-                ].join(" ")}
-                style={{
-                  left: indicator.left,
-                  width: indicator.width,
-                }}
-              />
-
-              {navItems.map(({ to, label, isHome: isHomeLink, ...rest }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  data-home={isHomeLink ? "true" : "false"}
-                  className="nav-pill__link type-nav"
-                  {...rest}
-                >
-                  {label}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
+          <div className="mx-auto flex max-w-6xl justify-center">{navPill}</div>
         </header>
       )}
 

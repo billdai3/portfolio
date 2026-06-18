@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type LabProjectLayoutProps = {
   tag?: string;
@@ -36,6 +36,32 @@ function TabButton({
   );
 }
 
+function GoBackButton() {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/lab");
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleGoBack}
+      className="lab-back-btn"
+      aria-label="Go Back"
+    >
+      <span className="lab-back-btn__icon" aria-hidden>
+        ←
+      </span>
+      <span className="lab-back-btn__label">Go Back</span>
+    </button>
+  );
+}
+
 export default function LabProjectLayout({
   tag,
   demo,
@@ -54,28 +80,23 @@ export default function LabProjectLayout({
   );
 
   const articlePanel = (
-    <article className="lab-prose max-w-none">{children}</article>
+    <article className="lab-prose max-w-none">
+      {tag ? (
+        <div className="mb-3">
+          <span className="type-btn rounded-full border border-border-default px-3 py-1 text-xs text-text-secondary">
+            {tag}
+          </span>
+        </div>
+      ) : null}
+      {children}
+    </article>
   );
 
   return (
     <div className="bg-bg-page text-text-primary">
-      <div className="mx-auto max-w-360 px-4 pb-16 pt-24 sm:px-6 lg:px-8 lg:pb-20 lg:pt-28">
-        <header className="mb-6 lg:mb-8">
-          <Link
-            to="/lab"
-            className="type-btn inline-flex items-center gap-1 text-sm text-text-muted transition hover:text-text-primary"
-          >
-            <span aria-hidden>←</span> Lab
-          </Link>
-          {tag ? (
-            <div className="mt-4">
-              <span className="type-btn rounded-full border border-border-default px-3 py-1 text-xs text-text-secondary">
-                {tag}
-              </span>
-            </div>
-          ) : null}
-        </header>
+      <GoBackButton />
 
+      <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-16">
         <div className="mb-4 lg:hidden">
           <div
             role="tablist"
@@ -100,8 +121,8 @@ export default function LabProjectLayout({
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-10">
           <aside
             className={[
-              "lg:sticky lg:top-24 lg:self-start",
-              "lg:h-[calc(100svh-7rem)]",
+              "lg:sticky lg:top-14 lg:self-start",
+              "lg:h-[calc(100svh-4.5rem)]",
               mobileTab === "demo" ? "block" : "hidden lg:block",
             ].join(" ")}
             aria-label="Interactive demo"

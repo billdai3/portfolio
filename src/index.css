@@ -146,4 +146,37 @@
   .nav-pill--scrolled .nav-pill__link:not([aria-current="page"]):hover {
     @apply bg-nav-hover-default;
   }
+
+  /* Lab project — back button (top-left) */
+  .lab-back-btn {
+    @apply fixed top-0 left-0 z-60 flex cursor-pointer items-stretch overflow-hidden rounded-br-3xl font-display text-base font-extrabold text-ash-400 bg-ash-800 transition-colors hover:text-ash-200 hover:bg-ash-700;
+  }
+
+  .lab-back-btn:hover .lab-back-btn__icon {
+    @apply bg-ash-600;
+  }
+
+  .lab-back-btn__icon {
+    @apply flex items-center justify-center bg-ash-700 rounded-br-3xl px-4 py-3 transition-colors;
+  }
+
+  .lab-back-btn__label {
+    @apply flex items-center pr-4 pl-3 py-3;
+  }
+
+  /* Lab project — collapsed nav tab (top-center) */
+  .nav-lab-hover-zone {
+    @apply fixed top-0 right-0 left-0 z-50 flex flex-col items-center;
+    min-height: 5rem;
+    /* Exclude top-left back button from hit area so it stays clickable */
+    clip-path: inset(0 0 0 10rem);
+  }
+
+  .nav-collapsed-tab {
+    @apply flex flex-col items-center justify-center gap-2 rounded-b-2xl bg-ash-800 px-6 pt-3.5 pb-4.5 transition-opacity duration-200;
+  }
+
+  .nav-collapsed-tab__bar {
+    @apply h-1 w-8 bg-ash-400;
+  }
 }
