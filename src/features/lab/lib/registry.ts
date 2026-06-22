@@ -1,25 +1,40 @@
 import type { ComponentType, ReactNode } from "react";
 import type { LabProjectMetadata } from "./createLabPage";
-import { extractMdxTitleWithFallback } from "./extract-mdx-title";
 
 type LabMdxModule = {
   default: ComponentType<{ children?: ReactNode }>;
   metadata: LabProjectMetadata;
+  title?: string;
 };
 
 const modules = import.meta.glob<LabMdxModule>("../../../content/lab/*.mdx", {
   eager: true,
 });
 
-const rawModules = import.meta.glob<string>("../../../content/lab/*.mdx", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
-
 function slugFromPath(path: string): string {
   const match = /\/([^/]+)\.mdx$/.exec(path);
   return match?.[1] ?? "";
+}
+
+function slugToTitle(slug: string): string {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function resolveTitle(mod: LabMdxModule, slug: string): string {
+  const title = mod.title?.trim();
+
+  if (title) return title;
+
+  if (import.meta.env.DEV) {
+    console.warn(
+      `[lab] No # heading in MDX for "${slug}"; using slug as title.`,
+    );
+  }
+
+  return slugToTitle(slug);
 }
 
 export type LabProjectEntry = LabProjectMetadata & {
@@ -31,11 +46,10 @@ export type LabProjectEntry = LabProjectMetadata & {
 export const labProjects: LabProjectEntry[] = Object.entries(modules)
   .map(([path, mod]) => {
     const slug = slugFromPath(path);
-    const raw = rawModules[path] ?? "";
 
     return {
       slug,
-      title: extractMdxTitleWithFallback(raw, slug),
+      title: resolveTitle(mod, slug),
       ...mod.metadata,
       Page: mod.default,
     };

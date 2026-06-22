@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import remarkGfm from 'remark-gfm'
+import rehypeMdxTitle from 'rehype-mdx-title'
 import rehypePrettyCode from 'rehype-pretty-code'
 
 // https://vite.dev/config/
@@ -15,6 +16,7 @@ export default defineConfig({
         providerImportSource: '@mdx-js/react',
         remarkPlugins: [remarkGfm],
         rehypePlugins: [
+          rehypeMdxTitle,
           [
             rehypePrettyCode,
             {
