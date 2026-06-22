@@ -71,7 +71,7 @@ export default function LabProjectLayout({
 
   const demoPanel = (
     <div className="flex h-full min-h-[min(70svh,32rem)] flex-col lg:min-h-0">
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border-default bg-bg-card p-3 sm:p-4">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border-default bg-bg-card">
         <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-ash-900">
           {demo}
         </div>
@@ -96,7 +96,7 @@ export default function LabProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <GoBackButton />
 
-      <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-16">
+      <div className="mx-auto max-w-360 px-2 pb-16 pt-14 sm:px-4 lg:px-6 lg:pb-20 lg:pt-18">
         <div className="mb-4 lg:hidden">
           <div
             role="tablist"
