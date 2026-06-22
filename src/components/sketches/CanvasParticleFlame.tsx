@@ -343,16 +343,23 @@ export default function CanvasParticleFlame() {
   }, []);
 
   return (
-    <>
-      <Leva
-        titleBar={{ title: "粒子控制", drag: true, filter: false }}
-        collapsed={false}
-      />
+    <div className="absolute inset-0">
       <canvas
         ref={canvasRef}
         id="mycanvas"
         className="absolute inset-0 h-full w-full max-w-full"
       />
-    </>
+
+      <div className="pointer-events-none absolute inset-0 z-10">
+        <div className="pointer-events-auto absolute right-2 top-2 max-h-[min(100%,20rem)] w-60 overflow-y-auto rounded-2xl">
+          <Leva
+            fill
+            flat
+            collapsed={false}
+            titleBar={{ title: "粒子控制", drag: false, filter: false }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
