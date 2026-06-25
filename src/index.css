@@ -253,4 +253,65 @@
       transition: none;
     }
   }
+
+  /* ShowcaseCard skeleton — dim/bright colors via --skeleton-color-dim | --skeleton-color-bright */
+  .showcase-skeleton-stripes > :nth-child(1) {
+    --skeleton-color-dim: #bfbfbf;
+    --skeleton-color-bright: #ffffff;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(2) {
+    --skeleton-color-dim: #bfbf00;
+    --skeleton-color-bright: #ffff00;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(3) {
+    --skeleton-color-dim: #00bfbf;
+    --skeleton-color-bright: #00ffff;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(4) {
+    --skeleton-color-dim: #00bf00;
+    --skeleton-color-bright: #00ff00;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(5) {
+    --skeleton-color-dim: #bf00bf;
+    --skeleton-color-bright: #ff00ff;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(6) {
+    --skeleton-color-dim: #bf0000;
+    --skeleton-color-bright: #ff0000;
+  }
+
+  .showcase-skeleton-stripes > :nth-child(7) {
+    --skeleton-color-dim: #0000bf;
+    --skeleton-color-bright: #0000ff;
+  }
+
+  .showcase-skeleton-text {
+    --skeleton-color-dim: var(--color-ash-700);
+    --skeleton-color-bright: var(--color-ash-600);
+  }
+
+  @keyframes showcase-skeleton-breathe {
+    from {
+      background-color: var(--skeleton-color-dim);
+    }
+    to {
+      background-color: var(--skeleton-color-bright);
+    }
+  }
+
+  .showcase-skeleton-breathe {
+    animation: showcase-skeleton-breathe 0.5s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .showcase-skeleton-breathe {
+      animation: none;
+      background-color: var(--skeleton-color-dim);
+    }
+  }
 }

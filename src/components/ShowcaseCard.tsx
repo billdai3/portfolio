@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 import SquircleClip from "./SquircleClip";
+import {
+  ShowcaseCardImageSkeleton,
+  ShowcaseCardTextSkeleton,
+} from "./ShowcaseCardSkeleton";
 
 export type ShowcaseItem = {
   title: string;
@@ -12,6 +16,10 @@ export type ShowcaseCardVariant = "on-section" | "on-section-alt";
 type ShowcaseCardProps = {
   item: ShowcaseItem;
   variant: ShowcaseCardVariant;
+  /** When true, shows rainbow stripe + text skeleton placeholders. */
+  loading?: boolean;
+  /** Preview image; shown in SquircleClip when not loading. */
+  image?: string;
 };
 
 function ShowcaseCardCornerDecoration() {
@@ -27,22 +35,41 @@ function ShowcaseCardCornerDecoration() {
   );
 }
 
-export default function ShowcaseCard({ item, variant }: ShowcaseCardProps) {
+export default function ShowcaseCard({
+  item,
+  variant,
+  loading = false,
+  image,
+}: ShowcaseCardProps) {
   const cardBg = variant === "on-section" ? "bg-bg-card" : "bg-bg-card-alt";
 
   const inner = (
     <>
-      <SquircleClip className="mb-3 bg-ash-700" />
+      <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
+        {loading ? (
+          <ShowcaseCardImageSkeleton />
+        ) : image ? (
+          <img
+            src={image}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        ) : null}
+      </SquircleClip>
       <div className="flex items-center gap-1.5">
         <ShowcaseCardCornerDecoration />
-        <div className="min-w-0 flex-1 text-center">
-          <p className="text-sm font-normal tracking-wider text-text-muted">
-            {item.tag}
-          </p>
-          <h3 className="text-lg font-extrabold tracking-tight text-text-primary">
-            {item.title}
-          </h3>
-        </div>
+        {loading ? (
+          <ShowcaseCardTextSkeleton />
+        ) : (
+          <div className="min-w-0 flex-1 text-center">
+            <p className="text-sm font-normal tracking-wider text-text-muted">
+              {item.tag}
+            </p>
+            <h3 className="text-lg font-extrabold tracking-tight text-text-primary">
+              {item.title}
+            </h3>
+          </div>
+        )}
         <ShowcaseCardCornerDecoration />
       </div>
     </>
@@ -53,11 +80,19 @@ export default function ShowcaseCard({ item, variant }: ShowcaseCardProps) {
       <Link
         to={item.href}
         className={`block rounded-2xl ${cardBg} p-5 transition`}
+        aria-busy={loading || undefined}
       >
         {inner}
       </Link>
     );
   }
 
-  return <div className={`rounded-2xl ${cardBg} p-5`}>{inner}</div>;
+  return (
+    <div
+      className={`rounded-2xl ${cardBg} p-5`}
+      aria-busy={loading || undefined}
+    >
+      {inner}
+    </div>
+  );
 }
