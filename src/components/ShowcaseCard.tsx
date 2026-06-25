@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SquircleClip from "./SquircleClip";
 
 export type ShowcaseItem = {
   title: string;
@@ -13,19 +14,37 @@ type ShowcaseCardProps = {
   variant: ShowcaseCardVariant;
 };
 
+function ShowcaseCardCornerDecoration() {
+  return (
+    <div
+      className="relative size-9 shrink-0 rounded-full bg-ash-700"
+      aria-hidden
+    >
+      <div className="absolute inset-1.5 flex items-center justify-center rounded-full bg-ash-800">
+        <div className="h-1.5 w-4 rotate-45 rounded-full bg-ash-700" />
+      </div>
+    </div>
+  );
+}
+
 export default function ShowcaseCard({ item, variant }: ShowcaseCardProps) {
-  const cardBg =
-    variant === "on-section" ? "bg-bg-card" : "bg-bg-card-alt";
+  const cardBg = variant === "on-section" ? "bg-bg-card" : "bg-bg-card-alt";
 
   const inner = (
     <>
-      <div className="mb-5 aspect-16/10 rounded-xl bg-ash-600" />
-      <p className="text-xs font-normal uppercase tracking-wider text-text-muted">
-        {item.tag}
-      </p>
-      <h3 className="mt-1.5 text-lg font-extrabold tracking-tight text-text-primary">
-        {item.title}
-      </h3>
+      <SquircleClip className="mb-3 bg-ash-700" />
+      <div className="flex items-center gap-1.5">
+        <ShowcaseCardCornerDecoration />
+        <div className="min-w-0 flex-1 text-center">
+          <p className="text-sm font-normal tracking-wider text-text-muted">
+            {item.tag}
+          </p>
+          <h3 className="text-lg font-extrabold tracking-tight text-text-primary">
+            {item.title}
+          </h3>
+        </div>
+        <ShowcaseCardCornerDecoration />
+      </div>
     </>
   );
 
