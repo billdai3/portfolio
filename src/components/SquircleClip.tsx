@@ -9,7 +9,10 @@ type SquircleClipProps = {
   className?: string;
 };
 
-export default function SquircleClip({ children, className = "" }: SquircleClipProps) {
+export default function SquircleClip({
+  children,
+  className = "",
+}: SquircleClipProps) {
   const clipId = useId();
 
   return (

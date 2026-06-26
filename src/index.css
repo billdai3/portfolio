@@ -17,14 +17,12 @@
   --color-ash-900: #1d1d1d;
 
   /*
-    Semantic backgrounds — ash-800 / ash-700 alternating UI blocks.
-    Section on ash-800 → cards use ash-700; section on ash-700 → cards use ash-800.
+    Semantic backgrounds — ash-900 / ash-700 alternating section blocks; cards use ash-800.
   */
   --color-bg-page: var(--color-ash-900);
   --color-bg-section: var(--color-ash-900);
-  --color-bg-section-alt: var(--color-ash-800);
+  --color-bg-section-alt: var(--color-ash-700);
   --color-bg-card: var(--color-ash-800);
-  --color-bg-card-alt: var(--color-ash-900);
   /* Aliases */
   --color-bg-soft: var(--color-bg-section);
   --color-bg-elevated: var(--color-bg-card);

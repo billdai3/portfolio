@@ -48,7 +48,7 @@ export default function HomePage() {
         </button>
       </section>
 
-      {/* Selected Works — ash-800 block, ash-700 cards */}
+      {/* Selected Works — ash-900 block, ash-800 cards */}
       <section
         id="selected-works"
         className="bg-bg-section px-6 py-20 sm:py-24"
@@ -64,7 +64,7 @@ export default function HomePage() {
           <ul className="grid gap-6 sm:grid-cols-2">
             {selectedWorks.map((item) => (
               <li key={item.title}>
-                <ShowcaseCard item={item} variant="on-section" />
+                <ShowcaseCard item={item} />
               </li>
             ))}
           </ul>
@@ -94,7 +94,7 @@ export default function HomePage() {
           <ul className="grid gap-6 sm:grid-cols-2">
             {experiments.map((item) => (
               <li key={item.title}>
-                <ShowcaseCard item={item} variant="on-section-alt" />
+                <ShowcaseCard item={item} />
               </li>
             ))}
           </ul>

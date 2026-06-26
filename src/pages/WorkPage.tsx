@@ -16,7 +16,7 @@ export default function WorkPage() {
       <ul className="grid gap-6 sm:grid-cols-2">
         {placeholderProjects.map((project) => (
           <li key={project.title}>
-            <ShowcaseCard item={project} variant="on-section" />
+            <ShowcaseCard item={project} />
           </li>
         ))}
       </ul>

@@ -20,11 +20,7 @@ function LabShowcaseCard({
   }, []);
 
   return (
-    <ShowcaseCard
-      item={{ title, tag, href }}
-      variant="on-section"
-      loading={loading}
-    />
+    <ShowcaseCard item={{ title, tag, href }} loading={loading} />
   );
 }
 

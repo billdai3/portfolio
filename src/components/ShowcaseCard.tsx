@@ -11,11 +11,8 @@ export type ShowcaseItem = {
   href?: string;
 };
 
-export type ShowcaseCardVariant = "on-section" | "on-section-alt";
-
 type ShowcaseCardProps = {
   item: ShowcaseItem;
-  variant: ShowcaseCardVariant;
   /** When true, shows rainbow stripe + text skeleton placeholders. */
   loading?: boolean;
   /** Preview image; shown in SquircleClip when not loading. */
@@ -37,23 +34,16 @@ function ShowcaseCardCornerDecoration() {
 
 export default function ShowcaseCard({
   item,
-  variant,
   loading = false,
   image,
 }: ShowcaseCardProps) {
-  const cardBg = variant === "on-section" ? "bg-bg-card" : "bg-bg-card-alt";
-
   const inner = (
     <>
       <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
         {loading ? (
           <ShowcaseCardImageSkeleton />
         ) : image ? (
-          <img
-            src={image}
-            alt=""
-            className="h-full w-full object-cover"
-          />
+          <img src={image} alt="" className="h-full w-full object-cover" />
         ) : null}
       </SquircleClip>
       <div className="flex items-center gap-1.5">
@@ -65,7 +55,7 @@ export default function ShowcaseCard({
             <p className="text-sm font-normal tracking-wider text-text-muted">
               {item.tag}
             </p>
-            <h3 className="text-lg font-extrabold tracking-tight text-text-primary">
+            <h3 className="text-lg font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-accent">
               {item.title}
             </h3>
           </div>
@@ -79,7 +69,7 @@ export default function ShowcaseCard({
     return (
       <Link
         to={item.href}
-        className={`block rounded-2xl ${cardBg} p-5 transition`}
+        className="group block rounded-2xl bg-bg-card p-5 transition-colors"
         aria-busy={loading || undefined}
       >
         {inner}
@@ -89,7 +79,7 @@ export default function ShowcaseCard({
 
   return (
     <div
-      className={`rounded-2xl ${cardBg} p-5`}
+      className="rounded-2xl bg-bg-card p-5"
       aria-busy={loading || undefined}
     >
       {inner}
