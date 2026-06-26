@@ -256,38 +256,38 @@
 
   /* ShowcaseCard skeleton — dim/bright colors via --skeleton-color-dim | --skeleton-color-bright */
   .showcase-skeleton-stripes > :nth-child(1) {
-    --skeleton-color-dim: #bfbfbf;
-    --skeleton-color-bright: #ffffff;
+    --skeleton-color-dim: #3f3f3f;
+    --skeleton-color-bright: #5f5f5f;
   }
 
   .showcase-skeleton-stripes > :nth-child(2) {
-    --skeleton-color-dim: #bfbf00;
-    --skeleton-color-bright: #ffff00;
+    --skeleton-color-dim: #3f3f00;
+    --skeleton-color-bright: #5f5f00;
   }
 
   .showcase-skeleton-stripes > :nth-child(3) {
-    --skeleton-color-dim: #00bfbf;
-    --skeleton-color-bright: #00ffff;
+    --skeleton-color-dim: #003f3f;
+    --skeleton-color-bright: #005f5f;
   }
 
   .showcase-skeleton-stripes > :nth-child(4) {
-    --skeleton-color-dim: #00bf00;
-    --skeleton-color-bright: #00ff00;
+    --skeleton-color-dim: #003f00;
+    --skeleton-color-bright: #005f00;
   }
 
   .showcase-skeleton-stripes > :nth-child(5) {
-    --skeleton-color-dim: #bf00bf;
-    --skeleton-color-bright: #ff00ff;
+    --skeleton-color-dim: #3f003f;
+    --skeleton-color-bright: #5f005f;
   }
 
   .showcase-skeleton-stripes > :nth-child(6) {
-    --skeleton-color-dim: #bf0000;
-    --skeleton-color-bright: #ff0000;
+    --skeleton-color-dim: #3f0000;
+    --skeleton-color-bright: #5f0000;
   }
 
   .showcase-skeleton-stripes > :nth-child(7) {
-    --skeleton-color-dim: #0000bf;
-    --skeleton-color-bright: #0000ff;
+    --skeleton-color-dim: #00003f;
+    --skeleton-color-bright: #00005f;
   }
 
   .showcase-skeleton-text {
