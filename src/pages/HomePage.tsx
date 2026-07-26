@@ -1,18 +1,23 @@
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
 import ShowcaseCard, { type ShowcaseItem } from "../components/ShowcaseCard";
+import { labProjects } from "../features/lab/lib/registry";
+import { workProjects } from "../features/work/lib/registry";
 
-const selectedWorks: ShowcaseItem[] = [
-  { title: "Project Alpha", tag: "Product design", href: "/work" },
-  { title: "Project Beta", tag: "Brand & web", href: "/work" },
-];
-
-const experiments: ShowcaseItem[] = [
-  { title: "Sketch One", tag: "WebGL", href: "/lab" },
-  { title: "Sketch Two", tag: "Generative", href: "/lab" },
-];
+const experiments: ShowcaseItem[] = labProjects.slice(0, 2).map((item) => ({
+  title: item.title,
+  tag: item.tag,
+  href: `/lab/${item.slug}`,
+}));
 
 export default function HomePage() {
+  const selectedWorks = workProjects.slice(0, 2).map((item) => ({
+    title: item.title,
+    tag: item.tag,
+    href: `/work/${item.slug}`,
+    cover: item.cover,
+  }));
+
   const scrollToSelectedWorks = () => {
     document
       .getElementById("selected-works")
@@ -63,8 +68,15 @@ export default function HomePage() {
           </h2>
           <ul className="grid gap-6 sm:grid-cols-2">
             {selectedWorks.map((item) => (
-              <li key={item.title}>
-                <ShowcaseCard item={item} />
+              <li key={item.href}>
+                <ShowcaseCard
+                  item={{
+                    title: item.title,
+                    tag: item.tag,
+                    href: item.href,
+                  }}
+                  image={item.cover}
+                />
               </li>
             ))}
           </ul>

@@ -162,6 +162,31 @@
     @apply flex items-center pr-4 pl-3 py-3;
   }
 
+  /* Work detail — readable column with wide / full media breakout */
+  .work-prose {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      min(42rem, 100%)
+      minmax(0, 1fr);
+  }
+
+  .work-prose > * {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .work-prose > .work-media--wide {
+    grid-column: 1 / -1;
+    width: min(100%, 64rem);
+    justify-self: center;
+  }
+
+  .work-prose > .work-media--full {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
   /* Detail page — collapsed nav tab (top-center) */
   .nav-detail-host {
     @apply pointer-events-none fixed top-0 right-0 left-0 z-50 flex justify-center;

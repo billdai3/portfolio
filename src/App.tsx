@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 import LabPage from './pages/LabPage'
 import LabProjectPage from './pages/LabProjectPage'
 import WorkPage from './pages/WorkPage'
+import WorkProjectPage from './pages/WorkProjectPage'
 
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
 const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
@@ -17,6 +18,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="work" element={<WorkPage />} />
+        <Route path="work/:slug" element={<WorkProjectPage />} />
         <Route path="lab" element={<LabPage />} />
         <Route path="lab/:slug" element={<LabProjectPage />} />
         <Route path="about" element={<AboutPage />} />

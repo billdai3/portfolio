@@ -1,0 +1,77 @@
+import { createWorkPage } from "@/features/work/lib/createWorkPage";
+import { Carousel, Media } from "@/features/work/components/mdx-media";
+
+export const metadata = {
+  tag: "Product design",
+  summary: "示範 Work MDX 公版：可讀欄寬、寬窄圖、lightbox 與 carousel。",
+  cover: "https://placehold.co/960x720/313131/d6d6d6?text=Northline",
+  year: "2025",
+  role: "Design + front-end",
+};
+
+export default createWorkPage({ metadata });
+
+# Northline
+
+一套示範用的 case study 內容，用來驗證 Work 詳情公版的排版與媒體互動。正文維持可讀寬度；圖片可與文字同寬，也可外擴。
+
+## Challenge
+
+產品需要在有限時間內說清楚價值主張，同時保留足夠的視覺節奏，讓讀者可以跟著流程走完整個故事。
+
+## Approach
+
+先用文字建立脈絡，再穿插不同寬度的圖面。點擊任意圖片可開啟檢視器；同區塊多圖則用 carousel 手動左右翻動。
+
+<Media
+  src="https://placehold.co/1200x750/444444/f1f1f1?text=Default+width"
+  alt="Default width shot"
+  caption="預設寬度：與正文同寬"
+/>
+
+### Research notes
+
+- 把閱讀寬度限制在約 `42rem`
+- 寬圖外擴到約 `64rem`
+- 全寬圖吃滿內容殼層（仍保留頁面左右 padding）
+
+<Media
+  src="https://placehold.co/1600x900/585858/f1f1f1?text=Wide+breakout"
+  alt="Wide breakout shot"
+  caption="Wide：相對文字欄外擴"
+  width="wide"
+/>
+
+## Process
+
+流程稿放在同一個圖片區，可用左右按鈕切換；點擊目前圖片仍會開 lightbox，並帶上整組圖片。
+
+<Carousel caption="流程稿">
+  <Media
+    src="https://placehold.co/1400x875/313131/d6d6d6?text=Frame+1"
+    alt="Process frame 1"
+  />
+  <Media
+    src="https://placehold.co/1400x875/444444/d6d6d6?text=Frame+2"
+    alt="Process frame 2"
+  />
+  <Media
+    src="https://placehold.co/1400x875/585858/d6d6d6?text=Frame+3"
+    alt="Process frame 3"
+  />
+</Carousel>
+
+## Outcome
+
+最後用接近全寬的圖收束視覺，讓結尾有足夠的停頓感。
+
+<Media
+  src="https://placehold.co/1920x900/1d1d1d/fcc92c?text=Full+width"
+  alt="Full width closing shot"
+  caption="Full：接近視窗內容寬"
+  width="full"
+/>
+
+也可以直接寫 Markdown 圖片；會自動套上預設寬度與放大檢視：
+
+![Markdown image](https://placehold.co/1000x500/313131/a1a1a1?text=Markdown+img)

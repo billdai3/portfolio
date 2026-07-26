@@ -1,22 +1,24 @@
 import PageShell from "../components/PageShell";
-import ShowcaseCard, { type ShowcaseItem } from "../components/ShowcaseCard";
-
-const placeholderProjects: ShowcaseItem[] = [
-  { title: "Project One", tag: "Case study" },
-  { title: "Project Two", tag: "Web app" },
-  { title: "Project Three", tag: "Branding" },
-];
+import ShowcaseCard from "../components/ShowcaseCard";
+import { workProjects } from "../features/work/lib/registry";
 
 export default function WorkPage() {
   return (
     <PageShell
       title="Work"
-      description="Selected projects and case studies. Replace these placeholders with your real work."
+      description="Selected projects and case studies."
     >
       <ul className="grid gap-6 sm:grid-cols-2">
-        {placeholderProjects.map((project) => (
-          <li key={project.title}>
-            <ShowcaseCard item={project} />
+        {workProjects.map((project) => (
+          <li key={project.slug}>
+            <ShowcaseCard
+              item={{
+                title: project.title,
+                tag: project.tag,
+                href: `/work/${project.slug}`,
+              }}
+              image={project.cover}
+            />
           </li>
         ))}
       </ul>

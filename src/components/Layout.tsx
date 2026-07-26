@@ -32,7 +32,7 @@ type IndicatorState = {
 };
 
 function isDetailPagePath(pathname: string) {
-  return /^\/lab\/[^/]+$/.test(pathname);
+  return /^\/(lab|work)\/[^/]+$/.test(pathname);
 }
 
 function isEnteringDetail(prev: string, next: string) {

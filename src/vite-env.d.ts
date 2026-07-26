@@ -2,9 +2,8 @@
 
 declare module "*.mdx" {
   import type { ComponentType, ReactNode } from "react";
-  import type { LabProjectMetadata } from "./features/lab/lib/createLabPage";
 
-  export const metadata: LabProjectMetadata;
+  export const metadata: Record<string, unknown>;
   export const title: string;
   const MDXComponent: ComponentType<{ children?: ReactNode }>;
   export default MDXComponent;

@@ -9,7 +9,8 @@ export default function DevMdxStyleguidePage() {
         <header className="mb-8 border-b border-border-default pb-6">
           <p className="type-btn text-xs text-text-muted">Dev only</p>
           <p className="mt-2 text-sm text-text-secondary">
-            預覽 labMdxComponents；改 mdx-components.tsx 後重新整理此頁。
+            預覽共用 MDX 樣式（base + Lab overlays）；改 base-mdx-components /
+            lab mdx-components 後重新整理此頁。
           </p>
         </header>
         <MDXProvider components={labMdxComponents}>
