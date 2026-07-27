@@ -75,9 +75,7 @@ export function Media({
   );
 }
 
-function isMediaElement(
-  child: ReactNode,
-): child is ReactElement<MediaProps> {
+function isMediaElement(child: ReactNode): child is ReactElement<MediaProps> {
   if (!isValidElement(child)) return false;
   const props = child.props as Partial<MediaProps>;
   return typeof props.src === "string" || typeof props.src === "object";
@@ -142,7 +140,7 @@ export function Carousel({ children, caption }: CarouselProps) {
               <img
                 src={current.src}
                 alt={current.alt}
-                className="block aspect-[16/10] w-full object-cover transition duration-300 group-hover:opacity-95"
+                className="block aspect-16/10 w-full object-cover transition duration-300 group-hover:opacity-95"
               />
             </button>
 
