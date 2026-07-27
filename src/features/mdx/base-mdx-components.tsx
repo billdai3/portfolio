@@ -21,12 +21,12 @@ export const baseMdxComponents: MDXComponents = {
     <h1 className="type-page-title mb-4 text-text-primary">{children}</h1>
   ),
   h2: ({ children }: MdxElProps) => (
-    <h2 className="font-display text-[1.5rem] font-extrabold leading-tight tracking-tight mb-3 text-text-primary not-first:mt-8">
+    <h2 className="font-display text-[1.5rem] font-extrabold leading-tight tracking-tight mb-3 text-text-primary not-first:mt-6">
       {children}
     </h2>
   ),
   h3: ({ children }: MdxElProps) => (
-    <h3 className="font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-10 mb-3 text-text-primary">
+    <h3 className="font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary">
       {children}
     </h3>
   ),

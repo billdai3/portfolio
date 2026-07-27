@@ -4,7 +4,7 @@ Lab MDX 元素對照速查。內文繼承 `font-body`（GlowSans 單字型）；
 
 ## Headings（標題）
 
-MDX 標題層級：`#` 頁面標題（`type-page-title`）→ `##` 章節標題（`font-display` 1.5rem）→ `###` 子章節（`font-display` 1rem）。`##` 與站內區塊用的 `type-section-title`（1.75rem，見 HomePage）是不同樣式，請勿混用名稱。`####`（`h4`）目前未 map，見下方 Gaps。捲至 `## Paragraphs` 可見連續 `##` 的 `not-first:mt-8` 間距。
+MDX 標題層級：`#` 頁面標題（`type-page-title`）→ `##` 章節標題（`font-display` 1.5rem）→ `###` 子章節（`font-display` 1rem）。`##` 與站內區塊用的 `type-section-title`（1.75rem，見 HomePage）是不同樣式，請勿混用名稱。`####`（`h4`）目前未 map，見下方 Gaps。捲至 `## Paragraphs` 可見連續 `##` 的 `not-first:mt-6` 間距。
 
 # Page title example
 
@@ -16,19 +16,19 @@ Lab MDX 頁面標題（全檔通常只有一個 `#`）；本頁頂部 `# MDX Sty
 
 ## Article section example
 
-文章內的主要章節標題；連續 `##` 時，第二個起套用 `not-first:mt-8`。
+文章內的主要章節標題；連續 `##` 時，第二個起套用 `not-first:mt-6`。
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
-| `##` | `h2` | `font-display text-[1.5rem] font-extrabold leading-tight tracking-tight mb-3 text-text-primary not-first:mt-8` |
+| `##` | `h2` | `font-display text-[1.5rem] font-extrabold leading-tight tracking-tight mb-3 text-text-primary not-first:mt-6` |
 
 ### Subsection example
 
-章節內的次要分組標題；字級小於 `##`，上邊距 `mt-10` 與前文拉開。
+章節內的次要分組標題；字級小於 `##`，上邊距 `mt-4` 與前文拉開。
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
-| `###` | `h3` | `font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-10 mb-3 text-text-primary` |
+| `###` | `h3` | `font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary` |
 
 ```md
 # Page title（h1 · type-page-title）
