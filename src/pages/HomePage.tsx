@@ -1,17 +1,17 @@
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
-import ShowcaseCard, { type ShowcaseItem } from "../components/ShowcaseCard";
+import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
 import { labProjects } from "../features/lab/lib/registry";
 import { workProjects } from "../features/work/lib/registry";
 
-const experiments: ShowcaseItem[] = labProjects.slice(0, 2).map((item) => ({
+const experiments = labProjects.slice(0, 2).map((item) => ({
   title: item.title,
   tag: item.tag,
   href: `/lab/${item.slug}`,
 }));
 
 export default function HomePage() {
-  const selectedWorks = workProjects.slice(0, 2).map((item) => ({
+  const selectedWorks = workProjects.slice(0, 3).map((item) => ({
     title: item.title,
     tag: item.tag,
     href: `/work/${item.slug}`,
@@ -59,17 +59,17 @@ export default function HomePage() {
         className="bg-bg-section px-6 py-20 sm:py-24"
         aria-labelledby="home-selected-works-heading"
       >
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-5xl">
           <h2
             id="home-selected-works-heading"
             className="type-section-title mb-10 text-center sm:mb-12"
           >
             Selected Works
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-2">
+          <ul className="grid gap-6 sm:grid-cols-3">
             {selectedWorks.map((item) => (
               <li key={item.href}>
-                <ShowcaseCard
+                <ShowcaseCardDelayed
                   item={{
                     title: item.title,
                     tag: item.tag,
@@ -96,17 +96,17 @@ export default function HomePage() {
         className="bg-bg-section-alt px-6 py-20 sm:py-24"
         aria-labelledby="home-experiments-heading"
       >
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-5xl">
           <h2
             id="home-experiments-heading"
             className="type-section-title mb-10 text-center sm:mb-12"
           >
             Creative Coding &amp; Experiments
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-2">
+          <ul className="grid gap-6 sm:grid-cols-3">
             {experiments.map((item) => (
               <li key={item.title}>
-                <ShowcaseCard item={item} />
+                <ShowcaseCardDelayed item={item} />
               </li>
             ))}
           </ul>
