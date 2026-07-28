@@ -40,11 +40,19 @@ export default function ShowcaseCard({
   const inner = (
     <>
       <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
-        {loading ? (
-          <ShowcaseCardImageSkeleton />
-        ) : image ? (
-          <img src={image} alt="" className="h-full w-full object-cover" />
-        ) : null}
+        <div className="relative h-full w-full">
+          {image ? (
+            <img src={image} alt="" className="h-full w-full object-cover" />
+          ) : null}
+          <div
+            className={`showcase-image-skeleton-fade absolute inset-0 transition-opacity duration-300 ease-out ${
+              loading ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+            aria-hidden={!loading}
+          >
+            <ShowcaseCardImageSkeleton />
+          </div>
+        </div>
       </SquircleClip>
       <div className="flex items-center gap-1.5">
         <ShowcaseCardCornerDecoration />

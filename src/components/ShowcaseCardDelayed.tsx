@@ -10,7 +10,7 @@ type ShowcaseCardDelayedProps = {
 export default function ShowcaseCardDelayed({
   item,
   image,
-  delayMs = 500,
+  delayMs = 200,
 }: ShowcaseCardDelayedProps) {
   const [loading, setLoading] = useState(true);
 

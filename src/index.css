@@ -336,5 +336,9 @@
       animation: none;
       background-color: var(--skeleton-color-dim);
     }
+
+    .showcase-image-skeleton-fade {
+      transition: none;
+    }
   }
 }
