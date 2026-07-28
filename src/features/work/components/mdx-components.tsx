@@ -6,9 +6,11 @@ import {
   type MdxElProps,
 } from "@/features/mdx/base-mdx-components";
 import { Media } from "./mdx-media";
+import { ProjectInfo } from "./ProjectInfo";
 
 export const workMdxComponents: MDXComponents = {
   ...baseMdxComponents,
+  ProjectInfo,
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <Media src={src ?? ""} alt={alt} width="default" />
   ),

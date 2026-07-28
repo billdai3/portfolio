@@ -16,13 +16,18 @@ export const metadata = {
   tag: "Product design",
   summary: "列表頁簡述",
   cover: "https://…", // 或 Vite 匯入的圖片 URL
-  year: "2025",
-  role: "Design + front-end",
 };
+
+export const projectInfo = [
+  { label: "專案年份", value: "2025" },
+  { label: "角色", value: "Design + front-end" },
+];
 
 export default createWorkPage({ metadata });
 
 # 專案標題
+
+<ProjectInfo items={projectInfo} />
 
 正文以單一 `#` 作為頁面標題；列表會由 `rehype-mdx-title` 匯出 `title`。其餘章節用 `##`、`###`。
 
@@ -46,3 +51,5 @@ export default createWorkPage({ metadata });
 | `<Carousel>` | 同區多圖左右切換；點擊帶整組進 lightbox |
 
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
+
+`ProjectInfo` 已註冊在 Work MDX components 中，可直接在 `.mdx` 使用；建議把會出現在列表卡片的資訊保留在 `metadata`，把詳情頁才需要顯示的欄位改放到 `projectInfo`。

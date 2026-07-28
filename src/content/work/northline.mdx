@@ -5,13 +5,18 @@ export const metadata = {
   tag: "Product design",
   summary: "示範 Work MDX 公版：可讀欄寬、寬窄圖、lightbox 與 carousel。",
   cover: "https://placehold.co/960x720/313131/d6d6d6?text=Northline",
-  year: "2025",
-  role: "Design + front-end",
 };
+
+export const projectInfo = [
+  { label: "專案年份", value: "2025" },
+  { label: "角色", value: "Design + front-end" },
+];
 
 export default createWorkPage({ metadata });
 
 # Northline
+
+<ProjectInfo items={projectInfo} />
 
 一套示範用的 case study 內容，用來驗證 Work 詳情公版的排版與媒體互動。正文維持可讀寬度；圖片可與文字同寬，也可外擴。
 

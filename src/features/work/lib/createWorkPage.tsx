@@ -6,22 +6,16 @@ export type WorkProjectMetadata = {
   summary: string;
   /** List card thumbnail; optional string URL or Vite image module src. */
   cover?: string;
-  year?: string;
-  role?: string;
 };
 
 type CreateWorkPageOptions = {
   metadata: WorkProjectMetadata;
 };
 
-export function createWorkPage({ metadata }: CreateWorkPageOptions) {
-  const { tag, year, role } = metadata;
+export function createWorkPage(_options: CreateWorkPageOptions) {
+  void _options;
 
   return function WorkMdxPage({ children }: { children?: ReactNode }) {
-    return (
-      <WorkProjectLayout tag={tag} year={year} role={role}>
-        {children}
-      </WorkProjectLayout>
-    );
+    return <WorkProjectLayout>{children}</WorkProjectLayout>;
   };
 }
