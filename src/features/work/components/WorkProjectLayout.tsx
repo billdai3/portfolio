@@ -1,5 +1,5 @@
+import { type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import type { ReactNode } from "react";
 
 type WorkProjectLayoutProps = {
   tag?: string;
@@ -46,7 +46,7 @@ export default function WorkProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <GoBackButton />
 
-      <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
+      <div className="detail-content-fade-in mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
         <article className="work-prose lab-prose max-w-none">
           {tag ? (
             <div className="mb-3">

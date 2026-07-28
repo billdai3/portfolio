@@ -96,7 +96,7 @@ export default function LabProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <GoBackButton />
 
-      <div className="mx-auto max-w-360 px-2 pb-16 pt-14 sm:px-4 lg:px-6 lg:pb-20 lg:pt-18">
+      <div className="detail-content-fade-in mx-auto max-w-360 px-2 pb-16 pt-14 sm:px-4 lg:px-6 lg:pb-20 lg:pt-18">
         <div className="mb-4 lg:hidden">
           <div
             role="tablist"
