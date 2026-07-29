@@ -48,7 +48,7 @@ export function Media({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="group block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border-default bg-bg-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="group block w-full cursor-zoom-in overflow-hidden rounded-xl border border-white/10 bg-bg-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           aria-label={alt ? `View larger: ${alt}` : "View larger image"}
         >
           <img
@@ -58,7 +58,7 @@ export function Media({
           />
         </button>
         {caption ? (
-          <figcaption className="mt-2 text-sm leading-relaxed text-text-muted">
+          <figcaption className="mt-2 text-sm leading-relaxed text-text-secondary text-center">
             {caption}
           </figcaption>
         ) : null}

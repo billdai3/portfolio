@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-ash-900);
+}
+
 @theme {
   /* Brand */
   --color-brand: #fcc92c;

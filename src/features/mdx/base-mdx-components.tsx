@@ -31,22 +31,20 @@ export const baseMdxComponents: MDXComponents = {
     </h3>
   ),
   p: ({ children }: MdxElProps) => (
-    <p className="mb-2 text-[1rem] leading-[1.75] text-text-secondary">
+    <p className="mb-2 text-[1rem] leading-[1.75] text-text-secondary hover:text-text-primary transition-colors duration-150">
       {children}
     </p>
   ),
   ul: ({ children }: MdxElProps) => (
-    <ul className="mb-4 list-disc space-y-2 pl-6 text-text-secondary">
-      {children}
-    </ul>
+    <ul className="mb-4 list-disc space-y-2 pl-6">{children}</ul>
   ),
   ol: ({ children }: MdxElProps) => (
-    <ol className="mb-4 list-decimal space-y-2 pl-6 text-text-secondary">
-      {children}
-    </ol>
+    <ol className="mb-4 list-decimal space-y-2 pl-6">{children}</ol>
   ),
   li: ({ children }: MdxElProps) => (
-    <li className="leading-relaxed [&>ul]:mt-2 [&>ol]:mt-2">{children}</li>
+    <li className="leading-relaxed text-text-secondary hover:text-text-primary transition-colors duration-150 [&>ul]:mt-2 [&>ol]:mt-2">
+      {children}
+    </li>
   ),
   a: ({ href, children }: MdxElProps & { href?: string }) => (
     <a
