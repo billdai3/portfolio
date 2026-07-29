@@ -38,7 +38,7 @@ export default function WorkProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <GoBackButton />
 
-      <div className="detail-content-fade-in mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
+      <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
         <article className="work-prose lab-prose max-w-none">
           {children}
         </article>

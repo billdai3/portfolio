@@ -10,8 +10,9 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useOutlet } from "react-router-dom";
 import { devPages } from "@/config/dev-pages";
+import RouteTransitionOutlet from "./RouteTransitionOutlet";
 
 const SCROLL_THRESHOLD = 8;
 const TOP_REVEAL_OFFSET = 16;
@@ -154,6 +155,7 @@ function DetailNavShell({
 
 export default function Layout() {
   const location = useLocation();
+  const outlet = useOutlet();
   const isHome = location.pathname === "/";
   const isDetailPage = isDetailPagePath(location.pathname);
   const hidePrimaryNav =
@@ -462,7 +464,9 @@ export default function Layout() {
       )}
 
       <main className="flex-1">
-        <Outlet />
+        <RouteTransitionOutlet pathname={location.pathname}>
+          {outlet}
+        </RouteTransitionOutlet>
       </main>
 
       <footer className="border-t border-border-default">
