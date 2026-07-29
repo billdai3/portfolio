@@ -6,7 +6,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
-import ImageLightbox, { type LightboxImage } from "./ImageLightbox";
+import ImageLightbox from "./ImageLightbox";
 
 export type MediaWidth = "default" | "wide" | "full";
 
@@ -65,10 +65,9 @@ export function Media({
       </figure>
       {open ? (
         <ImageLightbox
-          images={[{ src: imageSrc, alt }]}
-          index={0}
+          src={imageSrc}
+          alt={alt}
           onClose={() => setOpen(false)}
-          onIndexChange={() => undefined}
         />
       ) : null}
     </>
@@ -114,11 +113,6 @@ export function Carousel({ children, caption }: CarouselProps) {
     if (slides.length < 2) return;
     setIndex((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
-
-  const lightboxImages: LightboxImage[] = slides.map(({ src, alt }) => ({
-    src,
-    alt,
-  }));
 
   if (!current) return null;
 
@@ -196,10 +190,9 @@ export function Carousel({ children, caption }: CarouselProps) {
 
       {lightboxOpen ? (
         <ImageLightbox
-          images={lightboxImages}
-          index={safeIndex}
+          src={current.src}
+          alt={current.alt}
           onClose={() => setLightboxOpen(false)}
-          onIndexChange={setIndex}
         />
       ) : null}
     </>
