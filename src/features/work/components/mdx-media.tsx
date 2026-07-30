@@ -8,7 +8,7 @@ import {
 } from "react";
 import ImageLightbox from "./ImageLightbox";
 
-export type MediaWidth = "default" | "wide" | "full";
+export type MediaWidth = "default" | "wide" | "page";
 
 export type MediaProps = {
   src: string;
@@ -20,7 +20,7 @@ export type MediaProps = {
 const widthClassName: Record<MediaWidth, string> = {
   default: "w-full",
   wide: "work-media--wide",
-  full: "work-media--full",
+  page: "work-media--page",
 };
 
 function resolveSrc(src: string | { src?: string } | undefined): string {

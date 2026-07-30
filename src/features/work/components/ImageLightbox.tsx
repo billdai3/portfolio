@@ -7,7 +7,7 @@ type ImageLightboxProps = {
   onClose: () => void;
 };
 
-const OVERLAY_OPACITY = 0.92;
+const OVERLAY_OPACITY = 0.8;
 
 export default function ImageLightbox({
   src,
@@ -41,7 +41,7 @@ export default function ImageLightbox({
       aria-modal="true"
       aria-label={alt ? `Expanded image: ${alt}` : "Expanded image"}
       className="fixed inset-0 z-100 flex cursor-zoom-out items-center justify-center p-4 text-text-primary sm:p-6"
-      style={{ backgroundColor: `rgb(29 29 29 / ${OVERLAY_OPACITY})` }}
+      style={{ backgroundColor: `rgb(0 0 0 / ${OVERLAY_OPACITY})` }}
       onClick={onClose}
     >
       <img

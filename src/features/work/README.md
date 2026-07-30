@@ -33,7 +33,7 @@ export default createWorkPage({ metadata });
 
 <Media src="…" alt="…" caption="…" />
 <Media src="…" alt="…" width="wide" />
-<Media src="…" alt="…" width="full" />
+<Media src="…" alt="…" width="page" />
 
 <Carousel caption="流程稿">
   <Media src="…" alt="…" />
@@ -47,7 +47,7 @@ export default createWorkPage({ metadata });
 |------|------|
 | `<Media>` / `![alt](url)` | 與正文同寬；點擊開 lightbox |
 | `width="wide"` | 外擴至約 `max-w-5xl` |
-| `width="full"` | 吃滿內容殼層寬度 |
+| `width="page"` | 吃滿內容殼層寬度 |
 | `<Carousel>` | 同區多圖左右切換；點擊帶整組進 lightbox |
 
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
