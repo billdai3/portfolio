@@ -1,7 +1,39 @@
-export type LockedContentResult =
-  | { body: string; frontmatter: Record<string, unknown> }
+export type WorkContentPayload = {
+  slug: string;
+  body: string;
+  frontmatter: Record<string, unknown>;
+};
+
+export type LockedContentResult = WorkContentPayload | "unauthorized" | "error";
+
+export type UnlockContentResult =
+  | WorkContentPayload
   | "unauthorized"
-  | "error";
+  | "error"
+  | "unlocked-no-content";
+
+function toWorkContentPayload(data: unknown): WorkContentPayload | null {
+  if (!data || typeof data !== "object") return null;
+
+  const candidate = data as {
+    slug?: unknown;
+    body?: unknown;
+    frontmatter?: unknown;
+  };
+
+  if (typeof candidate.slug !== "string" || typeof candidate.body !== "string") {
+    return null;
+  }
+
+  return {
+    slug: candidate.slug,
+    body: candidate.body,
+    frontmatter:
+      candidate.frontmatter && typeof candidate.frontmatter === "object"
+        ? (candidate.frontmatter as Record<string, unknown>)
+        : {},
+  };
+}
 
 export async function fetchLockedContent(
   slug: string,
@@ -15,16 +47,34 @@ export async function fetchLockedContent(
   if (res.status === 401) return "unauthorized";
   if (!res.ok) return "error";
 
+  const payload = toWorkContentPayload(await res.json());
+  return payload ?? "error";
+}
+
+export async function unlockAndFetchContent(
+  slug: string,
+  password: string,
+  signal?: AbortSignal,
+): Promise<UnlockContentResult> {
+  const res = await fetch("/api/work-unlock", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify({ password, slug }),
+    signal,
+  });
+
+  if (res.status === 401) return "unauthorized";
+  if (!res.ok) return "error";
+
   const data = (await res.json()) as {
-    body?: string;
-    frontmatter?: Record<string, unknown>;
+    slug?: unknown;
+    body?: unknown;
+    frontmatter?: unknown;
+    contentError?: unknown;
   };
-  if (typeof data.body !== "string") return "error";
-  return {
-    body: data.body,
-    frontmatter:
-      data.frontmatter && typeof data.frontmatter === "object"
-        ? data.frontmatter
-        : {},
-  };
+  const payload = toWorkContentPayload(data);
+  if (payload) return payload;
+  if (typeof data.contentError === "string") return "unlocked-no-content";
+  return "error";
 }

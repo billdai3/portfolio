@@ -1,14 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import matter from "gray-matter";
-import {
-  fetchRepoText,
-  isValidSlug,
-  mdxPathForSlug,
-} from "../lib/server/github";
-import {
-  containsImportOrExport,
-  rewriteMediaPaths,
-} from "../lib/server/rewrite-media";
+import { loadWorkContent } from "../lib/server/load-work-content";
 import { isUnlocked } from "../lib/server/session";
 
 export default async function handler(
@@ -25,22 +16,20 @@ export default async function handler(
   }
 
   const slug = typeof req.query.slug === "string" ? req.query.slug : "";
-  if (!isValidSlug(slug)) {
+  const result = await loadWorkContent(slug);
+  if (!result.ok) {
+    if (result.reason === "invalid-content") {
+      return res.status(400).json({ error: "Invalid content" });
+    }
+
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const raw = await fetchRepoText(mdxPathForSlug(slug));
-  if (raw === null) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  const { content } = result;
 
-  if (containsImportOrExport(raw)) {
-    return res.status(400).json({ error: "Invalid content" });
-  }
-
-  const { data: frontmatter, content } = matter(raw);
-  const body = rewriteMediaPaths(content);
-
-  res.setHeader("Cache-Control", "private, max-age=300, stale-while-revalidate=3600");
-  return res.status(200).json({ slug, frontmatter, body });
+  res.setHeader(
+    "Cache-Control",
+    "private, max-age=300, stale-while-revalidate=3600",
+  );
+  return res.status(200).json(content);
 }

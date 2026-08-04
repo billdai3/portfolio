@@ -13,7 +13,7 @@ export default function WorkProjectPage() {
   }
 
   if (project.isLocked) {
-    return <LockedWorkProject slug={project.slug} />;
+    return <LockedWorkProject key={project.slug} slug={project.slug} />;
   }
 
   const { Page } = project;

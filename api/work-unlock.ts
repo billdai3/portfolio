@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { loadWorkContent } from "../lib/server/load-work-content";
 import { passwordsMatch } from "../lib/server/password";
 import {
   clearSessionCookie,
@@ -6,7 +7,7 @@ import {
   setSessionCookie,
 } from "../lib/server/session";
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "DELETE") {
     clearSessionCookie(res);
     return res.status(200).json({ ok: true });
@@ -29,6 +30,17 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: "Server misconfigured" });
   }
 
+  const slug = typeof req.body?.slug === "string" ? req.body.slug : "";
   setSessionCookie(res, token);
-  return res.status(200).json({ ok: true });
+
+  if (!slug) {
+    return res.status(200).json({ ok: true });
+  }
+
+  const result = await loadWorkContent(slug);
+  if (!result.ok) {
+    return res.status(200).json({ ok: true, contentError: result.reason });
+  }
+
+  return res.status(200).json({ ok: true, ...result.content });
 }

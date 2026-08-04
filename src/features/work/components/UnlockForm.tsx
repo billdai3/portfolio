@@ -1,10 +1,15 @@
 import { useState, type SubmitEvent } from "react";
+import {
+  unlockAndFetchContent,
+  type WorkContentPayload,
+} from "../lib/unlock-api";
 
 type UnlockFormProps = {
-  onUnlocked: () => void;
+  slug: string;
+  onUnlocked: (content?: WorkContentPayload) => void;
 };
 
-export function UnlockForm({ onUnlocked }: UnlockFormProps) {
+export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -15,20 +20,19 @@ export function UnlockForm({ onUnlocked }: UnlockFormProps) {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/work-unlock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({ password }),
-      });
-
-      if (!res.ok) {
+      const result = await unlockAndFetchContent(slug, password);
+      if (result === "unauthorized") {
         setError("密碼錯誤，請再試一次。");
         return;
       }
 
+      if (result === "error") {
+        setError("無法連線，請稍後再試。");
+        return;
+      }
+
       setPassword("");
-      onUnlocked();
+      onUnlocked(result === "unlocked-no-content" ? undefined : result);
     } catch {
       setError("無法連線，請稍後再試。");
     } finally {

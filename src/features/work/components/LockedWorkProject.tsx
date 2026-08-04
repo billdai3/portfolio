@@ -13,7 +13,10 @@ import { RemoteMdxErrorBoundary } from "./RemoteMdxErrorBoundary";
 import { workMdxComponents } from "./mdx-components";
 import WorkProjectLayout from "./WorkProjectLayout";
 import { compileRemoteMdx } from "../lib/compile-remote-mdx";
-import { fetchLockedContent } from "../lib/unlock-api";
+import {
+  fetchLockedContent,
+  type WorkContentPayload,
+} from "../lib/unlock-api";
 
 type LoadState =
   | { status: "checking" }
@@ -32,11 +35,32 @@ function isAbortError(error: unknown): boolean {
 }
 
 export default function LockedWorkProject({ slug }: { slug: string }) {
-  const [state, setState] = useState<LoadState>({ status: "checking" });
+  const [state, setState] = useState<LoadState>(() => {
+    const cachedContent = contentCache.get(slug);
+    return cachedContent
+      ? { status: "ready", Content: cachedContent }
+      : { status: "checking" };
+  });
   const loadAbortRef = useRef<AbortController | null>(null);
-  const cachedContent = contentCache.get(slug);
+
+  const compileAndStore = useCallback(
+    async (content: WorkContentPayload, signal?: AbortSignal) => {
+      const compiled = await compileRemoteMdx(content.body, content.frontmatter);
+      if (signal?.aborted) return;
+
+      contentCache.set(slug, compiled.Content);
+      setState({ status: "ready", Content: compiled.Content });
+    },
+    [slug],
+  );
 
   const loadContent = useCallback(async (signal?: AbortSignal) => {
+    const cachedContent = contentCache.get(slug);
+    if (cachedContent) {
+      setState({ status: "ready", Content: cachedContent });
+      return;
+    }
+
     try {
       const result = await fetchLockedContent(slug, signal);
       if (signal?.aborted) return;
@@ -51,88 +75,52 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
         return;
       }
 
-      const compiled = await compileRemoteMdx(
-        result.body,
-        result.frontmatter,
-      );
-      if (signal?.aborted) return;
-
-      contentCache.set(slug, compiled.Content);
-      setState({ status: "checking" });
+      await compileAndStore(result, signal);
     } catch (error) {
       if (isAbortError(error) || signal?.aborted) return;
       setState({ status: "error", message: "內容格式錯誤，無法渲染。" });
     }
-  }, [slug]);
+  }, [compileAndStore, slug]);
 
-  const startLoadContent = useCallback(() => {
-    loadAbortRef.current?.abort();
-    const controller = new AbortController();
-    loadAbortRef.current = controller;
-    setState({ status: "loading" });
-    void loadContent(controller.signal);
-  }, [loadContent]);
+  const startLoadContent = useCallback(
+    (content?: WorkContentPayload) => {
+      loadAbortRef.current?.abort();
+      const controller = new AbortController();
+      loadAbortRef.current = controller;
+      setState({ status: "loading" });
+
+      if (content) {
+        void compileAndStore(content, controller.signal).catch((error: unknown) => {
+          if (isAbortError(error) || controller.signal.aborted) return;
+          setState({ status: "error", message: "內容格式錯誤，無法渲染。" });
+        });
+        return;
+      }
+
+      void loadContent(controller.signal);
+    },
+    [compileAndStore, loadContent],
+  );
 
   useEffect(() => {
-    if (cachedContent) {
+    if (contentCache.has(slug)) {
       return () => {
         loadAbortRef.current?.abort();
       };
     }
 
+    loadAbortRef.current?.abort();
     const controller = new AbortController();
-    const { signal } = controller;
-
-    void fetchLockedContent(slug, signal)
-      .then(async (result) => {
-        if (signal.aborted) return;
-
-        if (result === "unauthorized") {
-          setState({ status: "locked" });
-          return;
-        }
-
-        if (result === "error") {
-          setState({ status: "error", message: "無法載入內容，請稍後再試。" });
-          return;
-        }
-
-        const compiled = await compileRemoteMdx(
-          result.body,
-          result.frontmatter,
-        );
-        if (signal.aborted) return;
-
-        contentCache.set(slug, compiled.Content);
-        setState({ status: "checking" });
-      })
-      .catch((error: unknown) => {
-        if (isAbortError(error) || signal.aborted) return;
-        setState({ status: "error", message: "內容格式錯誤，無法渲染。" });
-      });
+    loadAbortRef.current = controller;
+    queueMicrotask(() => {
+      void loadContent(controller.signal);
+    });
 
     return () => {
       controller.abort();
       loadAbortRef.current?.abort();
     };
-  }, [cachedContent, slug]);
-
-  if (cachedContent) {
-    return (
-      <MDXProvider components={workMdxComponents}>
-        <WorkProjectLayout>
-          <RemoteMdxErrorBoundary
-            key={slug}
-            onError={(message) =>
-              setState({ status: "error", message: `渲染失敗：${message}` })
-            }
-          >
-            {createElement(cachedContent)}
-          </RemoteMdxErrorBoundary>
-        </WorkProjectLayout>
-      </MDXProvider>
-    );
-  }
+  }, [loadContent, slug]);
 
   if (state.status === "checking" || state.status === "loading") {
     return (
@@ -143,7 +131,7 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
   }
 
   if (state.status === "locked") {
-    return <UnlockForm onUnlocked={startLoadContent} />;
+    return <UnlockForm slug={slug} onUnlocked={startLoadContent} />;
   }
 
   if (state.status === "error") {
@@ -161,5 +149,20 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     );
   }
 
-  return null;
+  const { Content } = state;
+
+  return (
+    <MDXProvider components={workMdxComponents}>
+      <WorkProjectLayout>
+        <RemoteMdxErrorBoundary
+          key={slug}
+          onError={(message) =>
+            setState({ status: "error", message: `渲染失敗：${message}` })
+          }
+        >
+          {createElement(Content)}
+        </RemoteMdxErrorBoundary>
+      </WorkProjectLayout>
+    </MDXProvider>
+  );
 }
