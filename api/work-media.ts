@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { fetchRepoBinary, isValidAssetPath } from "../lib/server/github";
+import { loadWorkMedia } from "../lib/server/load-work-media";
 import { isUnlocked } from "../lib/server/session";
 
 export default async function handler(
@@ -16,16 +16,14 @@ export default async function handler(
   }
 
   const path = typeof req.query.path === "string" ? req.query.path : "";
-  if (!isValidAssetPath(path)) {
+  const result = await loadWorkMedia(path);
+  if (!result.ok) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const file = await fetchRepoBinary(path);
-  if (!file) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  const { file } = result;
 
   res.setHeader("Content-Type", file.contentType);
-  res.setHeader("Cache-Control", "private, max-age=3600");
+  res.setHeader("Cache-Control", "private, max-age=60");
   return res.status(200).send(Buffer.from(file.body));
 }

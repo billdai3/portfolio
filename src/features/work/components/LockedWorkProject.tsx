@@ -14,6 +14,11 @@ import { workMdxComponents } from "./mdx-components";
 import WorkProjectLayout from "./WorkProjectLayout";
 import { compileRemoteMdx } from "../lib/compile-remote-mdx";
 import {
+  clearCachedWorkContent,
+  getCachedWorkContent,
+  setCachedWorkContent,
+} from "../lib/locked-content-cache";
+import {
   clearUnlockHint,
   fetchLockedContent,
   hasUnlockHint,
@@ -27,18 +32,13 @@ type LoadState =
   | { status: "ready"; Content: ComponentType<{ children?: ReactNode }> }
   | { status: "error"; message: string };
 
-const contentCache = new Map<
-  string,
-  ComponentType<{ children?: ReactNode }>
->();
-
 function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
 export default function LockedWorkProject({ slug }: { slug: string }) {
   const [state, setState] = useState<LoadState>(() => {
-    const cachedContent = contentCache.get(slug);
+    const cachedContent = getCachedWorkContent(slug);
     if (cachedContent) {
       return { status: "ready", Content: cachedContent };
     }
@@ -52,14 +52,14 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       const compiled = await compileRemoteMdx(content.body, content.frontmatter);
       if (signal?.aborted) return;
 
-      contentCache.set(slug, compiled.Content);
+      setCachedWorkContent(slug, compiled.Content);
       setState({ status: "ready", Content: compiled.Content });
     },
     [slug],
   );
 
   const loadContent = useCallback(async (signal?: AbortSignal) => {
-    const cachedContent = contentCache.get(slug);
+    const cachedContent = getCachedWorkContent(slug);
     if (cachedContent) {
       setState({ status: "ready", Content: cachedContent });
       return;
@@ -71,6 +71,7 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
 
       if (result === "unauthorized") {
         clearUnlockHint();
+        clearCachedWorkContent(slug);
         setState({ status: "locked" });
         return;
       }
@@ -108,7 +109,7 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
   );
 
   useEffect(() => {
-    if (contentCache.has(slug)) {
+    if (getCachedWorkContent(slug)) {
       return () => {
         loadAbortRef.current?.abort();
       };

@@ -27,9 +27,6 @@ export default async function handler(
 
   const { content } = result;
 
-  res.setHeader(
-    "Cache-Control",
-    "private, max-age=300, stale-while-revalidate=3600",
-  );
+  res.setHeader("Cache-Control", "private, no-store");
   return res.status(200).json(content);
 }

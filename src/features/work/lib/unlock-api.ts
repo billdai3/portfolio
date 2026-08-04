@@ -1,3 +1,5 @@
+import { clearAllCachedWorkContent } from "./locked-content-cache";
+
 export type WorkContentPayload = {
   slug: string;
   body: string;
@@ -31,6 +33,23 @@ export function persistUnlockHint(): void {
 export function clearUnlockHint(): void {
   if (!canUseSessionStorage()) return;
   window.sessionStorage.removeItem(UNLOCK_HINT_KEY);
+}
+
+export async function lockWorkContent(): Promise<boolean> {
+  try {
+    const res = await fetch("/api/work-unlock", {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+
+    clearUnlockHint();
+    clearAllCachedWorkContent();
+    return res.ok;
+  } catch {
+    clearUnlockHint();
+    clearAllCachedWorkContent();
+    return false;
+  }
 }
 
 function toWorkContentPayload(data: unknown): WorkContentPayload | null {
