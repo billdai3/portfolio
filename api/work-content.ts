@@ -41,5 +41,6 @@ export default async function handler(
   const { data: frontmatter, content } = matter(raw);
   const body = rewriteMediaPaths(content);
 
+  res.setHeader("Cache-Control", "private, max-age=300, stale-while-revalidate=3600");
   return res.status(200).json({ slug, frontmatter, body });
 }

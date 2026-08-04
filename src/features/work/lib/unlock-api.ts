@@ -1,15 +1,3 @@
-export async function fetchSessionUnlocked(
-  signal?: AbortSignal,
-): Promise<boolean> {
-  const res = await fetch("/api/work-session", {
-    credentials: "same-origin",
-    signal,
-  });
-  if (!res.ok) return false;
-  const data = (await res.json()) as { unlocked?: boolean };
-  return data.unlocked === true;
-}
-
 export type LockedContentResult =
   | { body: string; frontmatter: Record<string, unknown> }
   | "unauthorized"
