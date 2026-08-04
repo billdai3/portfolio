@@ -14,7 +14,9 @@ import { workMdxComponents } from "./mdx-components";
 import WorkProjectLayout from "./WorkProjectLayout";
 import { compileRemoteMdx } from "../lib/compile-remote-mdx";
 import {
+  clearUnlockHint,
   fetchLockedContent,
+  hasUnlockHint,
   type WorkContentPayload,
 } from "../lib/unlock-api";
 
@@ -37,9 +39,11 @@ function isAbortError(error: unknown): boolean {
 export default function LockedWorkProject({ slug }: { slug: string }) {
   const [state, setState] = useState<LoadState>(() => {
     const cachedContent = contentCache.get(slug);
-    return cachedContent
-      ? { status: "ready", Content: cachedContent }
-      : { status: "checking" };
+    if (cachedContent) {
+      return { status: "ready", Content: cachedContent };
+    }
+
+    return hasUnlockHint() ? { status: "checking" } : { status: "locked" };
   });
   const loadAbortRef = useRef<AbortController | null>(null);
 
@@ -66,6 +70,7 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       if (signal?.aborted) return;
 
       if (result === "unauthorized") {
+        clearUnlockHint();
         setState({ status: "locked" });
         return;
       }
@@ -104,6 +109,12 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (contentCache.has(slug)) {
+      return () => {
+        loadAbortRef.current?.abort();
+      };
+    }
+
+    if (!hasUnlockHint()) {
       return () => {
         loadAbortRef.current?.abort();
       };

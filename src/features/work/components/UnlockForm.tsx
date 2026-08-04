@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import {
+  persistUnlockHint,
   unlockAndFetchContent,
   type WorkContentPayload,
 } from "../lib/unlock-api";
@@ -32,6 +33,7 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
       }
 
       setPassword("");
+      persistUnlockHint();
       onUnlocked(result === "unlocked-no-content" ? undefined : result);
     } catch {
       setError("無法連線，請稍後再試。");

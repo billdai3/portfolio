@@ -12,6 +12,27 @@ export type UnlockContentResult =
   | "error"
   | "unlocked-no-content";
 
+const UNLOCK_HINT_KEY = "work:unlocked";
+
+function canUseSessionStorage(): boolean {
+  return typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
+}
+
+export function hasUnlockHint(): boolean {
+  if (!canUseSessionStorage()) return false;
+  return window.sessionStorage.getItem(UNLOCK_HINT_KEY) === "1";
+}
+
+export function persistUnlockHint(): void {
+  if (!canUseSessionStorage()) return;
+  window.sessionStorage.setItem(UNLOCK_HINT_KEY, "1");
+}
+
+export function clearUnlockHint(): void {
+  if (!canUseSessionStorage()) return;
+  window.sessionStorage.removeItem(UNLOCK_HINT_KEY);
+}
+
 function toWorkContentPayload(data: unknown): WorkContentPayload | null {
   if (!data || typeof data !== "object") return null;
 
