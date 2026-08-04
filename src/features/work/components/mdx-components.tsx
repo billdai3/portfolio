@@ -5,12 +5,14 @@ import {
   type MdxCodeProps,
   type MdxElProps,
 } from "@/features/mdx/base-mdx-components";
-import { Media } from "./mdx-media";
+import { Carousel, Media } from "./mdx-media";
 import { ProjectInfo } from "./ProjectInfo";
 
 export const workMdxComponents: MDXComponents = {
   ...baseMdxComponents,
   ProjectInfo,
+  Media,
+  Carousel,
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <Media src={src ?? ""} alt={alt} width="default" />
   ),

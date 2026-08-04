@@ -6,6 +6,8 @@ export type WorkProjectMetadata = {
   summary: string;
   /** List card thumbnail; optional string URL or Vite image module src. */
   cover?: string;
+  /** When true, detail body is fetched from the secret repo after unlock. */
+  isLocked?: boolean;
 };
 
 type CreateWorkPageOptions = {
