@@ -9,6 +9,10 @@ export type LoadWorkMediaResult =
   | { ok: true; file: LoadedWorkMedia }
   | { ok: false; reason: "invalid-path" | "not-found" };
 
+export type LoadWorkMediaMeta = {
+  cache: "hit" | "miss";
+};
+
 type CacheEntry = {
   expiresAt: number;
   file: LoadedWorkMedia;
@@ -16,6 +20,7 @@ type CacheEntry = {
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const mediaCache = new Map<string, CacheEntry>();
+const inFlightLoads = new Map<string, Promise<LoadWorkMediaResult>>();
 
 export async function loadWorkMedia(
   path: string,
@@ -33,15 +38,39 @@ export async function loadWorkMedia(
     mediaCache.delete(path);
   }
 
-  const file = await fetchRepoBinary(path);
-  if (!file) {
-    return { ok: false, reason: "not-found" };
+  const inFlight = inFlightLoads.get(path);
+  if (inFlight) {
+    return inFlight;
   }
 
-  mediaCache.set(path, {
-    file,
-    expiresAt: Date.now() + CACHE_TTL_MS,
-  });
+  const loadPromise = (async (): Promise<LoadWorkMediaResult> => {
+    const file = await fetchRepoBinary(path);
+    if (!file) {
+      return { ok: false, reason: "not-found" };
+    }
 
-  return { ok: true, file };
+    mediaCache.set(path, {
+      file,
+      expiresAt: Date.now() + CACHE_TTL_MS,
+    });
+
+    return { ok: true, file };
+  })();
+
+  inFlightLoads.set(path, loadPromise);
+
+  try {
+    return await loadPromise;
+  } finally {
+    inFlightLoads.delete(path);
+  }
+}
+
+export function getWorkMediaMeta(path: string): LoadWorkMediaMeta {
+  const cached = mediaCache.get(path);
+  if (cached && cached.expiresAt > Date.now()) {
+    return { cache: "hit" };
+  }
+
+  return { cache: "miss" };
 }

@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { loadWorkMedia } from "../lib/server/load-work-media";
+import {
+  getWorkMediaMeta,
+  loadWorkMedia,
+} from "../lib/server/load-work-media";
 import { isUnlocked } from "../lib/server/session";
 
 export default async function handler(
@@ -16,7 +19,14 @@ export default async function handler(
   }
 
   const path = typeof req.query.path === "string" ? req.query.path : "";
+  const metaBeforeLoad = getWorkMediaMeta(path);
+  const startedAt = performance.now();
   const result = await loadWorkMedia(path);
+  const totalMs = performance.now() - startedAt;
+
+  res.setHeader("Server-Timing", `total;dur=${totalMs.toFixed(1)}`);
+  res.setHeader("X-Work-Media-Cache", metaBeforeLoad.cache);
+
   if (!result.ok) {
     return res.status(401).json({ error: "Unauthorized" });
   }

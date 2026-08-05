@@ -28,6 +28,7 @@ export async function compileRemoteMdx(
   body: string,
   frontmatter: Record<string, unknown> = {},
 ): Promise<CompiledRemoteMdx> {
+  const startedAt = performance.now();
   const source = injectFrontmatterScope(body, frontmatter);
 
   const evaluated = await evaluate(source, {
@@ -36,6 +37,13 @@ export async function compileRemoteMdx(
     // Inject directly so Vite dual-instances of @mdx-js/react cannot break Context.
     useMDXComponents: () => workMdxComponents,
   });
+
+  if (import.meta.env.DEV) {
+    const durationMs = performance.now() - startedAt;
+    console.debug("[work] compileRemoteMdx", {
+      durationMs: Number(durationMs.toFixed(1)),
+    });
+  }
 
   return {
     Content: evaluated.default as ComponentType<{ children?: ReactNode }>,
