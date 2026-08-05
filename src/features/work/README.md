@@ -107,15 +107,15 @@ Supabase bucket `portfolio-assets`/
     └── secret-flow.jpg
 ```
 
-MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。伺服器會改寫成需 cookie 的 `/api/work-media`，並把 `assets/` 前綴去掉後，對應到 bucket 內的 object key（例如 `c2c-app/secret-flow.jpg`）。
+MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解鎖載入正文時，伺服器會把路徑改成 Supabase signed URL（約 1 小時有效），瀏覽器直連 private bucket 下載。簽發失敗時單張會 fallback 到需 cookie 的 `/api/work-media`。
 
 ### 私有 MDX 寫法
 
 - 使用 **YAML frontmatter**（不要 `import`／`export`／`createWorkPage`）。
 - Frontmatter 欄位（如 `projectInfo`）會在執行期注入成變數，正文可寫 `items={projectInfo}`。
 - 自訂元件直接寫 JSX 標籤：`<Media>`、`<Carousel>`、`<ProjectInfo>`（對應本站 `workMdxComponents`）。
-- 圖片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（伺服器會改寫成需 cookie 的 `/api/work-media`）。
-- 私有圖經 `/api/work-media` 代理，由伺服器以 `SUPABASE_SECRET_KEY` 從 private bucket 下載後回傳。
+- 圖片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。
+- 私有圖預設經 signed URL 直連 Storage；`/api/work-media` 僅作簽發失敗時的 fallback 代理。
 - 建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
 
 ```mdx

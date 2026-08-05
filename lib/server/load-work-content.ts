@@ -1,6 +1,9 @@
 import matter from "gray-matter";
 import { fetchRepoText, isValidSlug, mdxPathForSlug } from "./github";
-import { containsImportOrExport, rewriteMediaPaths } from "./rewrite-media";
+import {
+  containsImportOrExport,
+  rewriteMediaPathsWithSignedUrls,
+} from "./rewrite-media";
 
 export type LoadedWorkContent = {
   slug: string;
@@ -60,7 +63,7 @@ export async function loadWorkContent(
     const loadedContent: LoadedWorkContent = {
       slug,
       frontmatter: frontmatter as Record<string, unknown>,
-      body: rewriteMediaPaths(content),
+      body: await rewriteMediaPathsWithSignedUrls(content),
     };
 
     contentCache.set(slug, {

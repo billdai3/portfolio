@@ -25,7 +25,7 @@ type CacheEntry = {
 };
 
 const CACHE_TTL_MS = 30 * 60 * 1000;
-const WORK_MEDIA_BUCKET = "portfolio-assets";
+export const WORK_MEDIA_BUCKET = "portfolio-assets";
 const mediaCache = new Map<string, CacheEntry>();
 const inFlightLoads = new Map<string, Promise<LoadWorkMediaResult>>();
 
