@@ -29,7 +29,19 @@ export default async function handler(
   res.setHeader("X-Work-Media-Cache", metaBeforeLoad.cache);
 
   if (!result.ok) {
-    return res.status(401).json({ error: "Unauthorized" });
+    if (result.reason === "invalid-path") {
+      return res.status(400).json({ error: "Invalid path" });
+    }
+
+    if (result.reason === "not-found") {
+      return res.status(404).json({ error: "Not found" });
+    }
+
+    if (result.reason === "misconfigured") {
+      return res.status(500).json({ error: "Server misconfigured" });
+    }
+
+    return res.status(502).json({ error: "Failed to load media" });
   }
 
   const { file } = result;

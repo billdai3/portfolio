@@ -56,19 +56,21 @@ export default createWorkPage({ metadata });
 
 ## 上鎖專案（私有內容）
 
-公開 repo 只放空殼 MDX（`metadata.isLocked: true` + 列表用 cover／summary／標題）。完整正文與機密圖放在私有 repo；repo 名稱勿寫進公開文件，改用環境變數。
+公開 repo 只放空殼 MDX（`metadata.isLocked: true` + 列表用 cover／summary／標題）。完整正文放在私有 GitHub repo；機密圖放在 Supabase Storage 的 private bucket（`portfolio-assets`）。私有 repo 名稱勿寫進公開文件，改用環境變數。
 
 ### 環境變數
 
 對齊 `.env.example`（本機 `.env` 與 Vercel 都要設；勿 commit 真實值）：
 
-| 變數                   | 用途                          |
-| ---------------------- | ----------------------------- |
-| `GITHUB_PRIVATE_TOKEN` | 讀取私有 repo 的 GitHub token |
-| `GITHUB_USERNAME`      | 私有 repo 的 owner            |
-| `GITHUB_REPO_NAME`     | 私有 repo 名稱                |
-| `WORK_UNLOCK_PASSWORD` | 解鎖密碼                      |
-| `WORK_SESSION_SECRET`  | 簽署 session cookie           |
+| 變數                   | 用途                                       |
+| ---------------------- | ------------------------------------------ |
+| `GITHUB_PRIVATE_TOKEN` | 讀取私有 repo 的 GitHub token              |
+| `GITHUB_USERNAME`      | 私有 repo 的 owner                         |
+| `GITHUB_REPO_NAME`     | 私有 repo 名稱                             |
+| `SUPABASE_URL`         | Supabase project URL                       |
+| `SUPABASE_SECRET_KEY`  | 伺服器端讀取 private Storage 的 secret key |
+| `WORK_UNLOCK_PASSWORD` | 解鎖密碼                                   |
+| `WORK_SESSION_SECRET`  | 簽署 session cookie                        |
 
 本機測解鎖請用 `npm run dev:vercel`（純 `vite` 沒有 `/api`）。
 
@@ -92,17 +94,20 @@ export default createWorkPage({ metadata });
 # C2C 數位資產交易 App
 ```
 
-### 私有 repo 結構
+### 私有內容結構
 
-`<slug>.mdx` 檔名須與公開殼 slug 一致。
+`<slug>.mdx` 檔名須與公開殼 slug 一致。MDX 仍放私有 GitHub repo；圖片改放 Supabase bucket `portfolio-assets`。
 
 ```text
 <private-repo>/
-├── c2c-app.mdx
-└── assets/
-    └── c2c-app/
-        └── secret-flow.jpg
+└── c2c-app.mdx
+
+Supabase bucket `portfolio-assets`/
+└── c2c-app/
+    └── secret-flow.jpg
 ```
+
+MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。伺服器會改寫成需 cookie 的 `/api/work-media`，並把 `assets/` 前綴去掉後，對應到 bucket 內的 object key（例如 `c2c-app/secret-flow.jpg`）。
 
 ### 私有 MDX 寫法
 
@@ -110,7 +115,8 @@ export default createWorkPage({ metadata });
 - Frontmatter 欄位（如 `projectInfo`）會在執行期注入成變數，正文可寫 `items={projectInfo}`。
 - 自訂元件直接寫 JSX 標籤：`<Media>`、`<Carousel>`、`<ProjectInfo>`（對應本站 `workMdxComponents`）。
 - 圖片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（伺服器會改寫成需 cookie 的 `/api/work-media`）。
-- 私有圖仍經 GitHub 代理，建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
+- 私有圖經 `/api/work-media` 代理，由伺服器以 `SUPABASE_SECRET_KEY` 從 private bucket 下載後回傳。
+- 建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
 
 ```mdx
 ---
