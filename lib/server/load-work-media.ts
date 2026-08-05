@@ -1,8 +1,10 @@
+import { createHash } from "node:crypto";
 import { fetchRepoBinary, isValidAssetPath } from "./github";
 
 type LoadedWorkMedia = {
   body: ArrayBuffer;
   contentType: string;
+  etag: string;
 };
 
 export type LoadWorkMediaResult =
@@ -18,9 +20,36 @@ type CacheEntry = {
   file: LoadedWorkMedia;
 };
 
-const CACHE_TTL_MS = 5 * 60 * 1000;
+const CACHE_TTL_MS = 30 * 60 * 1000;
 const mediaCache = new Map<string, CacheEntry>();
 const inFlightLoads = new Map<string, Promise<LoadWorkMediaResult>>();
+
+export function computeMediaEtag(body: ArrayBuffer): string {
+  const digest = createHash("sha256")
+    .update(Buffer.from(body))
+    .digest("hex")
+    .slice(0, 16);
+  return `"${digest}"`;
+}
+
+export function etagMatches(
+  ifNoneMatch: string | string[] | undefined,
+  etag: string,
+): boolean {
+  if (ifNoneMatch == null) return false;
+
+  const header = Array.isArray(ifNoneMatch)
+    ? ifNoneMatch.join(",")
+    : ifNoneMatch;
+  const trimmed = header.trim();
+  if (!trimmed) return false;
+  if (trimmed === "*") return true;
+
+  const normalize = (value: string) => value.trim().replace(/^W\//, "");
+  const target = normalize(etag);
+
+  return trimmed.split(",").some((part) => normalize(part) === target);
+}
 
 export async function loadWorkMedia(
   path: string,
@@ -49,12 +78,17 @@ export async function loadWorkMedia(
       return { ok: false, reason: "not-found" };
     }
 
+    const loaded: LoadedWorkMedia = {
+      ...file,
+      etag: computeMediaEtag(file.body),
+    };
+
     mediaCache.set(path, {
-      file,
+      file: loaded,
       expiresAt: Date.now() + CACHE_TTL_MS,
     });
 
-    return { ok: true, file };
+    return { ok: true, file: loaded };
   })();
 
   inFlightLoads.set(path, loadPromise);

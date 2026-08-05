@@ -54,6 +54,8 @@ export function Media({
           <img
             src={imageSrc}
             alt={alt}
+            loading="lazy"
+            decoding="async"
             className="block w-full object-cover transition duration-300 group-hover:opacity-95"
           />
         </button>
@@ -134,6 +136,8 @@ export function Carousel({ children, caption }: CarouselProps) {
               <img
                 src={current.src}
                 alt={current.alt}
+                loading="eager"
+                decoding="async"
                 className="block aspect-16/10 w-full object-cover transition duration-300 group-hover:opacity-95"
               />
             </button>

@@ -110,6 +110,7 @@ export default createWorkPage({ metadata });
 - Frontmatter 欄位（如 `projectInfo`）會在執行期注入成變數，正文可寫 `items={projectInfo}`。
 - 自訂元件直接寫 JSX 標籤：`<Media>`、`<Carousel>`、`<ProjectInfo>`（對應本站 `workMdxComponents`）。
 - 圖片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（伺服器會改寫成需 cookie 的 `/api/work-media`）。
+- 私有圖仍經 GitHub 代理，建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
 
 ```mdx
 ---

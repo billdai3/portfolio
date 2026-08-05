@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
+  etagMatches,
   getWorkMediaMeta,
   loadWorkMedia,
 } from "../lib/server/load-work-media";
@@ -34,6 +35,12 @@ export default async function handler(
   const { file } = result;
 
   res.setHeader("Content-Type", file.contentType);
-  res.setHeader("Cache-Control", "private, max-age=60");
+  res.setHeader("Cache-Control", "private, max-age=86400");
+  res.setHeader("ETag", file.etag);
+
+  if (etagMatches(req.headers["if-none-match"], file.etag)) {
+    return res.status(304).end();
+  }
+
   return res.status(200).send(Buffer.from(file.body));
 }
