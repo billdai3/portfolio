@@ -43,7 +43,7 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-[50vh] max-w-md flex-col justify-center px-4 py-16">
+    <div className="mx-auto flex min-h-[50vh] max-w-md flex-col justify-center py-16">
       <h1 className="text-2xl font-semibold text-text-primary">此專案已上鎖</h1>
       <p className="mt-2 text-sm text-text-secondary">
         輸入密碼後即可檢視完整內容。

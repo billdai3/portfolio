@@ -134,21 +134,19 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     };
   }, [loadContent, slug]);
 
+  let body: ReactNode;
+
   if (state.status === "checking" || state.status === "loading") {
-    return (
-      <div className="mx-auto max-w-md px-4 py-24 text-center text-sm text-text-secondary">
+    body = (
+      <div className="py-24 text-center text-sm text-text-secondary">
         載入中…
       </div>
     );
-  }
-
-  if (state.status === "locked") {
-    return <UnlockForm slug={slug} onUnlocked={startLoadContent} />;
-  }
-
-  if (state.status === "error") {
-    return (
-      <div className="mx-auto max-w-md px-4 py-24 text-center">
+  } else if (state.status === "locked") {
+    body = <UnlockForm slug={slug} onUnlocked={startLoadContent} />;
+  } else if (state.status === "error") {
+    body = (
+      <div className="py-24 text-center">
         <p className="text-sm text-text-secondary">{state.message}</p>
         <button
           type="button"
@@ -159,13 +157,10 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
         </button>
       </div>
     );
-  }
-
-  const { Content } = state;
-
-  return (
-    <MDXProvider components={workMdxComponents}>
-      <WorkProjectLayout>
+  } else {
+    const { Content } = state;
+    body = (
+      <MDXProvider components={workMdxComponents}>
         <RemoteMdxErrorBoundary
           key={slug}
           onError={(message) =>
@@ -174,7 +169,13 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
         >
           {createElement(Content)}
         </RemoteMdxErrorBoundary>
-      </WorkProjectLayout>
-    </MDXProvider>
+      </MDXProvider>
+    );
+  }
+
+  return (
+    <WorkProjectLayout prose={state.status === "ready"}>
+      {body}
+    </WorkProjectLayout>
   );
 }
