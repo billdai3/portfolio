@@ -62,13 +62,13 @@ export default createWorkPage({ metadata });
 
 對齊 `.env.example`（本機 `.env` 與 Vercel 都要設；勿 commit 真實值）：
 
-| 變數 | 用途 |
-|------|------|
+| 變數                   | 用途                          |
+| ---------------------- | ----------------------------- |
 | `GITHUB_PRIVATE_TOKEN` | 讀取私有 repo 的 GitHub token |
-| `GITHUB_USERNAME` | 私有 repo 的 owner |
-| `GITHUB_REPO_NAME` | 私有 repo 名稱 |
-| `WORK_UNLOCK_PASSWORD` | 解鎖密碼 |
-| `WORK_SESSION_SECRET` | 簽署 session cookie |
+| `GITHUB_USERNAME`      | 私有 repo 的 owner            |
+| `GITHUB_REPO_NAME`     | 私有 repo 名稱                |
+| `WORK_UNLOCK_PASSWORD` | 解鎖密碼                      |
+| `WORK_SESSION_SECRET`  | 簽署 session cookie           |
 
 本機測解鎖請用 `npm run dev:vercel`（純 `vite` 沒有 `/api`）。
 
@@ -88,6 +88,8 @@ export const metadata = {
 };
 
 export default createWorkPage({ metadata });
+
+# C2C 數位資產交易 App
 ```
 
 ### 私有 repo 結構
