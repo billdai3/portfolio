@@ -9,12 +9,15 @@ import {
 import ImageLightbox from "./ImageLightbox";
 
 export type MediaWidth = "default" | "wide" | "page";
+export type MediaFit = "cover" | "contain";
 
 export type MediaProps = {
   src: string;
   alt?: string;
   caption?: string;
   width?: MediaWidth;
+  ratio?: string;
+  fit?: MediaFit;
 };
 
 const widthClassName: Record<MediaWidth, string> = {
@@ -22,6 +25,7 @@ const widthClassName: Record<MediaWidth, string> = {
   wide: "work-media--wide",
   page: "work-media--page",
 };
+const DEFAULT_MEDIA_RATIO = "16 / 10";
 
 function resolveSrc(src: string | { src?: string } | undefined): string {
   if (typeof src === "string") return src;
@@ -31,11 +35,63 @@ function resolveSrc(src: string | { src?: string } | undefined): string {
   return "";
 }
 
+type MediaImageProps = {
+  src: string;
+  alt: string;
+  ratio?: string;
+  fit?: MediaFit;
+  loading?: "eager" | "lazy";
+  hoverClassName?: string;
+};
+
+function MediaImage({
+  src,
+  alt,
+  ratio = DEFAULT_MEDIA_RATIO,
+  fit = "cover",
+  loading = "lazy",
+  hoverClassName = "group-hover:opacity-95",
+}: MediaImageProps) {
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const isLoaded = loadedSrc === src;
+
+  return (
+    <div
+      className="relative w-full overflow-hidden bg-bg-card"
+      style={{ aspectRatio: ratio }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        loading={loading}
+        decoding="async"
+        onLoad={() => setLoadedSrc(src)}
+        className={[
+          "absolute inset-0 h-full w-full transition-opacity duration-300",
+          hoverClassName,
+          fit === "contain" ? "object-contain" : "object-cover",
+          isLoaded ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+      />
+      <div
+        className={`media-image-placeholder-fade absolute inset-0 transition-opacity duration-300 ${
+          isLoaded ? "pointer-events-none opacity-0" : "opacity-100"
+        }`}
+        aria-hidden
+      >
+        <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+      </div>
+    </div>
+  );
+}
+
 export function Media({
   src,
   alt = "",
   caption,
   width = "default",
+  ratio = DEFAULT_MEDIA_RATIO,
+  fit = "cover",
 }: MediaProps) {
   const [open, setOpen] = useState(false);
   const imageSrc = resolveSrc(src);
@@ -51,13 +107,7 @@ export function Media({
           className="group block w-full cursor-zoom-in overflow-hidden rounded-xl border border-white/10 bg-bg-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           aria-label={alt ? `View larger: ${alt}` : "View larger image"}
         >
-          <img
-            src={imageSrc}
-            alt={alt}
-            loading="lazy"
-            decoding="async"
-            className="block w-full object-cover transition duration-300 group-hover:opacity-95"
-          />
+          <MediaImage src={imageSrc} alt={alt} ratio={ratio} fit={fit} />
         </button>
         {caption ? (
           <figcaption className="mt-2 text-sm leading-relaxed text-text-secondary text-center">
@@ -96,6 +146,8 @@ export function Carousel({ children, caption }: CarouselProps) {
         src,
         alt: child.props.alt ?? "",
         caption: child.props.caption,
+        ratio: child.props.ratio,
+        fit: child.props.fit ?? "cover",
       };
     })
     .filter((slide) => Boolean(slide.src));
@@ -133,12 +185,12 @@ export function Carousel({ children, caption }: CarouselProps) {
                   : "View larger image"
               }
             >
-              <img
+              <MediaImage
                 src={current.src}
                 alt={current.alt}
+                ratio={current.ratio}
+                fit={current.fit}
                 loading="eager"
-                decoding="async"
-                className="block aspect-16/10 w-full object-cover transition duration-300 group-hover:opacity-95"
               />
             </button>
 

@@ -408,6 +408,11 @@
     --skeleton-color-bright: var(--color-ash-600);
   }
 
+  .media-image-skeleton {
+    --skeleton-color-dim: var(--color-ash-800);
+    --skeleton-color-bright: var(--color-ash-700);
+  }
+
   @keyframes showcase-skeleton-breathe {
     from {
       background-color: var(--skeleton-color-dim);
@@ -427,6 +432,7 @@
       background-color: var(--skeleton-color-dim);
     }
 
+    .media-image-placeholder-fade,
     .showcase-image-skeleton-fade {
       transition: none;
     }
