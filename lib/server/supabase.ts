@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 let supabaseAdminClient: SupabaseClient | null = null;
