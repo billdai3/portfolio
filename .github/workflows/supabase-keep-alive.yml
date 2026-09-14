@@ -16,5 +16,5 @@ jobs:
           -H "apikey: ${{ secrets.SUPABASE_SERVICE_KEY_1 }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_KEY_1 }}" \
           -H "Content-Type: application/json" \
-          -H "Prefer: resolution=merge-duplicates"
+          -H "Prefer: resolution=merge-duplicates" \
           -d "{\"id\":1,\"pinged_at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
