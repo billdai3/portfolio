@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Heartbeat write to Supabase (Project 1)
         run: |
-          curl -s -o /dev/null -w "Project 1 Status: %{http_code}\n" -X POST \
+          curl -s -w "Project 1 Status: %{http_code}\n" -X POST \
             "${{ secrets.SUPABASE_URL_1 }}/rest/v1/heartbeat" \
           -H "apikey: ${{ secrets.SUPABASE_SERVICE_KEY_1 }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_KEY_1 }}" \
