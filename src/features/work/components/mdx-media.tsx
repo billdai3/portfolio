@@ -135,9 +135,14 @@ function isMediaElement(child: ReactNode): child is ReactElement<MediaProps> {
 type CarouselProps = {
   children: ReactNode;
   caption?: string;
+  width?: MediaWidth;
 };
 
-export function Carousel({ children, caption }: CarouselProps) {
+export function Carousel({
+  children,
+  caption,
+  width = "default",
+}: CarouselProps) {
   const slides = Children.toArray(children)
     .filter(isMediaElement)
     .map((child) => {
@@ -172,7 +177,7 @@ export function Carousel({ children, caption }: CarouselProps) {
 
   return (
     <>
-      <figure className="work-media mb-8 w-full">
+      <figure className={`work-media mb-8 ${widthClassName[width]}`}>
         <div className="overflow-hidden rounded-xl border border-border-default bg-bg-card">
           <div className="relative">
             <button
