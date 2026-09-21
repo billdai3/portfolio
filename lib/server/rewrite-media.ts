@@ -2,6 +2,10 @@ import { createSignedMediaUrlMap } from "./sign-work-media";
 
 const MEDIA_PROXY = "/api/work-media";
 
+function jsxMediaAttrRe(): RegExp {
+  return /\b(src|poster)=(["'])([^"']+)\2/g;
+}
+
 /** Normalize a relative or assets/ path into a repo asset path. */
 export function toAssetPath(raw: string): string | null {
   let path = raw.trim();
@@ -23,8 +27,8 @@ function toProxyUrl(assetPath: string): string {
 function collectAssetPaths(body: string): string[] {
   const paths: string[] = [];
 
-  for (const match of body.matchAll(/\bsrc=(["'])([^"']+)\1/g)) {
-    const asset = toAssetPath(match[2] ?? "");
+  for (const match of body.matchAll(jsxMediaAttrRe())) {
+    const asset = toAssetPath(match[3] ?? "");
     if (asset) paths.push(asset);
   }
 
@@ -48,7 +52,7 @@ function resolveMediaUrl(
 /**
  * Rewrite relative asset paths in MDX body to Supabase signed URLs.
  * Falls back to authenticated `/api/work-media` proxy per asset if signing fails.
- * Handles JSX `src="..."` / `src='...'` and markdown images `![alt](...)`.
+ * Handles JSX `src` / `poster` and markdown images `![alt](...)`.
  */
 export async function rewriteMediaPathsWithSignedUrls(
   body: string,
@@ -62,11 +66,11 @@ export async function rewriteMediaPathsWithSignedUrls(
   let out = body;
 
   out = out.replace(
-    /\bsrc=(["'])([^"']+)\1/g,
-    (full, quote: string, src: string) => {
-      const asset = toAssetPath(src);
+    jsxMediaAttrRe(),
+    (full, attr: string, quote: string, value: string) => {
+      const asset = toAssetPath(value);
       if (!asset) return full;
-      return `src=${quote}${resolveMediaUrl(asset, signedUrls)}${quote}`;
+      return `${attr}=${quote}${resolveMediaUrl(asset, signedUrls)}${quote}`;
     },
   );
 

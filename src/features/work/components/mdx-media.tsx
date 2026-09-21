@@ -10,6 +10,7 @@ import ImageLightbox from "./ImageLightbox";
 
 export type MediaWidth = "default" | "wide" | "page";
 export type MediaFit = "cover" | "contain";
+export type MediaType = "image" | "video";
 
 export type MediaProps = {
   src: string;
@@ -18,6 +19,12 @@ export type MediaProps = {
   width?: MediaWidth;
   ratio?: string;
   fit?: MediaFit;
+  type?: MediaType;
+  poster?: string;
+  autoPlay?: boolean;
+  muted?: boolean;
+  loop?: boolean;
+  controls?: boolean;
 };
 
 const widthClassName: Record<MediaWidth, string> = {
@@ -85,6 +92,63 @@ function MediaImage({
   );
 }
 
+type MediaVideoProps = {
+  src: string;
+  alt: string;
+  ratio?: string;
+  fit?: MediaFit;
+  poster?: string;
+  autoPlay?: boolean;
+  muted?: boolean;
+  loop?: boolean;
+  controls?: boolean;
+};
+
+function MediaVideo({
+  src,
+  alt,
+  ratio = DEFAULT_MEDIA_RATIO,
+  fit = "cover",
+  poster,
+  autoPlay = false,
+  muted = false,
+  loop = false,
+  controls = true,
+}: MediaVideoProps) {
+  const posterSrc = resolveSrc(poster);
+
+  return (
+    <div
+      className="relative w-full overflow-hidden bg-bg-card"
+      style={{ aspectRatio: ratio }}
+    >
+      <video
+        src={src}
+        poster={posterSrc || undefined}
+        autoPlay={autoPlay}
+        muted={muted}
+        loop={loop}
+        controls={controls}
+        playsInline
+        aria-label={alt || undefined}
+        className={[
+          "absolute inset-0 h-full w-full",
+          fit === "contain" ? "object-contain" : "object-cover",
+        ].join(" ")}
+      />
+    </div>
+  );
+}
+
+function MediaCaption({ caption }: { caption?: string }) {
+  if (!caption) return null;
+  return (
+    <figcaption className="mt-2 text-sm leading-relaxed text-text-secondary text-center">
+      {caption}
+    </figcaption>
+  );
+}
+
 export function Media({
   src,
   alt = "",
@@ -92,11 +156,38 @@ export function Media({
   width = "default",
   ratio = DEFAULT_MEDIA_RATIO,
   fit = "cover",
+  type = "image",
+  poster,
+  autoPlay = false,
+  muted = false,
+  loop = false,
+  controls = true,
 }: MediaProps) {
   const [open, setOpen] = useState(false);
-  const imageSrc = resolveSrc(src);
+  const mediaSrc = resolveSrc(src);
 
-  if (!imageSrc) return null;
+  if (!mediaSrc) return null;
+
+  if (type === "video") {
+    return (
+      <figure className={`work-media mb-8 ${widthClassName[width]}`}>
+        <div className="overflow-hidden rounded-xl border border-white/10 bg-bg-card">
+          <MediaVideo
+            src={mediaSrc}
+            alt={alt}
+            ratio={ratio}
+            fit={fit}
+            poster={poster}
+            autoPlay={autoPlay}
+            muted={muted}
+            loop={loop}
+            controls={controls}
+          />
+        </div>
+        <MediaCaption caption={caption} />
+      </figure>
+    );
+  }
 
   return (
     <>
@@ -107,17 +198,13 @@ export function Media({
           className="group block w-full cursor-zoom-in overflow-hidden rounded-xl border border-white/10 bg-bg-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           aria-label={alt ? `View larger: ${alt}` : "View larger image"}
         >
-          <MediaImage src={imageSrc} alt={alt} ratio={ratio} fit={fit} />
+          <MediaImage src={mediaSrc} alt={alt} ratio={ratio} fit={fit} />
         </button>
-        {caption ? (
-          <figcaption className="mt-2 text-sm leading-relaxed text-text-secondary text-center">
-            {caption}
-          </figcaption>
-        ) : null}
+        <MediaCaption caption={caption} />
       </figure>
       {open ? (
         <ImageLightbox
-          src={imageSrc}
+          src={mediaSrc}
           alt={alt}
           onClose={() => setOpen(false)}
         />

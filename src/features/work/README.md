@@ -34,6 +34,17 @@ export default createWorkPage({ metadata });
 <Media src="…" alt="…" caption="…" />
 <Media src="…" alt="…" width="wide" />
 <Media src="…" alt="…" width="page" />
+<Media
+  type="video"
+  src="…"
+  poster="…"
+  alt="…"
+  caption="…"
+  width="wide"
+  autoPlay
+  muted
+  loop
+/>
 
 <Carousel caption="流程稿">
   <Media src="…" alt="…" />
@@ -43,12 +54,15 @@ export default createWorkPage({ metadata });
 
 ## 媒體規則
 
-| 寫法                      | 行為                                    |
-| ------------------------- | --------------------------------------- |
-| `<Media>` / `![alt](url)` | 與正文同寬；點擊開 lightbox             |
-| `width="wide"`            | 外擴至約 `max-w-5xl`                    |
-| `width="page"`            | 吃滿內容殼層寬度                        |
-| `<Carousel>`              | 同區多圖左右切換；點擊帶整組進 lightbox |
+| 寫法                      | 行為                                                          |
+| ------------------------- | ------------------------------------------------------------- |
+| `<Media>` / `![alt](url)` | 與正文同寬；點擊開 lightbox                                   |
+| `type="video"`            | self-hosted mp4/webm；預設 `controls` + `playsInline`；無 lightbox |
+| `width="wide"`            | 外擴至約 `max-w-5xl`                                          |
+| `width="page"`            | 吃滿內容殼層寬度                                              |
+| `<Carousel>`              | 同區多圖左右切換；點擊帶整組進 lightbox；僅支援圖片           |
+
+影片可用 props：`poster`、`autoPlay`、`muted`、`loop`、`controls`（預設 `true`），以及共用的 `width` / `ratio` / `fit` / `caption`。請勿把 `type="video"` 放進 `<Carousel>`。
 
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
 
@@ -114,7 +128,7 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 - 使用 **YAML frontmatter**（不要 `import`／`export`／`createWorkPage`）。
 - Frontmatter 欄位（如 `projectInfo`）會在執行期注入成變數，正文可寫 `items={projectInfo}`。
 - 自訂元件直接寫 JSX 標籤：`<Media>`、`<Carousel>`、`<ProjectInfo>`（對應本站 `workMdxComponents`）。
-- 圖片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。
+- 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會一併簽發。
 - 私有圖預設經 signed URL 直連 Storage；`/api/work-media` 僅作簽發失敗時的 fallback 代理。
 - 建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
 
