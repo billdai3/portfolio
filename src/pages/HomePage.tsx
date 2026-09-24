@@ -16,6 +16,7 @@ export default function HomePage() {
     tag: item.tag,
     href: `/work/${item.slug}`,
     cover: item.cover,
+    isLocked: item.isLocked,
   }));
 
   const scrollToSelectedWorks = () => {
@@ -74,6 +75,7 @@ export default function HomePage() {
                     title: item.title,
                     tag: item.tag,
                     href: item.href,
+                    isLocked: item.isLocked,
                   }}
                   image={item.cover}
                 />

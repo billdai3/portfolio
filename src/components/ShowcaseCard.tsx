@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SquircleClip from "./SquircleClip";
 import {
@@ -10,6 +10,7 @@ export type ShowcaseItem = {
   title: string;
   tag: string;
   href?: string;
+  isLocked?: boolean;
 };
 
 type ShowcaseCardProps = {
@@ -20,86 +21,51 @@ type ShowcaseCardProps = {
   image?: string;
 };
 
-const SHORT_TAG_ROTATION = -20;
-const LONG_TAG_ROTATION = 0;
-const TAG_BASE_WIDTH = 56;
-const TAG_WIDTH_RANGE = 96;
-const SHORT_TAG_OFFSET_X = -2;
-const LONG_TAG_OFFSET_X = 5;
-const SHORT_TAG_OFFSET_Y = -2;
-const LONG_TAG_OFFSET_Y = -5;
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(max, Math.max(min, value));
-}
-
-function lerp(start: number, end: number, progress: number) {
-  return start + (end - start) * progress;
-}
-
-function getTagTransform(width: number) {
-  const normalized = clamp((width - TAG_BASE_WIDTH) / TAG_WIDTH_RANGE, 0, 1);
-  return {
-    rotation: lerp(SHORT_TAG_ROTATION, LONG_TAG_ROTATION, normalized),
-    offsetX: lerp(SHORT_TAG_OFFSET_X, LONG_TAG_OFFSET_X, normalized),
-    offsetY: lerp(SHORT_TAG_OFFSET_Y, LONG_TAG_OFFSET_Y, normalized),
-  };
-}
-
-function ShowcaseCardTag({ tag }: { tag: string }) {
-  const tagRef = useRef<HTMLSpanElement>(null);
-  const [transform, setTransform] = useState(() => ({
-    rotation: SHORT_TAG_ROTATION,
-    offsetX: SHORT_TAG_OFFSET_X,
-    offsetY: SHORT_TAG_OFFSET_Y,
-  }));
-
-  useLayoutEffect(() => {
-    const element = tagRef.current;
-
-    if (!element) {
-      return;
-    }
-
-    const updateTransform = () => {
-      const nextTransform = getTagTransform(element.offsetWidth);
-
-      setTransform((currentTransform) => {
-        if (
-          currentTransform.rotation === nextTransform.rotation &&
-          currentTransform.offsetX === nextTransform.offsetX &&
-          currentTransform.offsetY === nextTransform.offsetY
-        ) {
-          return currentTransform;
-        }
-
-        return nextTransform;
-      });
-    };
-
-    updateTransform();
-
-    const resizeObserver = new ResizeObserver(updateTransform);
-    resizeObserver.observe(element);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [tag]);
-
+function ShowcaseCardLockTag() {
   return (
-    <div className="pointer-events-none absolute top-[12%] left-[12%]">
-      <span
-        ref={tagRef}
-        className="inline-flex max-w-32 origin-left whitespace-nowrap rounded-full bg-ash-700 px-3 py-1 text-xs font-semibold tracking-wide text-text-secondary backdrop-blur-sm transition-[transform,background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900"
+    <div
+      className="pointer-events-none absolute top-[10%] left-[10%]"
+      aria-label="Locked project"
+    >
+      <span className="inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900">
+        <Lock className="size-5" strokeWidth={4} aria-hidden />
+      </span>
+    </div>
+  );
+}
+
+function ShowcaseCardTitleBar({ title }: { title: string }) {
+  return (
+    <div className="absolute inset-x-0 bottom-0 bg-bg-page/50 px-5 py-3 backdrop-blur-[2px]">
+      <h3
+        className="overflow-hidden text-center text-lg font-extrabold leading-tight tracking-tight text-ash-50 group-hover:text-accent"
         style={{
-          transform: `translate(${transform.offsetX}px, ${transform.offsetY}px) rotate(${transform.rotation}deg)`,
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical",
+          WebkitLineClamp: 2,
         }}
       >
-        <span className="block overflow-hidden text-ellipsis whitespace-nowrap">
-          {tag}
-        </span>
-      </span>
+        {title}
+      </h3>
+    </div>
+  );
+}
+
+const FOOTER_BAR_HEIGHTS = [45, 70, 90, 100, 90, 70, 45] as const;
+
+function ShowcaseCardFooterBars() {
+  return (
+    <div
+      className="flex h-full min-w-0 flex-1 items-center justify-center gap-2"
+      aria-hidden
+    >
+      {FOOTER_BAR_HEIGHTS.map((height, index) => (
+        <div
+          key={index}
+          className="w-2 rounded-full bg-ash-700"
+          style={{ height: `${height}%` }}
+        />
+      ))}
     </div>
   );
 }
@@ -133,7 +99,8 @@ export default function ShowcaseCard({
               className="h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"
             />
           ) : null}
-          {!loading ? <ShowcaseCardTag tag={item.tag} /> : null}
+          {!loading ? <ShowcaseCardTitleBar title={item.title} /> : null}
+          {!loading && item.isLocked ? <ShowcaseCardLockTag /> : null}
           <div
             className={`showcase-image-skeleton-fade absolute inset-0 transition-opacity duration-300 ease-out ${
               loading ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -144,24 +111,9 @@ export default function ShowcaseCard({
           </div>
         </div>
       </SquircleClip>
-      <div className="flex items-center gap-1.5">
+      <div className="flex h-7 items-center gap-1.5">
         <ShowcaseCardCornerDecoration />
-        {loading ? (
-          <ShowcaseCardTextSkeleton />
-        ) : (
-          <div className="flex min-h-12 min-w-0 flex-1 items-center text-center">
-            <h3
-              className="w-full overflow-hidden text-center leading-tight text-lg font-extrabold tracking-tight text-text-secondary transition-colors duration-300 ease-out group-hover:text-text-primary"
-              style={{
-                display: "-webkit-box",
-                WebkitBoxOrient: "vertical",
-                WebkitLineClamp: 2,
-              }}
-            >
-              {item.title}
-            </h3>
-          </div>
-        )}
+        {loading ? <ShowcaseCardTextSkeleton /> : <ShowcaseCardFooterBars />}
         <ShowcaseCardCornerDecoration />
       </div>
     </>

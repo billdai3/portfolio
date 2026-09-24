@@ -13,6 +13,7 @@ export default function WorkPage() {
                 title: project.title,
                 tag: project.tag,
                 href: `/work/${project.slug}`,
+                isLocked: project.isLocked,
               }}
               image={project.cover}
             />
