@@ -426,10 +426,38 @@
     animation: showcase-skeleton-breathe 0.5s ease-in-out infinite alternate;
   }
 
+  @keyframes showcase-title-marquee {
+    from {
+      transform: translateX(var(--marquee-start, 0px));
+    }
+    to {
+      transform: translateX(calc(var(--marquee-start, 0px) - 100% / 3));
+    }
+  }
+
+  .showcase-title-marquee {
+    transform: translateX(var(--marquee-start, 0px));
+  }
+
+  .group:hover .showcase-title-marquee {
+    animation-name: showcase-title-marquee;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .showcase-skeleton-breathe {
       animation: none;
       background-color: var(--skeleton-color-dim);
+    }
+
+    .group:hover .showcase-title-marquee {
+      animation: none;
+      display: none !important;
+    }
+
+    .group:hover .showcase-title-idle {
+      display: block !important;
     }
 
     .media-image-placeholder-fade,

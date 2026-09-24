@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import SquircleClip from "./SquircleClip";
@@ -35,18 +36,77 @@ function ShowcaseCardLockTag() {
 }
 
 function ShowcaseCardTitleBar({ title }: { title: string }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const segmentRef = useRef<HTMLSpanElement>(null);
+  const [marqueeStartPx, setMarqueeStartPx] = useState(0);
+  const marqueeDurationSec = Math.max(6, title.length * 0.28);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const segment = segmentRef.current;
+
+    if (!viewport || !segment) {
+      return;
+    }
+
+    const syncMarqueeStart = () => {
+      const viewportWidth = viewport.clientWidth;
+      const segmentWidth = segment.offsetWidth;
+      const idleMaxWidth = viewportWidth * 0.6;
+      const idleBoxLeft = (viewportWidth - idleMaxWidth) / 2;
+
+      // Match idle layout: short titles are centered; long titles start at the
+      // left edge of the max-w-[60%] box so hover doesn't jump left.
+      setMarqueeStartPx(
+        segmentWidth <= idleMaxWidth
+          ? (viewportWidth - segmentWidth) / 2
+          : idleBoxLeft,
+      );
+    };
+
+    syncMarqueeStart();
+
+    const resizeObserver = new ResizeObserver(syncMarqueeStart);
+    resizeObserver.observe(viewport);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [title]);
+
+  const marqueeStyle = {
+    animationDuration: `${marqueeDurationSec}s`,
+    "--marquee-start": `${marqueeStartPx}px`,
+  } as CSSProperties;
+
   return (
     <div className="absolute inset-x-0 bottom-0 bg-bg-page/50 px-5 py-3 backdrop-blur-[2px]">
-      <h3
-        className="overflow-hidden text-center text-lg font-extrabold leading-tight tracking-tight text-ash-50 group-hover:text-accent"
-        style={{
-          display: "-webkit-box",
-          WebkitBoxOrient: "vertical",
-          WebkitLineClamp: 2,
-        }}
-      >
-        {title}
-      </h3>
+      <div ref={viewportRef} className="overflow-hidden">
+        <span
+          ref={segmentRef}
+          className="invisible absolute whitespace-nowrap pr-10 text-lg font-extrabold tracking-tight"
+          aria-hidden
+        >
+          {title}
+        </span>
+        <h3 className="text-lg font-extrabold leading-tight tracking-tight text-ash-50 transition-colors duration-300 ease-out group-hover:text-accent">
+          <span className="showcase-title-idle mx-auto block max-w-[60%] truncate text-center group-hover:hidden">
+            {title}
+          </span>
+          <span
+            className="showcase-title-marquee hidden w-max group-hover:inline-flex"
+            style={marqueeStyle}
+          >
+            <span className="whitespace-nowrap pr-10">{title}</span>
+            <span className="whitespace-nowrap pr-10" aria-hidden>
+              {title}
+            </span>
+            <span className="whitespace-nowrap pr-10" aria-hidden>
+              {title}
+            </span>
+          </span>
+        </h3>
+      </div>
     </div>
   );
 }
