@@ -4,11 +4,8 @@ import { workProjects } from "../features/work/lib/registry";
 
 export default function WorkPage() {
   return (
-    <PageShell
-      title="Work"
-      description="Selected projects and case studies."
-    >
-      <ul className="grid gap-6 sm:grid-cols-3">
+    <PageShell title="Work" description="Selected projects and case studies.">
+      <ul className="grid gap-10 sm:grid-cols-2">
         {workProjects.map((project) => (
           <li key={project.slug}>
             <ShowcaseCardDelayed

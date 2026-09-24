@@ -11,7 +11,7 @@ const experiments = labProjects.slice(0, 2).map((item) => ({
 }));
 
 export default function HomePage() {
-  const selectedWorks = workProjects.slice(0, 3).map((item) => ({
+  const selectedWorks = workProjects.slice(0, 2).map((item) => ({
     title: item.title,
     tag: item.tag,
     href: `/work/${item.slug}`,
@@ -66,7 +66,7 @@ export default function HomePage() {
           >
             Selected Works
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-3">
+          <ul className="grid gap-10 sm:grid-cols-2">
             {selectedWorks.map((item) => (
               <li key={item.href}>
                 <ShowcaseCardDelayed

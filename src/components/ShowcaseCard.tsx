@@ -88,7 +88,7 @@ function ShowcaseCardTag({ tag }: { tag: string }) {
   }, [tag]);
 
   return (
-    <div className="pointer-events-none absolute top-7 left-7">
+    <div className="pointer-events-none absolute top-[12%] left-[12%]">
       <span
         ref={tagRef}
         className="inline-flex max-w-32 origin-left whitespace-nowrap rounded-full bg-ash-700 px-3 py-1 text-xs font-semibold tracking-wide text-text-secondary backdrop-blur-sm transition-[transform,background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900"
@@ -171,7 +171,7 @@ export default function ShowcaseCard({
     return (
       <Link
         to={item.href}
-        className="group block rounded-2xl bg-bg-card p-5 transition-colors"
+        className="group block rounded-[8%] bg-bg-card p-5 transition-colors"
         aria-busy={loading || undefined}
       >
         {inner}
@@ -181,7 +181,7 @@ export default function ShowcaseCard({
 
   return (
     <div
-      className="group rounded-2xl bg-bg-card p-5"
+      className="group rounded-[8%] bg-bg-card p-5"
       aria-busy={loading || undefined}
     >
       {inner}
