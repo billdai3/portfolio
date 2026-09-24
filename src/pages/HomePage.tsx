@@ -85,7 +85,7 @@ export default function HomePage() {
           <p className="mt-10 text-center sm:mt-12">
             <Link
               to="/work"
-              className="type-btn text-text-primary underline-offset-4 hover:underline"
+              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               View all work
             </Link>
@@ -115,7 +115,7 @@ export default function HomePage() {
           <p className="mt-10 text-center sm:mt-12">
             <Link
               to="/lab"
-              className="type-btn text-text-primary underline-offset-4 hover:underline"
+              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               Open lab
             </Link>
