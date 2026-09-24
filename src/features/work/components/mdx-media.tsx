@@ -292,6 +292,12 @@ export function Carousel({
 
             {slides.length > 1 ? (
               <>
+                <span
+                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg-card/85 px-3 py-1 text-xs tabular-nums text-text-secondary backdrop-blur-sm"
+                  aria-hidden
+                >
+                  {safeIndex + 1} / {slides.length}
+                </span>
                 <button
                   type="button"
                   onClick={goPrev}
@@ -325,17 +331,8 @@ export function Carousel({
           </div>
         </div>
         {caption || current.caption ? (
-          <figcaption className="mt-2 flex items-baseline justify-between gap-4 text-sm leading-relaxed text-text-secondary hover:text-text-primary transition-colors duration-150">
-            <span>{caption ?? current.caption}</span>
-            {slides.length > 1 ? (
-              <span className="shrink-0 tabular-nums">
-                {safeIndex + 1} / {slides.length}
-              </span>
-            ) : null}
-          </figcaption>
-        ) : slides.length > 1 ? (
-          <figcaption className="mt-2 text-right text-sm tabular-nums text-text-secondary hover:text-text-primary transition-colors duration-150">
-            {safeIndex + 1} / {slides.length}
+          <figcaption className="mt-2 text-sm leading-relaxed text-center text-text-secondary hover:text-text-primary transition-colors duration-150">
+            {caption ?? current.caption}
           </figcaption>
         ) : null}
       </figure>
