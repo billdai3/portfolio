@@ -105,7 +105,7 @@ export default function HomePage() {
           >
             Creative Coding &amp; Experiments
           </h2>
-          <ul className="grid gap-6 sm:grid-cols-3">
+          <ul className="grid gap-10 sm:grid-cols-2">
             {experiments.map((item) => (
               <li key={item.title}>
                 <ShowcaseCardDelayed item={item} />
