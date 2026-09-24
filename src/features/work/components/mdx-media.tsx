@@ -11,7 +11,11 @@ import {
   type ReactNode,
   type TransitionEvent,
 } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeftRightEllipsis,
+} from "lucide-react";
 import { resolveLocalWorkAsset } from "../lib/resolve-local-work-asset";
 import ImageLightbox from "./ImageLightbox";
 
@@ -636,18 +640,12 @@ export function Comparison({
           ) : null}
 
           <div
-            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-white/90"
+            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-white"
             style={{ left: `${position}%` }}
             aria-hidden
           >
-            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-bg-card/90 text-text-primary shadow-sm">
-              <span
-                className="flex items-center gap-0.5 text-xs leading-none"
-                aria-hidden
-              >
-                <span>‹</span>
-                <span>›</span>
-              </span>
+            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ash-900 shadow-sm">
+              <ChevronsLeftRightEllipsis className="size-5" aria-hidden />
             </span>
           </div>
         </div>
