@@ -2,12 +2,14 @@ import {
   Children,
   isValidElement,
   useCallback,
+  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
+  type TransitionEvent,
 } from "react";
 import { resolveLocalWorkAsset } from "../lib/resolve-local-work-asset";
 import ImageLightbox from "./ImageLightbox";
@@ -53,6 +55,8 @@ type MediaImageProps = {
   fit?: MediaFit;
   loading?: "eager" | "lazy";
   hoverClassName?: string;
+  /** Fill a sized parent instead of driving layout via aspect-ratio. */
+  fill?: boolean;
 };
 
 function MediaImage({
@@ -62,14 +66,18 @@ function MediaImage({
   fit = "cover",
   loading = "lazy",
   hoverClassName = "group-hover:opacity-95",
+  fill = false,
 }: MediaImageProps) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const isLoaded = loadedSrc === src;
 
   return (
     <div
-      className="relative w-full overflow-hidden bg-bg-card"
-      style={{ aspectRatio: ratio }}
+      className={[
+        "relative overflow-hidden bg-bg-card",
+        fill ? "h-full w-full" : "w-full",
+      ].join(" ")}
+      style={fill ? undefined : { aspectRatio: ratio }}
     >
       <img
         src={src}
@@ -229,6 +237,8 @@ type CarouselProps = {
   width?: MediaWidth;
 };
 
+const CAROUSEL_PUSH_MS = 300;
+
 export function Carousel({
   children,
   caption,
@@ -250,45 +260,143 @@ export function Carousel({
 
   const [index, setIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [shift, setShift] = useState(false);
+  const animatingRef = useRef(false);
 
   const safeIndex = slides.length === 0 ? 0 : index % slides.length;
   const current = slides[safeIndex];
+  const outgoing =
+    outgoingIndex !== null ? slides[outgoingIndex % slides.length] : null;
+  const isPair = outgoing !== null && isAnimating;
+
+  const viewportRatio =
+    (outgoing?.ratio ?? current?.ratio) || DEFAULT_MEDIA_RATIO;
+
+  const finishAnimation = useCallback(() => {
+    animatingRef.current = false;
+    setIsAnimating(false);
+    setOutgoingIndex(null);
+    setShift(false);
+  }, []);
 
   const goPrev = useCallback(() => {
-    if (slides.length < 2) return;
+    if (animatingRef.current || slides.length < 2) return;
+    animatingRef.current = true;
+    setDirection(-1);
+    setOutgoingIndex(safeIndex);
+    setShift(false);
+    setIsAnimating(true);
     setIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+  }, [safeIndex, slides.length]);
 
   const goNext = useCallback(() => {
-    if (slides.length < 2) return;
+    if (animatingRef.current || slides.length < 2) return;
+    animatingRef.current = true;
+    setDirection(1);
+    setOutgoingIndex(safeIndex);
+    setShift(false);
+    setIsAnimating(true);
     setIndex((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
+  }, [safeIndex, slides.length]);
+
+  useLayoutEffect(() => {
+    if (!isAnimating || outgoingIndex === null) return;
+    let frame2 = 0;
+    const frame1 = requestAnimationFrame(() => {
+      frame2 = requestAnimationFrame(() => setShift(true));
+    });
+    const timeout = window.setTimeout(finishAnimation, CAROUSEL_PUSH_MS + 80);
+    return () => {
+      cancelAnimationFrame(frame1);
+      cancelAnimationFrame(frame2);
+      window.clearTimeout(timeout);
+    };
+  }, [finishAnimation, isAnimating, outgoingIndex]);
+
+  const onTrackTransitionEnd = useCallback(
+    (event: TransitionEvent<HTMLDivElement>) => {
+      if (event.propertyName !== "transform") return;
+      if (event.target !== event.currentTarget) return;
+      finishAnimation();
+    },
+    [finishAnimation],
+  );
 
   if (!current) return null;
+
+  const trackTransform = !isPair
+    ? "translateX(0%)"
+    : direction === 1
+      ? shift
+        ? "translateX(-50%)"
+        : "translateX(0%)"
+      : shift
+        ? "translateX(0%)"
+        : "translateX(-50%)";
+
+  const orderedSlides = !isPair
+    ? [{ slide: current, key: safeIndex }]
+    : direction === 1
+      ? [
+          { slide: outgoing!, key: outgoingIndex! },
+          { slide: current, key: safeIndex },
+        ]
+      : [
+          { slide: current, key: safeIndex },
+          { slide: outgoing!, key: outgoingIndex! },
+        ];
 
   return (
     <>
       <figure className={`work-media mb-8 ${widthClassName[width]}`}>
         <div className="overflow-hidden rounded-xl border border-border-default bg-bg-card">
-          <div className="relative">
+          <div
+            className="group relative overflow-hidden"
+            style={{ aspectRatio: viewportRatio }}
+          >
+            <div
+              className="absolute inset-y-0 left-0 flex h-full"
+              style={{
+                width: isPair ? "200%" : "100%",
+                transform: trackTransform,
+                transitionProperty: isPair && shift ? "transform" : "none",
+                transitionDuration:
+                  isPair && shift ? `${CAROUSEL_PUSH_MS}ms` : "0ms",
+                transitionTimingFunction: "ease-out",
+              }}
+              onTransitionEnd={onTrackTransitionEnd}
+            >
+              {orderedSlides.map(({ slide, key }) => (
+                <div
+                  key={key}
+                  className="h-full shrink-0"
+                  style={{ width: isPair ? "50%" : "100%" }}
+                >
+                  <MediaImage
+                    src={slide.src}
+                    alt={slide.alt}
+                    ratio={slide.ratio}
+                    fit={slide.fit}
+                    loading="eager"
+                    fill
+                  />
+                </div>
+              ))}
+            </div>
+
             <button
               type="button"
               onClick={() => setLightboxOpen(true)}
-              className="group block w-full cursor-zoom-in text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+              className="absolute inset-0 z-1 cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
               aria-label={
                 current.alt
                   ? `View larger: ${current.alt}`
                   : "View larger image"
               }
-            >
-              <MediaImage
-                src={current.src}
-                alt={current.alt}
-                ratio={current.ratio}
-                fit={current.fit}
-                loading="eager"
-              />
-            </button>
+            />
 
             {slides.length > 1 ? (
               <>
@@ -301,7 +409,8 @@ export function Carousel({
                 <button
                   type="button"
                   onClick={goPrev}
-                  className="absolute top-1/2 left-3 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary"
+                  disabled={isAnimating}
+                  className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
                   aria-label="Previous slide"
                 >
                   ←
@@ -309,12 +418,13 @@ export function Carousel({
                 <button
                   type="button"
                   onClick={goNext}
-                  className="absolute top-1/2 right-3 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary"
+                  disabled={isAnimating}
+                  className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
                   aria-label="Next slide"
                 >
                   →
                 </button>
-                <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
                   {slides.map((_, i) => (
                     <span
                       key={i}
