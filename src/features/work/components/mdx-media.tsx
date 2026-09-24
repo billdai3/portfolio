@@ -6,6 +6,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { resolveLocalWorkAsset } from "../lib/resolve-local-work-asset";
 import ImageLightbox from "./ImageLightbox";
 
 export type MediaWidth = "default" | "wide" | "page";
@@ -35,9 +36,9 @@ const widthClassName: Record<MediaWidth, string> = {
 const DEFAULT_MEDIA_RATIO = "16 / 10";
 
 function resolveSrc(src: string | { src?: string } | undefined): string {
-  if (typeof src === "string") return src;
+  if (typeof src === "string") return resolveLocalWorkAsset(src);
   if (src && typeof src === "object" && typeof src.src === "string") {
-    return src.src;
+    return resolveLocalWorkAsset(src.src);
   }
   return "";
 }

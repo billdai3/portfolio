@@ -1,23 +1,12 @@
+import { toAssetPath } from "../../src/features/work/lib/asset-path";
 import { createSignedMediaUrlMap } from "./sign-work-media";
+
+export { toAssetPath };
 
 const MEDIA_PROXY = "/api/work-media";
 
 function jsxMediaAttrRe(): RegExp {
   return /\b(src|poster)=(["'])([^"']+)\2/g;
-}
-
-/** Normalize a relative or assets/ path into a repo asset path. */
-export function toAssetPath(raw: string): string | null {
-  let path = raw.trim();
-  if (!path || path.startsWith("http://") || path.startsWith("https://")) {
-    return null;
-  }
-  if (path.startsWith("/api/work-media")) return null;
-
-  path = path.replace(/^\.\//, "").replace(/^\/+/, "");
-
-  if (path.startsWith("assets/")) return path;
-  return null;
 }
 
 function toProxyUrl(assetPath: string): string {

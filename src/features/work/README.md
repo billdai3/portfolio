@@ -9,13 +9,13 @@
 
 ```mdx
 import { createWorkPage } from "@/features/work/lib/createWorkPage";
-import { Carousel, Media } from "@/features/work/components/mdx-media";
-// 可選：import cover from "./assets/my-project/cover.jpg";
+// 列表 cover 仍需 Vite import（registry 不經 Media）
+import cover from "./assets/my-project/cover.jpg";
 
 export const metadata = {
   tag: "Product design",
   summary: "列表頁簡述",
-  cover: "https://…", // 或 Vite 匯入的圖片 URL
+  cover,
 };
 
 export const projectInfo = [
@@ -31,13 +31,15 @@ export default createWorkPage({ metadata });
 
 正文以單一 `#` 作為頁面標題；列表會由 `rehype-mdx-title` 匯出 `title`。其餘章節用 `##`、`###`。
 
-<Media src="…" alt="…" caption="…" />
-<Media src="…" alt="…" width="wide" />
-<Media src="…" alt="…" width="page" />
+正文媒體可寫相對路徑（與遠端私有 MDX 相同）；`Media` 會解析成 Vite URL，不必逐張 import：
+
+<Media src="./assets/my-project/hero.webp" alt="…" caption="…" />
+<Media src="./assets/my-project/wide.webp" alt="…" width="wide" />
+<Media src="./assets/my-project/page.webp" alt="…" width="page" />
 <Media
   type="video"
-  src="…"
-  poster="…"
+  src="./assets/my-project/demo.mp4"
+  poster="./assets/my-project/poster.webp"
   alt="…"
   caption="…"
   width="wide"
@@ -47,8 +49,8 @@ export default createWorkPage({ metadata });
 />
 
 <Carousel caption="流程稿">
-  <Media src="…" alt="…" />
-  <Media src="…" alt="…" />
+  <Media src="./assets/my-project/frame-1.webp" alt="…" />
+  <Media src="./assets/my-project/frame-2.webp" alt="…" />
 </Carousel>
 ```
 
@@ -64,9 +66,11 @@ export default createWorkPage({ metadata });
 
 影片可用 props：`poster`、`autoPlay`、`muted`、`loop`、`controls`（預設 `true`），以及共用的 `width` / `ratio` / `fit` / `caption`。請勿把 `type="video"` 放進 `<Carousel>`。
 
+本地公開正文可用 `./assets/<slug>/...`（檔案放 `src/content/work/assets/`）；`http(s)` 與 Vite `import` 結果仍可直接當 `src`。列表 `metadata.cover` 仍須 Vite `import`（不經 Media）。
+
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
 
-`ProjectInfo` 已註冊在 Work MDX components 中，可直接在 `.mdx` 使用；建議把會出現在列表卡片的資訊保留在 `metadata`，把詳情頁才需要顯示的欄位改放到 `projectInfo`。
+`ProjectInfo`、`Media`、`Carousel` 已註冊在 Work MDX components 中，可直接在 `.mdx` 使用（不必 import）；建議把會出現在列表卡片的資訊保留在 `metadata`，把詳情頁才需要顯示的欄位改放到 `projectInfo`。
 
 ## 上鎖專案（私有內容）
 
