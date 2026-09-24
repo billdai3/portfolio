@@ -11,6 +11,7 @@ import {
   type ReactNode,
   type TransitionEvent,
 } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { resolveLocalWorkAsset } from "../lib/resolve-local-work-asset";
 import ImageLightbox from "./ImageLightbox";
 
@@ -410,19 +411,23 @@ export function Carousel({
                   type="button"
                   onClick={goPrev}
                   disabled={isAnimating}
-                  className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
+                  className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ash-50/10 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
                   aria-label="Previous slide"
                 >
-                  ←
+                  <ChevronLeft className="size-5" strokeWidth={4} aria-hidden />
                 </button>
                 <button
                   type="button"
                   onClick={goNext}
                   disabled={isAnimating}
-                  className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-bg-card/85 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
+                  className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ash-50/10 text-text-secondary transition-colors hover:text-text-primary disabled:pointer-events-none disabled:opacity-50"
                   aria-label="Next slide"
                 >
-                  →
+                  <ChevronRight
+                    className="size-5"
+                    strokeWidth={4}
+                    aria-hidden
+                  />
                 </button>
                 <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
                   {slides.map((_, i) => (
