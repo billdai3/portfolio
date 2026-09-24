@@ -61,7 +61,12 @@ export const workProjects: WorkProjectEntry[] = Object.entries(modules)
       Page: mod.default,
     };
   })
-  .sort((a, b) => a.title.localeCompare(b.title));
+  .sort((a, b) => {
+    const ao = a.order ?? Number.POSITIVE_INFINITY;
+    const bo = b.order ?? Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
+    return a.title.localeCompare(b.title);
+  });
 
 export function getWorkProject(
   slug: string | undefined,

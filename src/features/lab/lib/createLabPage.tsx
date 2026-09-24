@@ -4,6 +4,8 @@ import LabProjectLayout from "../components/LabProjectLayout";
 export type LabProjectMetadata = {
   tag: string;
   summary: string;
+  /** Lower sorts earlier in lists; omit to sort last. */
+  order?: number;
 };
 
 type CreateLabPageOptions = {

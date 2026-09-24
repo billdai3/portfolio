@@ -8,6 +8,8 @@ export type WorkProjectMetadata = {
   cover?: string;
   /** When true, detail body is fetched from the secret repo after unlock. */
   isLocked?: boolean;
+  /** Lower sorts earlier in lists; omit to sort last. */
+  order?: number;
 };
 
 type CreateWorkPageOptions = {
