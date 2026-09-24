@@ -147,7 +147,7 @@ function MediaVideo({
 function MediaCaption({ caption }: { caption?: string }) {
   if (!caption) return null;
   return (
-    <figcaption className="mt-2 text-sm leading-relaxed text-text-secondary text-center">
+    <figcaption className="mt-2 text-sm leading-relaxed text-center text-text-secondary hover:text-text-primary transition-colors duration-150">
       {caption}
     </figcaption>
   );
@@ -325,7 +325,7 @@ export function Carousel({
           </div>
         </div>
         {caption || current.caption ? (
-          <figcaption className="mt-2 flex items-baseline justify-between gap-4 text-sm leading-relaxed text-text-muted">
+          <figcaption className="mt-2 flex items-baseline justify-between gap-4 text-sm leading-relaxed text-text-secondary hover:text-text-primary transition-colors duration-150">
             <span>{caption ?? current.caption}</span>
             {slides.length > 1 ? (
               <span className="shrink-0 tabular-nums">
@@ -334,7 +334,7 @@ export function Carousel({
             ) : null}
           </figcaption>
         ) : slides.length > 1 ? (
-          <figcaption className="mt-2 text-right text-sm tabular-nums text-text-muted">
+          <figcaption className="mt-2 text-right text-sm tabular-nums text-text-secondary hover:text-text-primary transition-colors duration-150">
             {safeIndex + 1} / {slides.length}
           </figcaption>
         ) : null}
