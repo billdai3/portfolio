@@ -5,7 +5,7 @@ import {
   type MdxCodeProps,
   type MdxElProps,
 } from "@/features/mdx/base-mdx-components";
-import { Carousel, Media } from "./mdx-media";
+import { Carousel, Comparison, Media } from "./mdx-media";
 import { ProjectInfo } from "./ProjectInfo";
 
 export const workMdxComponents: MDXComponents = {
@@ -13,6 +13,7 @@ export const workMdxComponents: MDXComponents = {
   ProjectInfo,
   Media,
   Carousel,
+  Comparison,
   img: ({ src, alt }: { src?: string; alt?: string }) => (
     <Media src={src ?? ""} alt={alt} width="default" />
   ),

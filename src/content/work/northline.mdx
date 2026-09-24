@@ -3,7 +3,7 @@ import { Carousel, Media } from "@/features/work/components/mdx-media";
 
 export const metadata = {
   tag: "Product design",
-  summary: "示範 Work MDX 公版：可讀欄寬、寬窄圖、lightbox 與 carousel。",
+  summary: "示範 Work MDX 公版：可讀欄寬、寬窄圖、lightbox、carousel 與 comparison。",
   cover: "https://placehold.co/960x720/313131/d6d6d6?text=Northline",
 };
 
@@ -65,6 +65,20 @@ export default createWorkPage({ metadata });
     alt="Process frame 3"
   />
 </Carousel>
+
+## Comparison
+
+改版前後或調色前後可用同一框擦除對比；拖曳中間分隔線切換露出比例（無 lightbox）。
+
+<Comparison
+  before="https://placehold.co/1400x875/313131/d6d6d6?text=Before"
+  after="https://placehold.co/1400x875/585858/f1f1f1?text=After"
+  alt="Before and after comparison"
+  caption="拖曳中線對照 before / after"
+  width="wide"
+  beforeLabel="Before"
+  afterLabel="After"
+/>
 
 ## Outcome
 

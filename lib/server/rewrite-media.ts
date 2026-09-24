@@ -6,7 +6,7 @@ export { toAssetPath };
 const MEDIA_PROXY = "/api/work-media";
 
 function jsxMediaAttrRe(): RegExp {
-  return /\b(src|poster)=(["'])([^"']+)\2/g;
+  return /\b(src|poster|before|after)=(["'])([^"']+)\2/g;
 }
 
 function toProxyUrl(assetPath: string): string {
@@ -41,7 +41,7 @@ function resolveMediaUrl(
 /**
  * Rewrite relative asset paths in MDX body to Supabase signed URLs.
  * Falls back to authenticated `/api/work-media` proxy per asset if signing fails.
- * Handles JSX `src` / `poster` and markdown images `![alt](...)`.
+ * Handles JSX `src` / `poster` / `before` / `after` and markdown images `![alt](...)`.
  */
 export async function rewriteMediaPathsWithSignedUrls(
   body: string,

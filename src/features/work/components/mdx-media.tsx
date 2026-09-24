@@ -2,7 +2,10 @@ import {
   Children,
   isValidElement,
   useCallback,
+  useRef,
   useState,
+  type KeyboardEvent,
+  type PointerEvent,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -345,5 +348,197 @@ export function Carousel({
         />
       ) : null}
     </>
+  );
+}
+
+export type ComparisonProps = {
+  before: string;
+  after: string;
+  alt?: string;
+  caption?: string;
+  width?: MediaWidth;
+  ratio?: string;
+  fit?: MediaFit;
+  beforeLabel?: string;
+  afterLabel?: string;
+};
+
+function clampPercent(value: number): number {
+  return Math.min(100, Math.max(0, value));
+}
+
+export function Comparison({
+  before,
+  after,
+  alt = "",
+  caption,
+  width = "default",
+  ratio = DEFAULT_MEDIA_RATIO,
+  fit = "cover",
+  beforeLabel,
+  afterLabel,
+}: ComparisonProps) {
+  const beforeSrc = resolveSrc(before);
+  const afterSrc = resolveSrc(after);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState(50);
+  const [dragging, setDragging] = useState(false);
+  const [beforeLoaded, setBeforeLoaded] = useState(false);
+  const [afterLoaded, setAfterLoaded] = useState(false);
+  const isLoaded = beforeLoaded && afterLoaded;
+  const objectFitClass =
+    fit === "contain" ? "object-contain" : "object-cover";
+
+  const updateFromClientX = useCallback((clientX: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    setPosition(clampPercent(((clientX - rect.left) / rect.width) * 100));
+  }, []);
+
+  const onPointerDown = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      setDragging(true);
+      updateFromClientX(event.clientX);
+    },
+    [updateFromClientX],
+  );
+
+  const onPointerMove = useCallback(
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+      updateFromClientX(event.clientX);
+    },
+    [updateFromClientX],
+  );
+
+  const onPointerUp = useCallback((event: PointerEvent<HTMLDivElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    setDragging(false);
+  }, []);
+
+  const onKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    const step = event.shiftKey ? 10 : 2;
+    if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+      event.preventDefault();
+      setPosition((prev) => clampPercent(prev - step));
+    } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+      event.preventDefault();
+      setPosition((prev) => clampPercent(prev + step));
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      setPosition(0);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      setPosition(100);
+    }
+  }, []);
+
+  if (!beforeSrc || !afterSrc) return null;
+
+  const sliderLabel = alt
+    ? `Compare before and after: ${alt}`
+    : "Compare before and after images";
+
+  return (
+    <figure className={`work-media mb-8 ${widthClassName[width]}`}>
+      <div className="overflow-hidden rounded-xl border border-white/10 bg-bg-card">
+        <div
+          ref={containerRef}
+          role="slider"
+          tabIndex={0}
+          aria-label={sliderLabel}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(position)}
+          aria-valuetext={`${Math.round(position)}% before`}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onKeyDown={onKeyDown}
+          className={[
+            "relative w-full touch-none select-none overflow-hidden bg-bg-card outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
+            dragging ? "cursor-grabbing" : "cursor-ew-resize",
+          ].join(" ")}
+          style={{ aspectRatio: ratio }}
+        >
+          <img
+            src={afterSrc}
+            alt={alt ? `${alt} (after)` : ""}
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setAfterLoaded(true)}
+            className={[
+              "absolute inset-0 h-full w-full transition-opacity duration-300",
+              objectFitClass,
+              isLoaded ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+          />
+          <img
+            src={beforeSrc}
+            alt={alt ? `${alt} (before)` : ""}
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+            onLoad={() => setBeforeLoaded(true)}
+            className={[
+              "absolute inset-0 h-full w-full transition-opacity duration-300",
+              objectFitClass,
+              isLoaded ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+            style={{
+              clipPath: `inset(0 ${100 - position}% 0 0)`,
+            }}
+          />
+
+          <div
+            className={`media-image-placeholder-fade absolute inset-0 transition-opacity duration-300 ${
+              isLoaded ? "pointer-events-none opacity-0" : "opacity-100"
+            }`}
+            aria-hidden
+          >
+            <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+          </div>
+
+          {beforeLabel ? (
+            <span
+              className="pointer-events-none absolute top-3 left-3 rounded bg-bg-card/85 px-2 py-1 text-xs text-text-secondary"
+              aria-hidden
+            >
+              {beforeLabel}
+            </span>
+          ) : null}
+          {afterLabel ? (
+            <span
+              className="pointer-events-none absolute top-3 right-3 rounded bg-bg-card/85 px-2 py-1 text-xs text-text-secondary"
+              aria-hidden
+            >
+              {afterLabel}
+            </span>
+          ) : null}
+
+          <div
+            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-white/90"
+            style={{ left: `${position}%` }}
+            aria-hidden
+          >
+            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-bg-card/90 text-text-primary shadow-sm">
+              <span className="flex items-center gap-0.5 text-xs leading-none" aria-hidden>
+                <span>‹</span>
+                <span>›</span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <MediaCaption caption={caption} />
+    </figure>
   );
 }
