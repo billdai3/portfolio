@@ -293,7 +293,7 @@ export function Carousel({
             {slides.length > 1 ? (
               <>
                 <span
-                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg-card/85 px-3 py-1 text-xs tabular-nums text-text-secondary backdrop-blur-sm"
+                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg-card/80 px-3 py-1 text-xs tabular-nums text-text-primary backdrop-blur-sm"
                   aria-hidden
                 >
                   {safeIndex + 1} / {slides.length}
@@ -383,8 +383,7 @@ export function Comparison({
   const [beforeLoaded, setBeforeLoaded] = useState(false);
   const [afterLoaded, setAfterLoaded] = useState(false);
   const isLoaded = beforeLoaded && afterLoaded;
-  const objectFitClass =
-    fit === "contain" ? "object-contain" : "object-cover";
+  const objectFitClass = fit === "contain" ? "object-contain" : "object-cover";
 
   const updateFromClientX = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -506,7 +505,7 @@ export function Comparison({
 
           {beforeLabel ? (
             <span
-              className="pointer-events-none absolute top-3 left-3 rounded bg-bg-card/85 px-2 py-1 text-xs text-text-secondary"
+              className="pointer-events-none absolute top-3 left-3 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
               aria-hidden
             >
               {beforeLabel}
@@ -514,7 +513,7 @@ export function Comparison({
           ) : null}
           {afterLabel ? (
             <span
-              className="pointer-events-none absolute top-3 right-3 rounded bg-bg-card/85 px-2 py-1 text-xs text-text-secondary"
+              className="pointer-events-none absolute top-3 right-3 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
               aria-hidden
             >
               {afterLabel}
@@ -527,7 +526,10 @@ export function Comparison({
             aria-hidden
           >
             <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-bg-card/90 text-text-primary shadow-sm">
-              <span className="flex items-center gap-0.5 text-xs leading-none" aria-hidden>
+              <span
+                className="flex items-center gap-0.5 text-xs leading-none"
+                aria-hidden
+              >
                 <span>‹</span>
                 <span>›</span>
               </span>
