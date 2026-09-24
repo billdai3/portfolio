@@ -26,9 +26,14 @@ export const baseMdxComponents: MDXComponents = {
     </h2>
   ),
   h3: ({ children }: MdxElProps) => (
-    <h3 className="font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary">
+    <h3 className="font-display text-[1.2rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary">
       {children}
     </h3>
+  ),
+  h4: ({ children }: MdxElProps) => (
+    <h4 className="font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-3 mb-2 text-text-primary">
+      {children}
+    </h4>
   ),
   p: ({ children }: MdxElProps) => (
     <p className="mb-2 text-[1rem] leading-[1.75] text-text-secondary hover:text-text-primary transition-colors duration-150">

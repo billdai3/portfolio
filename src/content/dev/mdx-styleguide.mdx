@@ -1,10 +1,10 @@
 # MDX Style Guide
 
-Lab MDX 元素對照速查。內文繼承 `font-body`（GlowSans 單字型）；`h1` 使用 `type-page-title`，`h2` / `h3` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。頁面 `<h1>` 由 MDX 的 `#` 提供；正式 Lab MDX 應只寫一個 `#`。本 styleguide 在 h1 示範區可能刻意出現多個 `#`。
+Lab MDX 元素對照速查。內文繼承 `font-body`（GlowSans 單字型）；`h1` 使用 `type-page-title`，`h2` / `h3` / `h4` 使用 `font-display` 混排（Montserrat Alternates + GlowSans）。`font-extrabold` 時混排層西文為 Montserrat 700、中文為 GlowSans 800。頁面 `<h1>` 由 MDX 的 `#` 提供；正式 Lab MDX 應只寫一個 `#`。本 styleguide 在 h1 示範區可能刻意出現多個 `#`。
 
 ## Headings（標題）
 
-MDX 標題層級：`#` 頁面標題（`type-page-title`）→ `##` 章節標題（`font-display` 1.5rem）→ `###` 子章節（`font-display` 1rem）。`##` 與站內區塊用的 `type-section-title`（1.75rem，見 HomePage）是不同樣式，請勿混用名稱。`####`（`h4`）目前未 map，見下方 Gaps。捲至 `## Paragraphs` 可見連續 `##` 的 `not-first:mt-6` 間距。
+MDX 標題層級：`#` 頁面標題（`type-page-title`）→ `##` 章節標題（`font-display` 1.5rem）→ `###` 子章節（`font-display` 1.2rem）→ `####` 更小子標題（`font-display` 1rem）。`##` 與站內區塊用的 `type-section-title`（1.75rem，見 HomePage）是不同樣式，請勿混用名稱。捲至 `## Paragraphs` 可見連續 `##` 的 `not-first:mt-6` 間距。
 
 # Page title example
 
@@ -28,19 +28,29 @@ Lab MDX 頁面標題（全檔通常只有一個 `#`）；本頁頂部 `# MDX Sty
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
-| `###` | `h3` | `font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary` |
+| `###` | `h3` | `font-display text-[1.2rem] font-extrabold leading-tight tracking-tight mt-4 mb-3 text-text-primary` |
+
+#### Minor subsection example
+
+`###` 之下的更細分組；字級同內文 `1rem`，上邊距 `mt-3`。
+
+| MDX | HTML | Styles |
+| --- | --- | --- |
+| `####` | `h4` | `font-display text-[1rem] font-extrabold leading-tight tracking-tight mt-3 mb-2 text-text-primary` |
 
 ```md
 # Page title（h1 · type-page-title）
 
 ## Article section（h2 · font-display 1.5rem）
 
-### Subsection（h3 · font-display 1rem）
+### Subsection（h3 · font-display 1.2rem）
+
+#### Minor subsection（h4 · font-display 1rem）
 ```
 
 ### Mixed script headings（混排標題）
 
-`h1` / `h2` / `h3` 皆走 `font-display` 混排（西文 Montserrat Alternates，中文 GlowSans）。以下 h1 區刻意連續多個 `#` 示範。`type-page-title` 展開為 `font-display text-[2rem] font-extrabold leading-tight tracking-tight`；`font-extrabold` 時西文 Montserrat 700、中文 GlowSans 800。
+`h1` / `h2` / `h3` / `h4` 皆走 `font-display` 混排（西文 Montserrat Alternates，中文 GlowSans）。以下 h1 區刻意連續多個 `#` 示範。`type-page-title` 展開為 `font-display text-[2rem] font-extrabold leading-tight tracking-tight`；`font-extrabold` 時西文 Montserrat 700、中文 GlowSans 800。
 
 # 設計師 Portfolio 作品集
 
@@ -55,6 +65,8 @@ Lab MDX 頁面標題（全檔通常只有一個 `#`）；本頁頂部 `# MDX Sty
 ## 章節標題 Article section 混排測試
 
 ### 子章節 Subsection 混排測試
+
+#### 四級標題 Minor subsection 混排測試
 
 ## Paragraphs（段落）
 
@@ -242,7 +254,8 @@ drawGradient(ctx, phase);
 | ------ | ----------- |
 | `#`    | page title (`type-page-title`) |
 | `##`   | article section (`font-display` 1.5rem) |
-| `###`  | subsection (`font-display` 1rem) |
+| `###`  | subsection (`font-display` 1.2rem) |
+| `####` | minor subsection (`font-display` 1rem) |
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
@@ -253,25 +266,12 @@ drawGradient(ctx, phase);
 | ------ | ----------- |
 | `##`   | article section |
 | `###`  | subsection |
+| `####` | minor subsection |
 ```
 
 ## Gaps（尚未 map）
 
-以下元素目前**沒有**在 `labMdxComponents` 裡自訂，用來觀察預設樣式缺口。Not mapped — showing browser default styles.
-
-### Headings h4（四級標題）
-
-#### Fourth-level heading example
-
-`####` 目前走瀏覽器預設樣式，尚未在 `labMdxComponents` 自訂。
-
-| MDX | HTML | Styles |
-| --- | --- | --- |
-| `####` | `h4` | _尚未 map_ |
-
-```md
-#### Fourth-level heading example
-```
+以下元素目前**沒有**在 `baseMdxComponents` / Lab overlay 裡自訂，用來觀察預設樣式缺口。Not mapped — showing browser default styles。
 
 ### Images（圖片）
 
@@ -279,7 +279,7 @@ drawGradient(ctx, phase);
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
-| `![alt](url)` | `img` | _尚未 map_ |
+| `![alt](url)` | `img` | _尚未 map_（Lab 路徑；Work 請用 `<Media>`） |
 
 ```md
 ![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)

@@ -29,7 +29,7 @@ export default createWorkPage({ metadata });
 
 <ProjectInfo items={projectInfo} />
 
-正文以單一 `#` 作為頁面標題；列表會由 `rehype-mdx-title` 匯出 `title`。其餘章節用 `##`、`###`。
+正文以單一 `#` 作為頁面標題；列表會由 `rehype-mdx-title` 匯出 `title`。其餘章節用 `##`、`###`、`####`。
 
 正文媒體可寫相對路徑（與遠端私有 MDX 相同）；`Media` 會解析成 Vite URL，不必逐張 import：
 

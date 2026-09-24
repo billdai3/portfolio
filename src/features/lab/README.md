@@ -24,7 +24,7 @@ export default createLabPage({
 
 # 作品標題
 
-正文以單一 `#` 作為頁面標題；Lab 列表會在 MDX 編譯時由 `rehype-mdx-title` 從此 heading 匯出 `title`（勿依賴 `?raw`）。其餘章節用 `##`、`###`。
+正文以單一 `#` 作為頁面標題；Lab 列表會在 MDX 編譯時由 `rehype-mdx-title` 從此 heading 匯出 `title`（勿依賴 `?raw`）。其餘章節用 `##`、`###`、`####`。
 
 Markdown 內容…
 ```
