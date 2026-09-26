@@ -1,11 +1,12 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import { Lock } from "lucide-react";
+import { Lock, LockOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import SquircleClip from "./SquircleClip";
 import {
   ShowcaseCardImageSkeleton,
   ShowcaseCardTextSkeleton,
 } from "./ShowcaseCardSkeleton";
+import { useWorkUnlockHint } from "../features/work/lib/use-work-unlock-hint";
 
 export type ShowcaseItem = {
   title: string;
@@ -22,14 +23,16 @@ type ShowcaseCardProps = {
   image?: string;
 };
 
-function ShowcaseCardLockTag() {
+function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
+  const Icon = unlocked ? LockOpen : Lock;
+
   return (
     <div
       className="pointer-events-none absolute top-[10%] left-[10%]"
-      aria-label="Locked project"
+      aria-label={unlocked ? "Unlocked project" : "Locked project"}
     >
       <span className="inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900">
-        <Lock className="size-5" strokeWidth={4} aria-hidden />
+        <Icon className="size-5" strokeWidth={4} aria-hidden />
       </span>
     </div>
   );
@@ -148,6 +151,8 @@ export default function ShowcaseCard({
   loading = false,
   image,
 }: ShowcaseCardProps) {
+  const unlocked = useWorkUnlockHint();
+
   const inner = (
     <>
       <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
@@ -160,7 +165,9 @@ export default function ShowcaseCard({
             />
           ) : null}
           {!loading ? <ShowcaseCardTitleBar title={item.title} /> : null}
-          {!loading && item.isLocked ? <ShowcaseCardLockTag /> : null}
+          {!loading && item.isLocked ? (
+            <ShowcaseCardLockTag unlocked={unlocked} />
+          ) : null}
           <div
             className={`showcase-image-skeleton-fade absolute inset-0 transition-opacity duration-300 ease-out ${
               loading ? "opacity-100" : "opacity-0 pointer-events-none"

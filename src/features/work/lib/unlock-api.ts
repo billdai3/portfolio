@@ -16,8 +16,23 @@ export type UnlockContentResult =
 
 const UNLOCK_HINT_KEY = "work:unlocked";
 
+const unlockHintListeners = new Set<() => void>();
+
 function canUseSessionStorage(): boolean {
   return typeof window !== "undefined" && typeof window.sessionStorage !== "undefined";
+}
+
+function notifyUnlockHint(): void {
+  for (const listener of unlockHintListeners) {
+    listener();
+  }
+}
+
+export function subscribeUnlockHint(listener: () => void): () => void {
+  unlockHintListeners.add(listener);
+  return () => {
+    unlockHintListeners.delete(listener);
+  };
 }
 
 export function hasUnlockHint(): boolean {
@@ -28,11 +43,13 @@ export function hasUnlockHint(): boolean {
 export function persistUnlockHint(): void {
   if (!canUseSessionStorage()) return;
   window.sessionStorage.setItem(UNLOCK_HINT_KEY, "1");
+  notifyUnlockHint();
 }
 
 export function clearUnlockHint(): void {
   if (!canUseSessionStorage()) return;
   window.sessionStorage.removeItem(UNLOCK_HINT_KEY);
+  notifyUnlockHint();
 }
 
 export async function lockWorkContent(): Promise<boolean> {
