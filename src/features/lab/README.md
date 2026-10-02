@@ -6,6 +6,14 @@
 2. 在 `src/content/lab/<slug>.mdx` 新增 MDX（slug = 檔名，kebab-case）。
 3. Lab 列表與 `/lab/<slug>` 路由會由 `lib/registry.ts` 自動掃描 MDX。
 
+## OpenProcessing / 獨立 HTML sketch
+
+來自 OpenProcessing 等平台的 `index.html` + sketch JS，可放在 `public/<slug>/`（Vite 會原樣掛到網站根路徑）。
+
+1. Sketch 元件用滿版 iframe 指向該路徑（例如 `src="/abstract-clock/index.html"`）。
+2. 在 MDX 裡照常 `createLabPage({ Sketch, metadata })`。
+3. 需要跟 React / Leva 深度整合時，再把 sketch 改成 instance mode 搬進 `src/components/sketches/`。
+
 ## MDX 範本
 
 ```mdx
