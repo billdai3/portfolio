@@ -1,6 +1,5 @@
 import { createLabPage } from "@/features/lab/lib/createLabPage";
 import AbstractClock from "@/components/sketches/AbstractClock";
-import process1 from "@/content/lab/assets/abstract-clock/process-1.webp";
 
 export const metadata = {
   tag: "p5",
@@ -23,17 +22,12 @@ export default createLabPage({
 
 一開始是決定只將「目前的時間」刻度畫出，例如：三點就是畫出三個「時」的刻度、三十分就是畫出三十個「分」的刻度，然後搭配秒數讓這些刻度有各自旋轉角度的變化，不過畫出的畫面有些單調。
 
-{/* <Media
+<Media
   src="./assets/abstract-clock/process-1.webp"
   alt="一開始製作的版本畫面"
   caption="一開始製作的版本"
   ratio="20 / 11"
-/> */}
-
-<figure>
-  <img src={process1} alt="一開始製作的版本畫面" />
-  <figcaption>一開始製作的版本</figcaption>
-</figure>
+/>
 
 思考如何加強畫面感，決定想辦法利用分針內部及時針外部的空間，加上更細微的角度變化（不是只在每 1 秒時跳動，而是每毫秒都會，讓秒針看起來是順暢地流動），最後成功讓畫面有一種生成式的幾何美感。
 

@@ -5,9 +5,16 @@ import {
   type MdxCodeProps,
   type MdxElProps,
 } from "@/features/mdx/base-mdx-components";
+import { Carousel, Comparison, Media } from "@/features/work/components/mdx-media";
 
 export const labMdxComponents: MDXComponents = {
   ...baseMdxComponents,
+  Media,
+  Carousel,
+  Comparison,
+  img: ({ src, alt }: { src?: string; alt?: string }) => (
+    <Media src={src ?? ""} alt={alt} width="default" />
+  ),
   figure: ({ children, ...props }: MdxElProps) => (
     <figure
       className="mb-6 overflow-hidden rounded-xl border border-border-default bg-bg-card"

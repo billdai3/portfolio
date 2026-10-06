@@ -273,13 +273,15 @@ drawGradient(ctx, phase);
 
 以下元素目前**沒有**在 `baseMdxComponents` / Lab overlay 裡自訂，用來觀察預設樣式缺口。Not mapped — showing browser default styles。
 
-### Images（圖片）
+### Images（圖片）— 已 map
+
+Lab / Work 的 `img` 都會轉成 `<Media>`；本地資產寫 `./assets/...`（放在 `content/lab/assets` 或 `content/work/assets`）。
 
 ![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)
 
 | MDX | HTML | Styles |
 | --- | --- | --- |
-| `![alt](url)` | `img` | _尚未 map_（Lab 路徑；Work 請用 `<Media>`） |
+| `![alt](url)` | `img` → `<Media>` | Lab / Work 皆可；本地圖用 `./assets/...` 或 `<Media>` |
 
 ```md
 ![Placeholder](https://placehold.co/600x200/313131/d6d6d6?text=MDX+Image+Placeholder)

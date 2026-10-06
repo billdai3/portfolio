@@ -16,7 +16,7 @@ import {
   ChevronRight,
   ChevronsLeftRightEllipsis,
 } from "lucide-react";
-import { resolveLocalWorkAsset } from "../lib/resolve-local-work-asset";
+import { resolveLocalContentAsset } from "@/features/mdx/resolve-local-content-asset";
 import ImageLightbox from "./ImageLightbox";
 
 export type MediaWidth = "default" | "wide" | "page";
@@ -46,9 +46,9 @@ const widthClassName: Record<MediaWidth, string> = {
 const DEFAULT_MEDIA_RATIO = "16 / 10";
 
 function resolveSrc(src: string | { src?: string } | undefined): string {
-  if (typeof src === "string") return resolveLocalWorkAsset(src);
+  if (typeof src === "string") return resolveLocalContentAsset(src);
   if (src && typeof src === "object" && typeof src.src === "string") {
-    return resolveLocalWorkAsset(src.src);
+    return resolveLocalContentAsset(src.src);
   }
   return "";
 }
