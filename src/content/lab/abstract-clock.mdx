@@ -1,5 +1,6 @@
 import { createLabPage } from "@/features/lab/lib/createLabPage";
 import AbstractClock from "@/components/sketches/AbstractClock";
+import process1 from "@/content/lab/assets/abstract-clock/process-1.webp";
 
 export const metadata = {
   tag: "p5",
@@ -12,6 +13,30 @@ export default createLabPage({
   metadata,
 });
 
-# 抽象幾何時鐘
+# Abstract Clock 抽象幾何時鐘
 
-## 內文
+## 實驗目標
+
+時間是不斷變化的數據，但又有其限制（一天只有 24 小時、一小時只有 60 分、循環反覆），很適合讓我製作有變化但又能夠掌握範圍的作品。而比起直接顯示數字的數位時鐘，我更喜歡指針式的，製作出「看得出時間」但又有「抽象變化的美感」的時鐘是這次的挑戰。
+
+## 實驗過程
+
+一開始是決定只將「目前的時間」刻度畫出，例如：三點就是畫出三個「時」的刻度、三十分就是畫出三十個「分」的刻度，然後搭配秒數讓這些刻度有各自旋轉角度的變化，不過畫出的畫面有些單調。
+
+{/* <Media
+  src="./assets/abstract-clock/process-1.webp"
+  alt="一開始製作的版本畫面"
+  caption="一開始製作的版本"
+  ratio="20 / 11"
+/> */}
+
+<figure>
+  <img src={process1} alt="一開始製作的版本畫面" />
+  <figcaption>一開始製作的版本</figcaption>
+</figure>
+
+思考如何加強畫面感，決定想辦法利用分針內部及時針外部的空間，加上更細微的角度變化（不是只在每 1 秒時跳動，而是每毫秒都會，讓秒針看起來是順暢地流動），最後成功讓畫面有一種生成式的幾何美感。
+
+## 實驗總結
+
+這個課題很難去預測畫面結果，有無限的可能性、沒有標準答案，也無法說畫面多豐富或是多簡單才好看。最後收斂出的結果，我自己很喜歡，在盯著的過程中，一分一秒就這樣像是冥想般地過去。我不太擅長抽象、無法預測的設計風格，也是希望透過這次練習能夠有所成長，也期待未來能夠產出更多有意思的作品。
