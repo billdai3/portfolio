@@ -2,7 +2,6 @@ import { useState, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 type LabProjectLayoutProps = {
-  tag?: string;
   demo: ReactNode;
   children: ReactNode;
 };
@@ -63,7 +62,6 @@ function GoBackButton() {
 }
 
 export default function LabProjectLayout({
-  tag,
   demo,
   children,
 }: LabProjectLayoutProps) {
@@ -80,16 +78,7 @@ export default function LabProjectLayout({
   );
 
   const articlePanel = (
-    <article className="lab-prose max-w-none">
-      {tag ? (
-        <div className="mb-3">
-          <span className="type-btn rounded-full border border-border-default px-3 py-1 text-xs text-text-secondary">
-            {tag}
-          </span>
-        </div>
-      ) : null}
-      {children}
-    </article>
+    <article className="lab-prose max-w-none">{children}</article>
   );
 
   return (

@@ -13,14 +13,10 @@ type CreateLabPageOptions = {
   metadata: LabProjectMetadata;
 };
 
-export function createLabPage({ Sketch, metadata }: CreateLabPageOptions) {
-  const { tag } = metadata;
-
+export function createLabPage({ Sketch }: CreateLabPageOptions) {
   return function LabMdxPage({ children }: { children?: ReactNode }) {
     return (
-      <LabProjectLayout tag={tag} demo={<Sketch />}>
-        {children}
-      </LabProjectLayout>
+      <LabProjectLayout demo={<Sketch />}>{children}</LabProjectLayout>
     );
   };
 }
