@@ -8,6 +8,7 @@ const experiments = labProjects.slice(0, 2).map((item) => ({
   title: item.title,
   tag: item.tag,
   href: `/lab/${item.slug}`,
+  cover: item.cover,
 }));
 
 export default function HomePage() {
@@ -108,7 +109,14 @@ export default function HomePage() {
           <ul className="grid gap-10 sm:grid-cols-2">
             {experiments.map((item) => (
               <li key={item.title}>
-                <ShowcaseCardDelayed item={item} />
+                <ShowcaseCardDelayed
+                  item={{
+                    title: item.title,
+                    tag: item.tag,
+                    href: item.href,
+                  }}
+                  image={item.cover}
+                />
               </li>
             ))}
           </ul>

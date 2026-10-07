@@ -19,10 +19,13 @@
 ```mdx
 import { createLabPage } from "@/features/lab/lib/createLabPage";
 import MySketch from "@/components/sketches/MySketch";
+// 列表 cover 仍需 Vite import（registry 不經 Media）
+import cover from "./assets/my-project/cover.jpg";
 
 export const metadata = {
   tag: "Canvas",
   summary: "列表頁簡述",
+  cover,
 };
 
 export default createLabPage({

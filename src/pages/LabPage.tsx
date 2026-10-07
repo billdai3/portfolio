@@ -17,6 +17,7 @@ export default function LabPage() {
                 tag: item.tag,
                 href: `/lab/${item.slug}`,
               }}
+              image={item.cover}
             />
           </li>
         ))}
