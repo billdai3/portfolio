@@ -16,6 +16,7 @@ export default function WorkPage() {
                 isLocked: project.isLocked,
               }}
               image={project.cover}
+              video={project.coverVideo}
             />
           </li>
         ))}

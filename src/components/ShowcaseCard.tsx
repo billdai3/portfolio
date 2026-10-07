@@ -1,4 +1,11 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type Ref,
+} from "react";
 import { Lock, LockOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import SquircleClip from "./SquircleClip";
@@ -21,7 +28,17 @@ type ShowcaseCardProps = {
   loading?: boolean;
   /** Preview image; shown in SquircleClip when not loading. */
   image?: string;
+  /** Optional hover preview; muted loop plays on fine-pointer hover. */
+  video?: string;
 };
+
+function canHoverPlayVideo(hasVideo: boolean): boolean {
+  if (!hasVideo || typeof window === "undefined") return false;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return false;
+  }
+  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
 
 function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
   const Icon = unlocked ? LockOpen : Lock;
@@ -150,8 +167,61 @@ export default function ShowcaseCard({
   item,
   loading = false,
   image,
+  video,
 }: ShowcaseCardProps) {
   const unlocked = useWorkUnlockHint();
+  const cardRef = useRef<HTMLAnchorElement | HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoActive, setVideoActive] = useState(false);
+  const [shouldPreload, setShouldPreload] = useState(false);
+
+  useEffect(() => {
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const node = cardRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        setShouldPreload(true);
+        observer.disconnect();
+      },
+      { rootMargin: "200px 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [video]);
+
+  useEffect(() => {
+    if (!shouldPreload) return;
+    videoRef.current?.load();
+  }, [shouldPreload, video]);
+
+  const handlePointerEnter = () => {
+    if (!canHoverPlayVideo(Boolean(video))) return;
+    const el = videoRef.current;
+    if (!el) return;
+
+    const playPromise = el.play();
+    if (playPromise) {
+      void playPromise
+        .then(() => setVideoActive(true))
+        .catch(() => setVideoActive(false));
+      return;
+    }
+    setVideoActive(true);
+  };
+
+  const handlePointerLeave = () => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.pause();
+    el.currentTime = 0;
+    setVideoActive(false);
+  };
 
   const inner = (
     <>
@@ -162,6 +232,21 @@ export default function ShowcaseCard({
               src={image}
               alt=""
               className="h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"
+            />
+          ) : null}
+          {video ? (
+            <video
+              ref={videoRef}
+              src={video}
+              muted
+              loop
+              playsInline
+              preload={shouldPreload ? "auto" : "none"}
+              aria-hidden
+              className={[
+                "pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ease-out",
+                videoActive ? "opacity-100" : "opacity-0",
+              ].join(" ")}
             />
           ) : null}
           {!loading ? <ShowcaseCardTitleBar title={item.title} /> : null}
@@ -189,9 +274,12 @@ export default function ShowcaseCard({
   if (item.href) {
     return (
       <Link
+        ref={cardRef as Ref<HTMLAnchorElement>}
         to={item.href}
         className="group block rounded-[8%] bg-bg-card p-5 transition-colors"
         aria-busy={loading || undefined}
+        onMouseEnter={handlePointerEnter}
+        onMouseLeave={handlePointerLeave}
       >
         {inner}
       </Link>
@@ -200,8 +288,11 @@ export default function ShowcaseCard({
 
   return (
     <div
+      ref={cardRef as Ref<HTMLDivElement>}
       className="group rounded-[8%] bg-bg-card p-5"
       aria-busy={loading || undefined}
+      onMouseEnter={handlePointerEnter}
+      onMouseLeave={handlePointerLeave}
     >
       {inner}
     </div>

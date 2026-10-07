@@ -6,6 +6,8 @@ export type LabProjectMetadata = {
   summary: string;
   /** List card thumbnail; optional string URL or Vite image module src. */
   cover?: string;
+  /** Optional list-card hover video; Vite import of mp4/webm. */
+  coverVideo?: string;
   /** Lower sorts earlier in lists; omit to sort last. */
   order?: number;
 };

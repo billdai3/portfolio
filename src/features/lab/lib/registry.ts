@@ -37,9 +37,9 @@ function resolveTitle(mod: LabMdxModule, slug: string): string {
   return slugToTitle(slug);
 }
 
-function resolveCover(cover: LabProjectMetadata["cover"]): string | undefined {
-  if (!cover) return undefined;
-  if (typeof cover === "string") return cover;
+function resolveAssetUrl(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  if (typeof value === "string") return value;
   return undefined;
 }
 
@@ -57,7 +57,8 @@ export const labProjects: LabProjectEntry[] = Object.entries(modules)
       slug,
       title: resolveTitle(mod, slug),
       ...mod.metadata,
-      cover: resolveCover(mod.metadata.cover),
+      cover: resolveAssetUrl(mod.metadata.cover),
+      coverVideo: resolveAssetUrl(mod.metadata.coverVideo),
       Page: mod.default,
     };
   })

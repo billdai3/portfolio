@@ -19,13 +19,16 @@
 ```mdx
 import { createLabPage } from "@/features/lab/lib/createLabPage";
 import MySketch from "@/components/sketches/MySketch";
-// 列表 cover 仍需 Vite import（registry 不經 Media）
+// 列表 cover／coverVideo 仍需 Vite import（registry 不經 Media）
 import cover from "./assets/my-project/cover.jpg";
+// 可選：列表卡片 hover 時循環播放
+import coverVideo from "./assets/my-project/cover-hover.mp4";
 
 export const metadata = {
   tag: "Canvas",
   summary: "列表頁簡述",
   cover,
+  coverVideo,
 };
 
 export default createLabPage({

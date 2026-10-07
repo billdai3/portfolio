@@ -18,6 +18,7 @@ export default function LabPage() {
                 href: `/lab/${item.slug}`,
               }}
               image={item.cover}
+              video={item.coverVideo}
             />
           </li>
         ))}

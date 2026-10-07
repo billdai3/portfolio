@@ -4,12 +4,14 @@ import ShowcaseCard, { type ShowcaseItem } from "./ShowcaseCard";
 type ShowcaseCardDelayedProps = {
   item: ShowcaseItem;
   image?: string;
+  video?: string;
   delayMs?: number;
 };
 
 export default function ShowcaseCardDelayed({
   item,
   image,
+  video,
   delayMs = 200,
 }: ShowcaseCardDelayedProps) {
   const [loading, setLoading] = useState(true);
@@ -19,5 +21,7 @@ export default function ShowcaseCardDelayed({
     return () => window.clearTimeout(timer);
   }, [delayMs]);
 
-  return <ShowcaseCard item={item} image={image} loading={loading} />;
+  return (
+    <ShowcaseCard item={item} image={image} video={video} loading={loading} />
+  );
 }

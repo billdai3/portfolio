@@ -9,13 +9,16 @@
 
 ```mdx
 import { createWorkPage } from "@/features/work/lib/createWorkPage";
-// 列表 cover 仍需 Vite import（registry 不經 Media）
+// 列表 cover／coverVideo 仍需 Vite import（registry 不經 Media）
 import cover from "./assets/my-project/cover.jpg";
+// 可選：列表卡片 hover 時循環播放
+import coverVideo from "./assets/my-project/cover-hover.mp4";
 
 export const metadata = {
   tag: "Product design",
   summary: "列表頁簡述",
   cover,
+  coverVideo,
 };
 
 export const projectInfo = [
@@ -77,7 +80,7 @@ export default createWorkPage({ metadata });
 
 `<Comparison>` 用 `before` / `after` 路徑（與 `src` 相同解析規則），可選 `beforeLabel` / `afterLabel`；共用 `width` / `ratio` / `fit` / `caption`。
 
-本地公開正文可用 `./assets/<slug>/...`（檔案放 `src/content/work/assets/`）；`http(s)` 與 Vite `import` 結果仍可直接當 `src`。列表 `metadata.cover` 仍須 Vite `import`（不經 Media）。
+本地公開正文可用 `./assets/<slug>/...`（檔案放 `src/content/work/assets/`）；`http(s)` 與 Vite `import` 結果仍可直接當 `src`。列表 `metadata.cover`／`coverVideo` 仍須 Vite `import`（不經 Media）。
 
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
 
