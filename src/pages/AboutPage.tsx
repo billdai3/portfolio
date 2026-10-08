@@ -1,27 +1,50 @@
-const skills = [
+import { useState, type ComponentType } from "react";
+
+import SkillCodingAnimation from "../components/SkillCodingAnimation";
+import SkillDesignAnimation from "../components/SkillDesignAnimation";
+import SkillSystemAnimation from "../components/SkillSystemAnimation";
+import SkillWorkflowAnimation from "../components/SkillWorkflowAnimation";
+
+type SkillAnimationProps = {
+  className?: string;
+  autoplay?: boolean;
+  active?: boolean;
+};
+
+const skills: {
+  title: string;
+  description: string;
+  Animation: ComponentType<SkillAnimationProps>;
+}[] = [
   {
     title: "Figma",
     description:
       "熟悉軟體操作，有設計和優化多個網頁及 App 的經驗，包括製作 Wireframe、Mockup 及 Prototype 等。",
+    Animation: SkillDesignAnimation,
   },
   {
     title: "Design System",
     description:
       "熟悉設計系統的建立及維護，包括 Design Tokens 的使用、組件庫的製作等，能夠與工程師協作，一起提升開發效率。",
+    Animation: SkillSystemAnimation,
   },
   {
     title: "HTML & CSS",
     description:
       "熟悉網頁結構及樣式，有在多個專案應用 RWD 的經驗，確保設計能夠在不同裝置都有良好體驗。",
+    Animation: SkillCodingAnimation,
   },
   {
     title: "End-to-End Design Process",
     description:
       "擁有完整的設計流程經驗，從需求分析、設計到交付和測試。能夠有效地與利害關係人及團隊溝通協作，一起推動專案到上線。",
+    Animation: SkillWorkflowAnimation,
   },
-] as const;
+];
 
 export default function AboutPage() {
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+
   return (
     <div className="text-text-primary">
       <section
@@ -67,21 +90,29 @@ export default function AboutPage() {
           </h2>
 
           <ul className="grid gap-6 sm:grid-cols-2">
-            {skills.map((skill) => (
+            {skills.map(({ title, description, Animation }) => (
               <li
-                key={skill.title}
+                key={title}
                 className="flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
+                onMouseEnter={() => setActiveSkill(title)}
+                onMouseLeave={() => setActiveSkill(null)}
               >
                 <div
-                  className="size-30 shrink-0 rounded-xl bg-ash-600"
+                  className="size-30 shrink-0 overflow-hidden rounded-xl"
                   aria-hidden
-                />
+                >
+                  <Animation
+                    className="size-full"
+                    autoplay={false}
+                    active={activeSkill === title}
+                  />
+                </div>
                 <div className="min-w-0">
                   <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary sm:text-lg">
-                    {skill.title}
+                    {title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    {skill.description}
+                    {description}
                   </p>
                 </div>
               </li>

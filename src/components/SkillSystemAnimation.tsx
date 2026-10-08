@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 import skillSystemSvg from "../assets/skill-system.svg?raw";
@@ -24,6 +24,10 @@ type LevaSetValues = (values: Record<string, unknown>) => void;
 
 type SkillSystemAnimationProps = {
   className?: string;
+  /** 預設 true；About 等 hover 播放場景請設 false，並用 active 控制。 */
+  autoplay?: boolean;
+  /** 有傳入時依此播放／暫停（false 會停在開頭）。 */
+  active?: boolean;
   levaSetValues?: LevaSetValues;
   timelineRef?: RefObject<SkillSystemTimelineHandle | null>;
 };
@@ -54,7 +58,7 @@ function buildSkillSystemTimeline(
   const symbolBIn = q<SVGRectElement>(root, "symbol-b-in");
   const symbolLIn = q<SVGRectElement>(root, "symbol-l-in");
 
-  const tl = gsap.timeline({ repeat: -1 });
+  const tl = gsap.timeline({ repeat: -1, paused: true });
   const symMove = { duration: SYM_DUR, ease: SYM_EASE };
 
   if (donutCover) tl.set(donutCover, { autoAlpha: 0 }, 0);
@@ -269,11 +273,20 @@ function showCompleteState(root: ParentNode) {
 
 export default function SkillSystemAnimation({
   className,
+  autoplay = true,
+  active,
   levaSetValues,
   timelineRef,
 }: SkillSystemAnimationProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  // 只掛一次 SVG，避免 active 重渲時 dangerouslySetInnerHTML 洗掉 GSAP 樣式
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    wrap.innerHTML = skillSystemSvg;
+  }, []);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -319,7 +332,8 @@ export default function SkillSystemAnimation({
 
       levaSetValues?.({ progress: 0 });
       tl.progress(0);
-      tl.play();
+      const shouldPlay = active !== undefined ? active : autoplay;
+      if (shouldPlay) tl.play();
     }, svg);
 
     return () => {
@@ -327,7 +341,21 @@ export default function SkillSystemAnimation({
       tlRef.current = null;
       ctx.revert();
     };
-  }, [levaSetValues, timelineRef]);
+    // active 由下方 effect 控制，避免 hover 時重建 timeline
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
+  }, [autoplay, levaSetValues, timelineRef]);
+
+  useEffect(() => {
+    const tl = tlRef.current;
+    if (!tl || active === undefined) return;
+    if (active) {
+      tl.play();
+      return;
+    }
+    tl.pause();
+    tl.progress(0);
+    levaSetValues?.({ progress: 0 });
+  }, [active, levaSetValues]);
 
   return (
     <div
@@ -338,7 +366,6 @@ export default function SkillSystemAnimation({
       ]
         .filter(Boolean)
         .join(" ")}
-      dangerouslySetInnerHTML={{ __html: skillSystemSvg }}
     />
   );
 }
