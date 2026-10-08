@@ -16,27 +16,27 @@ const skills: {
   Animation: ComponentType<SkillAnimationProps>;
 }[] = [
   {
-    title: "Figma",
+    title: "Figma & UI Prototyping",
     description:
-      "熟悉軟體操作，有設計和優化多個網頁及 App 的經驗，包括製作 Wireframe、Mockup 及 Prototype 等。",
+      "熟練運用 Figma 製作數位產品的設計稿及可動原型。有設計、優化過多個網站及 App 的經驗。",
     Animation: SkillDesignAnimation,
   },
   {
-    title: "Design System",
+    title: "Design System Architecture",
     description:
-      "熟悉設計系統的建立及維護，包括 Design Tokens 的使用、組件庫的製作等，能夠與工程師協作，一起提升開發效率。",
+      "熟悉設計系統的建立及維護，包含 Design Tokens 的使用、元件庫的製作、設計規格的撰寫等。",
     Animation: SkillSystemAnimation,
   },
   {
-    title: "HTML & CSS",
+    title: "Creative Front-End",
     description:
-      "熟悉網頁結構及樣式，有在多個專案應用 RWD 的經驗，確保設計能夠在不同裝置都有良好體驗。",
+      "瞭解網頁結構、樣式規則及互動邏輯等前端知識，並能運用相關技術來設計標準的互動式 RWD 網頁，讓設計能夠準確地落地實現。",
     Animation: SkillCodingAnimation,
   },
   {
-    title: "End-to-End Design Process",
+    title: "AI-Empowered Delivery",
     description:
-      "擁有完整的設計流程經驗，從需求分析、設計到交付和測試。能夠有效地與利害關係人及團隊溝通協作，一起推動專案到上線。",
+      "擁有完整的實務經驗，也能夠運用 Coding Agent 參與開發。能夠有效地與利害關係人、團隊溝通協作，推動專案順利上線。",
     Animation: SkillWorkflowAnimation,
   },
 ];
@@ -98,8 +98,10 @@ export default function AboutPage() {
                 I&apos;m Bill.
               </h2>
               <p className="mt-4 text-base leading-relaxed text-text-secondary">
-                擁有 5 年 UI/UX
-                設計經驗，精通設計系統、規格及資訊架構的規劃，擅長透過設計稿、原型及簡報來推動專案進度。具備跨職能協作、領導力及溝通能力，能夠帶領團隊實現設計目標。
+                UI/UX 設計師，參與過多個從 0 到 1 的 Web 與 App
+                專案，負責從需求釐清到設計落地，並與 PM、工程團隊密切合作。熟悉
+                Figma、Adobe
+                等設計工具，擅長設計系統建立及維護，並協助團隊建立設計流程、提升專案效率與設計一致性。
               </p>
             </div>
           </div>
