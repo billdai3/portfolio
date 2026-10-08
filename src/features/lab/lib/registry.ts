@@ -1,77 +1,25 @@
-import type { ComponentType, ReactNode } from "react";
+import {
+  buildMdxContentRegistry,
+  findContentBySlug,
+  type MdxContentEntry,
+  type MdxContentModule,
+} from "@/features/mdx/build-mdx-content-registry";
 import type { LabProjectMetadata } from "./createLabPage";
 
-type LabMdxModule = {
-  default: ComponentType<{ children?: ReactNode }>;
-  metadata: LabProjectMetadata;
-  title?: string;
-};
+type LabMdxModule = MdxContentModule<LabProjectMetadata>;
 
 const modules = import.meta.glob<LabMdxModule>("../../../content/lab/*.mdx", {
   eager: true,
 });
 
-function slugFromPath(path: string): string {
-  const match = /\/([^/]+)\.mdx$/.exec(path);
-  return match?.[1] ?? "";
-}
+export type LabProjectEntry = MdxContentEntry<LabProjectMetadata>;
 
-function slugToTitle(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-function resolveTitle(mod: LabMdxModule, slug: string): string {
-  const title = mod.title?.trim();
-
-  if (title) return title;
-
-  if (import.meta.env.DEV) {
-    console.warn(
-      `[lab] No # heading in MDX for "${slug}"; using slug as title.`,
-    );
-  }
-
-  return slugToTitle(slug);
-}
-
-function resolveAssetUrl(value: string | undefined): string | undefined {
-  if (!value) return undefined;
-  if (typeof value === "string") return value;
-  return undefined;
-}
-
-export type LabProjectEntry = LabProjectMetadata & {
-  slug: string;
-  title: string;
-  Page: ComponentType<{ children?: ReactNode }>;
-};
-
-export const labProjects: LabProjectEntry[] = Object.entries(modules)
-  .map(([path, mod]) => {
-    const slug = slugFromPath(path);
-
-    return {
-      slug,
-      title: resolveTitle(mod, slug),
-      ...mod.metadata,
-      cover: resolveAssetUrl(mod.metadata.cover),
-      coverVideo: resolveAssetUrl(mod.metadata.coverVideo),
-      Page: mod.default,
-    };
-  })
-  .sort((a, b) => {
-    const ao = a.order ?? Number.POSITIVE_INFINITY;
-    const bo = b.order ?? Number.POSITIVE_INFINITY;
-    if (ao !== bo) return ao - bo;
-    return a.title.localeCompare(b.title);
-  });
+export const labProjects: LabProjectEntry[] = buildMdxContentRegistry(modules, {
+  label: "lab",
+});
 
 export function getLabProject(
   slug: string | undefined,
 ): LabProjectEntry | undefined {
-  if (!slug) return undefined;
-  return labProjects.find((p) => p.slug === slug);
+  return findContentBySlug(labProjects, slug);
 }

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import DetailBackButton from "@/components/DetailBackButton";
 
 type LabProjectLayoutProps = {
   demo: ReactNode;
@@ -35,32 +35,6 @@ function TabButton({
   );
 }
 
-function GoBackButton() {
-  const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/lab");
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={handleGoBack}
-      className="detail-back-btn"
-      aria-label="Go Back"
-    >
-      <span className="detail-back-btn__icon" aria-hidden>
-        ←
-      </span>
-      <span className="detail-back-btn__label">Go Back</span>
-    </button>
-  );
-}
-
 export default function LabProjectLayout({
   demo,
   children,
@@ -83,7 +57,7 @@ export default function LabProjectLayout({
 
   return (
     <div className="bg-bg-page text-text-primary">
-      <GoBackButton />
+      <DetailBackButton fallbackTo="/lab" />
 
       <div className="mx-auto max-w-360 px-2 pb-16 pt-14 sm:px-4 lg:px-6 lg:pb-20 lg:pt-18">
         <div className="mb-4 lg:hidden">

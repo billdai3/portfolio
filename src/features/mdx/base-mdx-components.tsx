@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import type { MDXComponents } from "mdx/types";
 
 export type MdxElProps = { children?: ReactNode };
@@ -15,7 +15,41 @@ export function isBlockCode({
   return Boolean(dataLanguage ?? className?.includes("language-"));
 }
 
-/** Shared MDX typography — Lab / Work extend with their own figure / img / code. */
+function mdxCode({ children, className, ...props }: MdxCodeProps) {
+  if (isBlockCode({ className, ...props })) {
+    return (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    );
+  }
+
+  return (
+    <code
+      className="rounded bg-bg-card px-1.5 py-0.5 font-mono text-sm text-ash-100"
+      {...props}
+    >
+      {children}
+    </code>
+  );
+}
+
+type MdxMediaLikeProps = {
+  src: string;
+  alt?: string;
+  width?: "default" | "wide" | "page";
+};
+
+/** Factory for markdown `img` → Media; kept here so Work / Lab share one wrapper. */
+export function createMdxImgComponent(
+  Media: ComponentType<MdxMediaLikeProps>,
+): NonNullable<MDXComponents["img"]> {
+  return function MdxImg({ src, alt }: { src?: string; alt?: string }) {
+    return <Media src={src ?? ""} alt={alt} width="default" />;
+  };
+}
+
+/** Shared MDX typography — Lab / Work extend with media / figure / pre. */
 export const baseMdxComponents: MDXComponents = {
   h1: ({ children }: MdxElProps) => (
     <h1 className="type-page-title mb-4 text-text-primary">{children}</h1>
@@ -87,4 +121,5 @@ export const baseMdxComponents: MDXComponents = {
       {children}
     </td>
   ),
+  code: mdxCode,
 };

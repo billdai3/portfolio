@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import DetailBackButton from "@/components/DetailBackButton";
 
 type WorkProjectLayoutProps = {
   children: ReactNode;
@@ -7,39 +7,13 @@ type WorkProjectLayoutProps = {
   prose?: boolean;
 };
 
-function GoBackButton() {
-  const navigate = useNavigate();
-
-  const handleGoBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/work");
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={handleGoBack}
-      className="detail-back-btn"
-      aria-label="Go Back"
-    >
-      <span className="detail-back-btn__icon" aria-hidden>
-        ←
-      </span>
-      <span className="detail-back-btn__label">Go Back</span>
-    </button>
-  );
-}
-
 export default function WorkProjectLayout({
   children,
   prose = true,
 }: WorkProjectLayoutProps) {
   return (
     <div className="bg-bg-page text-text-primary">
-      <GoBackButton />
+      <DetailBackButton fallbackTo="/work" />
 
       <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
         {prose ? (
