@@ -60,9 +60,7 @@ function buildSkillDesignTimeline(
 
   const tl = gsap.timeline({ repeat: -1 });
 
-  if (cursorArrow) gsap.set(cursorArrow, { autoAlpha: 1 });
-  if (cursorResize) gsap.set(cursorResize, { autoAlpha: 0 });
-  if (cursorTarget) gsap.set(cursorTarget, { autoAlpha: 0 });
+  applyIdleState(root);
 
   if (cursor) {
     tl.to(
@@ -229,7 +227,8 @@ function buildSkillDesignTimeline(
   return tl;
 }
 
-function showCompleteState(root: ParentNode) {
+/** 動畫 t=0／預設 idle 的絕對休息態。 */
+function applyIdleState(root: ParentNode) {
   const cursor = q<SVGGElement>(root, "cursor");
   const cursorArrow = q<SVGElement>(root, "cursor-arrow");
   const cursorResize = q<SVGElement>(root, "cursor-resize");
@@ -241,7 +240,7 @@ function showCompleteState(root: ParentNode) {
   const vertexBl = q<SVGRectElement>(root, "vertex-bl");
   const size = q<SVGGElement>(root, "size");
 
-  if (cursor) gsap.set(cursor, { clearProps: "transform" });
+  if (cursor) gsap.set(cursor, { x: 0, y: 0 });
   if (cursorArrow) gsap.set(cursorArrow, { autoAlpha: 1 });
   if (cursorResize) gsap.set(cursorResize, { autoAlpha: 0 });
   if (cursorTarget) gsap.set(cursorTarget, { autoAlpha: 0 });
@@ -252,7 +251,91 @@ function showCompleteState(root: ParentNode) {
   if (surface) {
     gsap.set(surface, { autoAlpha: 1, attr: { width: 92, height: 76 } });
   }
-  if (size) gsap.set(size, { autoAlpha: 1, clearProps: "transform" });
+  if (size) gsap.set(size, { x: 0, y: 0, autoAlpha: 1 });
+}
+
+function showCompleteState(root: ParentNode) {
+  applyIdleState(root);
+}
+
+/** Hover out：從當前值直接過渡回 t=0 休息態。 */
+function tweenToRestState(
+  root: ParentNode,
+  options?: { duration?: number; onComplete?: () => void },
+) {
+  const duration = options?.duration ?? 0.35;
+  const ease = "power2.out";
+  const cursor = q<SVGGElement>(root, "cursor");
+  const cursorArrow = q<SVGElement>(root, "cursor-arrow");
+  const cursorResize = q<SVGElement>(root, "cursor-resize");
+  const cursorTarget = q<SVGElement>(root, "cursor-target");
+  const surface = q<SVGRectElement>(root, "surface");
+  const vertexTl = q<SVGRectElement>(root, "vertex-tl");
+  const vertexTr = q<SVGRectElement>(root, "vertex-tr");
+  const vertexBr = q<SVGRectElement>(root, "vertex-br");
+  const vertexBl = q<SVGRectElement>(root, "vertex-bl");
+  const size = q<SVGGElement>(root, "size");
+
+  const rest = gsap.timeline({ onComplete: options?.onComplete });
+  if (cursor) rest.to(cursor, { x: 0, y: 0, duration, ease, overwrite: "auto" }, 0);
+  if (cursorArrow) {
+    rest.to(cursorArrow, { autoAlpha: 1, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (cursorResize) {
+    rest.to(cursorResize, { autoAlpha: 0, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (cursorTarget) {
+    rest.to(cursorTarget, { autoAlpha: 0, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (vertexTl) {
+    rest.to(
+      vertexTl,
+      { autoAlpha: 1, attr: { x: 26, y: 26 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (vertexTr) {
+    rest.to(
+      vertexTr,
+      { autoAlpha: 1, attr: { x: 118, y: 26 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (vertexBr) {
+    rest.to(
+      vertexBr,
+      { autoAlpha: 1, attr: { x: 118, y: 102 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (vertexBl) {
+    rest.to(
+      vertexBl,
+      { autoAlpha: 1, attr: { x: 26, y: 102 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (surface) {
+    rest.to(
+      surface,
+      {
+        autoAlpha: 1,
+        attr: { width: 92, height: 76 },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (size) {
+    rest.to(
+      size,
+      { x: 0, y: 0, autoAlpha: 1, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  return rest;
 }
 
 export default function SkillDesignAnimation({
@@ -267,6 +350,8 @@ export default function SkillDesignAnimation({
     sceneSelector: "#skill-design",
     buildTimeline: buildSkillDesignTimeline,
     showCompleteState,
+    applyIdleState,
+    tweenToRestState,
     autoplay,
     active,
     levaSetValues,

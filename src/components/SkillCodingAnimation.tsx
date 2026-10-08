@@ -68,25 +68,7 @@ function buildSkillCodingTimeline(
 
   const tl = gsap.timeline({ repeat: -1 });
 
-  // 初始狀態，避免相對位移造成累積偏移
-  if (graphicLeft) tl.set(graphicLeft, { x: 0, y: 0 }, 0);
-  if (graphicRight) tl.set(graphicRight, { x: 0, y: 0 }, 0);
-  if (graphicSlash) {
-    tl.set(
-      graphicSlash,
-      {
-        rotation: 0,
-        y: 0,
-        svgOrigin: SLASH_SVG_ORIGIN,
-        attr: { d: SLASH_D_ORIGINAL },
-      },
-      0,
-    );
-  }
-  if (graphicLeft1) tl.set(graphicLeft1, { attr: { d: LEFT1_D_ORIG } }, 0);
-  if (graphicLeft2) tl.set(graphicLeft2, { attr: { d: LEFT2_D_ORIG } }, 0);
-  if (graphicRight1) tl.set(graphicRight1, { attr: { d: RIGHT1_D_ORIG } }, 0);
-  if (graphicRight2) tl.set(graphicRight2, { attr: { d: RIGHT2_D_ORIG } }, 0);
+  applyIdleState(root);
 
   const tweenDuration = 0.3;
   const ease = EASE_POWER_OUT;
@@ -375,8 +357,8 @@ function buildSkillCodingTimeline(
   return tl;
 }
 
-function showCompleteState(root: ParentNode) {
-  // t=8.9 的 tween（duration 0.3）結束時即視為「完成」狀態
+/** 動畫 t=0／預設 idle 的絕對休息態。 */
+function applyIdleState(root: ParentNode) {
   const graphicLeft = q<SVGGElement>(root, "graphic-left");
   const graphicRight = q<SVGGElement>(root, "graphic-right");
   const graphicSlash = q<SVGPathElement>(root, "graphic-slash");
@@ -385,7 +367,32 @@ function showCompleteState(root: ParentNode) {
   const graphicRight1 = q<SVGPathElement>(root, "graphic-right-1");
   const graphicRight2 = q<SVGPathElement>(root, "graphic-right-2");
 
-  // 最後 keyframe 後應回到原始位置（x=0, y=0）
+  if (graphicLeft) gsap.set(graphicLeft, { x: 0, y: 0 });
+  if (graphicRight) gsap.set(graphicRight, { x: 0, y: 0 });
+  if (graphicSlash) {
+    gsap.set(graphicSlash, {
+      rotation: 0,
+      y: 0,
+      svgOrigin: SLASH_SVG_ORIGIN,
+      attr: { d: SLASH_D_ORIGINAL },
+    });
+  }
+  if (graphicLeft1) gsap.set(graphicLeft1, { attr: { d: LEFT1_D_ORIG } });
+  if (graphicLeft2) gsap.set(graphicLeft2, { attr: { d: LEFT2_D_ORIG } });
+  if (graphicRight1) gsap.set(graphicRight1, { attr: { d: RIGHT1_D_ORIG } });
+  if (graphicRight2) gsap.set(graphicRight2, { attr: { d: RIGHT2_D_ORIG } });
+}
+
+function showCompleteState(root: ParentNode) {
+  // reduced-motion：循環末幀路徑（RESET），位置仍回原點
+  const graphicLeft = q<SVGGElement>(root, "graphic-left");
+  const graphicRight = q<SVGGElement>(root, "graphic-right");
+  const graphicSlash = q<SVGPathElement>(root, "graphic-slash");
+  const graphicLeft1 = q<SVGPathElement>(root, "graphic-left-1");
+  const graphicLeft2 = q<SVGPathElement>(root, "graphic-left-2");
+  const graphicRight1 = q<SVGPathElement>(root, "graphic-right-1");
+  const graphicRight2 = q<SVGPathElement>(root, "graphic-right-2");
+
   if (graphicLeft) gsap.set(graphicLeft, { x: 0, y: 0 });
   if (graphicRight) gsap.set(graphicRight, { x: 0, y: 0 });
   if (graphicSlash) {
@@ -402,6 +409,74 @@ function showCompleteState(root: ParentNode) {
   if (graphicRight2) gsap.set(graphicRight2, { attr: { d: RIGHT2_D_RESET } });
 }
 
+/** Hover out：回到 timeline t=0 的絕對休息態（非路徑倒轉）。 */
+function tweenToRestState(
+  root: ParentNode,
+  options?: { duration?: number; onComplete?: () => void },
+) {
+  const duration = options?.duration ?? 0.35;
+  const ease = "power2.out";
+  const graphicLeft = q<SVGGElement>(root, "graphic-left");
+  const graphicRight = q<SVGGElement>(root, "graphic-right");
+  const graphicSlash = q<SVGPathElement>(root, "graphic-slash");
+  const graphicLeft1 = q<SVGPathElement>(root, "graphic-left-1");
+  const graphicLeft2 = q<SVGPathElement>(root, "graphic-left-2");
+  const graphicRight1 = q<SVGPathElement>(root, "graphic-right-1");
+  const graphicRight2 = q<SVGPathElement>(root, "graphic-right-2");
+
+  const rest = gsap.timeline({ onComplete: options?.onComplete });
+  if (graphicLeft) {
+    rest.to(graphicLeft, { x: 0, y: 0, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (graphicRight) {
+    rest.to(graphicRight, { x: 0, y: 0, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (graphicSlash) {
+    rest.to(
+      graphicSlash,
+      {
+        rotation: 0,
+        y: 0,
+        svgOrigin: SLASH_SVG_ORIGIN,
+        attr: { d: SLASH_D_ORIGINAL },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (graphicLeft1) {
+    rest.to(
+      graphicLeft1,
+      { attr: { d: LEFT1_D_ORIG }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (graphicLeft2) {
+    rest.to(
+      graphicLeft2,
+      { attr: { d: LEFT2_D_ORIG }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (graphicRight1) {
+    rest.to(
+      graphicRight1,
+      { attr: { d: RIGHT1_D_ORIG }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (graphicRight2) {
+    rest.to(
+      graphicRight2,
+      { attr: { d: RIGHT2_D_ORIG }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  return rest;
+}
+
 export default function SkillCodingAnimation({
   className,
   autoplay = true,
@@ -414,6 +489,8 @@ export default function SkillCodingAnimation({
     sceneSelector: "#skill-coding",
     buildTimeline: buildSkillCodingTimeline,
     showCompleteState,
+    applyIdleState,
+    tweenToRestState,
     autoplay,
     active,
     levaSetValues,

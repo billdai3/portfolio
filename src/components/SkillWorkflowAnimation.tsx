@@ -72,34 +72,7 @@ function buildSkillWorkflowTimeline(
 
   const tl = gsap.timeline({ repeat: -1 });
 
-  for (const id of BUBBLE_STROKE_IDS) {
-    const bubble = q<SVGElement>(root, id);
-    if (bubble) {
-      tl.set(bubble, { attr: { ...BUBBLE_STROKE_ATTR } }, 0);
-    }
-  }
-
-  if (bubble1) {
-    tl.set(bubble1, { scale: 1, transformOrigin: BUBBLE_CENTER_ORIGIN }, 0);
-  }
-  if (bubble2) {
-    tl.set(bubble2, { scale: 1, transformOrigin: BUBBLE_CENTER_ORIGIN }, 0);
-  }
-  if (bubble3) {
-    tl.set(
-      bubble3,
-      { scaleX: 1, scaleY: 1, transformOrigin: BUBBLE3_ORIGIN },
-      0,
-    );
-  }
-  if (bubble4) {
-    tl.set(bubble4, { scale: 1, transformOrigin: BUBBLE4_ORIGIN }, 0);
-  }
-  for (const line of lines) {
-    if (line) {
-      tl.set(line, { scaleX: 1, transformOrigin: LINE_ORIGIN }, 0);
-    }
-  }
+  applyIdleState(root);
 
   for (const line of lines) {
     if (!line) continue;
@@ -323,7 +296,8 @@ function buildSkillWorkflowTimeline(
   return tl;
 }
 
-function showCompleteState(root: ParentNode) {
+/** 動畫 t=0／預設 idle 的絕對休息態。 */
+function applyIdleState(root: ParentNode) {
   const bubble1 = q<SVGPathElement>(root, "bubble-1");
   const bubble2 = q<SVGPathElement>(root, "bubble-2");
   const bubble3 = q<SVGRectElement>(root, "bubble-3");
@@ -369,6 +343,88 @@ function showCompleteState(root: ParentNode) {
   }
 }
 
+function showCompleteState(root: ParentNode) {
+  applyIdleState(root);
+}
+
+/** Hover out：各 bubble／line 從當前 scale 過渡回 1。 */
+function tweenToRestState(
+  root: ParentNode,
+  options?: { duration?: number; onComplete?: () => void },
+) {
+  const duration = options?.duration ?? 0.35;
+  const ease = "power2.out";
+  const bubble1 = q<SVGPathElement>(root, "bubble-1");
+  const bubble2 = q<SVGPathElement>(root, "bubble-2");
+  const bubble3 = q<SVGRectElement>(root, "bubble-3");
+  const bubble4 = q<SVGPathElement>(root, "bubble-4");
+  const lines = LINE_IDS.map((id) => q<SVGRectElement>(root, id));
+
+  const rest = gsap.timeline({ onComplete: options?.onComplete });
+  if (bubble1) {
+    rest.to(
+      bubble1,
+      {
+        scale: 1,
+        transformOrigin: BUBBLE_CENTER_ORIGIN,
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (bubble2) {
+    rest.to(
+      bubble2,
+      {
+        scale: 1,
+        transformOrigin: BUBBLE_CENTER_ORIGIN,
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (bubble3) {
+    rest.to(
+      bubble3,
+      {
+        scaleX: 1,
+        scaleY: 1,
+        transformOrigin: BUBBLE3_ORIGIN,
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (bubble4) {
+    rest.to(
+      bubble4,
+      {
+        scale: 1,
+        transformOrigin: BUBBLE4_ORIGIN,
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  for (const line of lines) {
+    if (!line) continue;
+    rest.to(
+      line,
+      { scaleX: 1, transformOrigin: LINE_ORIGIN, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  return rest;
+}
+
 export default function SkillWorkflowAnimation({
   className,
   autoplay = true,
@@ -381,6 +437,8 @@ export default function SkillWorkflowAnimation({
     sceneSelector: "#skill-workflow",
     buildTimeline: buildSkillWorkflowTimeline,
     showCompleteState,
+    applyIdleState,
+    tweenToRestState,
     autoplay,
     active,
     levaSetValues,

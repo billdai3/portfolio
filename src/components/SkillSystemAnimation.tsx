@@ -60,14 +60,7 @@ function buildSkillSystemTimeline(
   const tl = gsap.timeline({ repeat: -1 });
   const symMove = { duration: SYM_DUR, ease: SYM_EASE };
 
-  if (donutCover) tl.set(donutCover, { autoAlpha: 0 }, 0);
-  if (symbol) {
-    tl.set(
-      symbol,
-      { rotation: -45, transformOrigin: SYMBOL_ORIGIN },
-      0,
-    );
-  }
+  applyIdleState(root);
 
   if (symbol) {
     tl.to(
@@ -264,10 +257,224 @@ function buildSkillSystemTimeline(
   return tl;
 }
 
+/** 動畫 t=0／預設 idle 的絕對休息態。 */
+function applyIdleState(root: ParentNode) {
+  const donut = q<SVGGElement>(root, "donut");
+  const donutCover = q<SVGElement>(root, "donut-cover");
+  const donutIn = q<SVGCircleElement>(root, "donut-in");
+  const donutOut20 = q<SVGElement>(root, "donut-out-20");
+  const donutOut40 = q<SVGElement>(root, "donut-out-40");
+  const donutOut60 = q<SVGElement>(root, "donut-out-60");
+  const donutOut80 = q<SVGElement>(root, "donut-out-80");
+  const donutOut100 = q<SVGElement>(root, "donut-out-100");
+  const symbol = q<SVGGElement>(root, "symbol");
+  const symbolTOut = q<SVGRectElement>(root, "symbol-t-out");
+  const symbolROut = q<SVGRectElement>(root, "symbol-r-out");
+  const symbolBOut = q<SVGRectElement>(root, "symbol-b-out");
+  const symbolLOut = q<SVGRectElement>(root, "symbol-l-out");
+  const symbolTIn = q<SVGRectElement>(root, "symbol-t-in");
+  const symbolRIn = q<SVGRectElement>(root, "symbol-r-in");
+  const symbolBIn = q<SVGRectElement>(root, "symbol-b-in");
+  const symbolLIn = q<SVGRectElement>(root, "symbol-l-in");
+
+  const spinIdle = { rotation: 0, svgOrigin: SVG_ORIGIN };
+  if (donut) gsap.set(donut, spinIdle);
+  if (donutOut20) gsap.set(donutOut20, spinIdle);
+  if (donutOut40) gsap.set(donutOut40, spinIdle);
+  if (donutOut60) gsap.set(donutOut60, spinIdle);
+  if (donutOut80) gsap.set(donutOut80, spinIdle);
+  if (donutOut100) gsap.set(donutOut100, spinIdle);
+  if (donutCover) gsap.set(donutCover, { autoAlpha: 0 });
+  if (donutIn) gsap.set(donutIn, { attr: { r: 38 } });
+  if (symbol) {
+    gsap.set(symbol, { rotation: -45, transformOrigin: SYMBOL_ORIGIN });
+  }
+  if (symbolTOut) {
+    gsap.set(symbolTOut, { attr: { x: 63, y: 63, width: 34, height: 4 } });
+  }
+  if (symbolROut) {
+    gsap.set(symbolROut, { attr: { x: 93, y: 63, width: 4, height: 34 } });
+  }
+  if (symbolBOut) {
+    gsap.set(symbolBOut, { attr: { x: 63, y: 93, width: 34, height: 4 } });
+  }
+  if (symbolLOut) {
+    gsap.set(symbolLOut, { attr: { x: 63, y: 63, width: 4, height: 34 } });
+  }
+  if (symbolTIn) {
+    gsap.set(symbolTIn, {
+      scale: 1,
+      transformOrigin: SYMBOL_ORIGIN,
+      attr: { x: 78, y: 63, width: 4, height: 19 },
+    });
+  }
+  if (symbolRIn) {
+    gsap.set(symbolRIn, {
+      scale: 1,
+      transformOrigin: SYMBOL_ORIGIN,
+      attr: { x: 78, y: 78, width: 19, height: 4 },
+    });
+  }
+  if (symbolBIn) {
+    gsap.set(symbolBIn, {
+      scale: 1,
+      transformOrigin: SYMBOL_ORIGIN,
+      attr: { x: 78, y: 78, width: 4, height: 19 },
+    });
+  }
+  if (symbolLIn) {
+    gsap.set(symbolLIn, {
+      scale: 1,
+      transformOrigin: SYMBOL_ORIGIN,
+      attr: { x: 63, y: 78, width: 19, height: 4 },
+    });
+  }
+}
+
 function showCompleteState(root: ParentNode) {
   const tl = buildSkillSystemTimeline(root);
   tl.time(ANIM_END_SEC);
   tl.kill();
+}
+
+/** Hover out：回到 t=0（symbol -45°、donut 未展開、symbol 原尺寸）。 */
+function tweenToRestState(
+  root: ParentNode,
+  options?: { duration?: number; onComplete?: () => void },
+) {
+  const duration = options?.duration ?? 0.35;
+  const ease = "power2.out";
+  const donut = q<SVGGElement>(root, "donut");
+  const donutCover = q<SVGElement>(root, "donut-cover");
+  const donutIn = q<SVGCircleElement>(root, "donut-in");
+  const donutOut20 = q<SVGElement>(root, "donut-out-20");
+  const donutOut40 = q<SVGElement>(root, "donut-out-40");
+  const donutOut60 = q<SVGElement>(root, "donut-out-60");
+  const donutOut80 = q<SVGElement>(root, "donut-out-80");
+  const donutOut100 = q<SVGElement>(root, "donut-out-100");
+  const symbol = q<SVGGElement>(root, "symbol");
+  const symbolTOut = q<SVGRectElement>(root, "symbol-t-out");
+  const symbolROut = q<SVGRectElement>(root, "symbol-r-out");
+  const symbolBOut = q<SVGRectElement>(root, "symbol-b-out");
+  const symbolLOut = q<SVGRectElement>(root, "symbol-l-out");
+  const symbolTIn = q<SVGRectElement>(root, "symbol-t-in");
+  const symbolRIn = q<SVGRectElement>(root, "symbol-r-in");
+  const symbolBIn = q<SVGRectElement>(root, "symbol-b-in");
+  const symbolLIn = q<SVGRectElement>(root, "symbol-l-in");
+
+  const rest = gsap.timeline({ onComplete: options?.onComplete });
+  const spinRest = { rotation: 0, svgOrigin: SVG_ORIGIN, duration, ease, overwrite: "auto" as const };
+
+  if (donut) rest.to(donut, spinRest, 0);
+  if (donutOut20) rest.to(donutOut20, spinRest, 0);
+  if (donutOut40) rest.to(donutOut40, spinRest, 0);
+  if (donutOut60) rest.to(donutOut60, spinRest, 0);
+  if (donutOut80) rest.to(donutOut80, spinRest, 0);
+  if (donutOut100) rest.to(donutOut100, spinRest, 0);
+  if (donutCover) {
+    rest.to(donutCover, { autoAlpha: 0, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (donutIn) {
+    rest.to(donutIn, { attr: { r: 38 }, duration, ease, overwrite: "auto" }, 0);
+  }
+  if (symbol) {
+    rest.to(
+      symbol,
+      {
+        rotation: -45,
+        transformOrigin: SYMBOL_ORIGIN,
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (symbolTOut) {
+    rest.to(
+      symbolTOut,
+      { attr: { x: 63, y: 63, width: 34, height: 4 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (symbolROut) {
+    rest.to(
+      symbolROut,
+      { attr: { x: 93, y: 63, width: 4, height: 34 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (symbolBOut) {
+    rest.to(
+      symbolBOut,
+      { attr: { x: 63, y: 93, width: 34, height: 4 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (symbolLOut) {
+    rest.to(
+      symbolLOut,
+      { attr: { x: 63, y: 63, width: 4, height: 34 }, duration, ease, overwrite: "auto" },
+      0,
+    );
+  }
+  if (symbolTIn) {
+    rest.to(
+      symbolTIn,
+      {
+        scale: 1,
+        transformOrigin: SYMBOL_ORIGIN,
+        attr: { x: 78, y: 63, width: 4, height: 19 },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (symbolRIn) {
+    rest.to(
+      symbolRIn,
+      {
+        scale: 1,
+        transformOrigin: SYMBOL_ORIGIN,
+        attr: { x: 78, y: 78, width: 19, height: 4 },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (symbolBIn) {
+    rest.to(
+      symbolBIn,
+      {
+        scale: 1,
+        transformOrigin: SYMBOL_ORIGIN,
+        attr: { x: 78, y: 78, width: 4, height: 19 },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  if (symbolLIn) {
+    rest.to(
+      symbolLIn,
+      {
+        scale: 1,
+        transformOrigin: SYMBOL_ORIGIN,
+        attr: { x: 63, y: 78, width: 19, height: 4 },
+        duration,
+        ease,
+        overwrite: "auto",
+      },
+      0,
+    );
+  }
+  return rest;
 }
 
 export default function SkillSystemAnimation({
@@ -282,6 +489,8 @@ export default function SkillSystemAnimation({
     sceneSelector: "#skill-system",
     buildTimeline: buildSkillSystemTimeline,
     showCompleteState,
+    applyIdleState,
+    tweenToRestState,
     autoplay,
     active,
     levaSetValues,

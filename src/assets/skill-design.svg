@@ -101,7 +101,7 @@
         stroke-linecap="round"
         stroke-linejoin="round"
       />
-      <g id="cursor-target">
+      <g id="cursor-target" opacity="0">
         <mask
           id="path-12-outside-1_0_1"
           maskUnits="userSpaceOnUse"
@@ -126,7 +126,7 @@
           mask="url(#path-12-outside-1_0_1)"
         />
       </g>
-      <g id="cursor-resize">
+      <g id="cursor-resize" opacity="0">
         <mask
           id="path-14-outside-2_0_1"
           maskUnits="userSpaceOnUse"
