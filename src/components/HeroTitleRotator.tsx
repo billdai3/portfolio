@@ -58,11 +58,15 @@ export default function HeroTitleRotator() {
   const liveIndex = index % HERO_TITLES.length;
 
   if (reduceMotion) {
-    return <h1 className="type-hero-title text-ash-900">{HERO_TITLES[0]}</h1>;
+    return (
+      <h1 className="hero-title-rotator type-hero-title text-ash-900">
+        {HERO_TITLES[0]}
+      </h1>
+    );
   }
 
   return (
-    <h1 className="type-hero-title text-ash-900">
+    <h1 className="hero-title-rotator type-hero-title text-ash-900">
       <span className="sr-only" aria-live="polite">
         {HERO_TITLES[liveIndex]}
       </span>

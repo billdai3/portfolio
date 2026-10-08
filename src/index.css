@@ -5,6 +5,12 @@
   color: var(--color-ash-900);
 }
 
+.hero-title-rotator ::selection,
+.hero-title-rotator::selection {
+  background-color: var(--color-ash-50);
+  color: var(--color-ash-900);
+}
+
 @theme {
   /* Brand */
   --color-brand: #fcc92c;
