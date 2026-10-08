@@ -7,7 +7,6 @@ import SkillWorkflowAnimation from "../components/SkillWorkflowAnimation";
 
 type SkillAnimationProps = {
   className?: string;
-  autoplay?: boolean;
   active?: boolean;
 };
 
@@ -42,9 +41,39 @@ const skills: {
   },
 ];
 
-export default function AboutPage() {
-  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+function SkillCard({
+  title,
+  description,
+  Animation,
+}: {
+  title: string;
+  description: string;
+  Animation: ComponentType<SkillAnimationProps>;
+}) {
+  const [active, setActive] = useState(false);
 
+  return (
+    <li
+      className="flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+    >
+      <div className="size-30 shrink-0 overflow-hidden rounded-xl" aria-hidden>
+        <Animation className="size-full" active={active} />
+      </div>
+      <div className="min-w-0">
+        <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary sm:text-lg">
+          {title}
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+          {description}
+        </p>
+      </div>
+    </li>
+  );
+}
+
+export default function AboutPage() {
   return (
     <div className="text-text-primary">
       <section
@@ -90,32 +119,8 @@ export default function AboutPage() {
           </h2>
 
           <ul className="grid gap-6 sm:grid-cols-2">
-            {skills.map(({ title, description, Animation }) => (
-              <li
-                key={title}
-                className="flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
-                onMouseEnter={() => setActiveSkill(title)}
-                onMouseLeave={() => setActiveSkill(null)}
-              >
-                <div
-                  className="size-30 shrink-0 overflow-hidden rounded-xl"
-                  aria-hidden
-                >
-                  <Animation
-                    className="size-full"
-                    autoplay={false}
-                    active={activeSkill === title}
-                  />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary sm:text-lg">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    {description}
-                  </p>
-                </div>
-              </li>
+            {skills.map((skill) => (
+              <SkillCard key={skill.title} {...skill} />
             ))}
           </ul>
         </div>

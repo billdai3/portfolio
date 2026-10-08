@@ -1,23 +1,22 @@
 import gsap from "gsap";
-import { useEffect, useLayoutEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 import skillWorkflowSvg from "../assets/skill-workflow.svg?raw";
+import {
+  skillSvgClassName,
+  useSkillSvgAnimation,
+  type SkillLevaSetValues,
+  type SkillTimelineHandle,
+} from "./useSkillSvgAnimation";
 
 /** 給 Leva scrub / Reset 用（僅 dev 頁）。 */
-export type SkillWorkflowTimelineHandle = {
-  seek: (progress: number) => void;
-  getProgress: () => number;
-  restart: () => void;
-};
+export type SkillWorkflowTimelineHandle = SkillTimelineHandle;
 
-type LevaSetValues = (values: Record<string, unknown>) => void;
+type LevaSetValues = SkillLevaSetValues;
 
 type SkillWorkflowAnimationProps = {
   className?: string;
-  /** 預設 true；About 等 hover 播放場景請設 false，並用 active 控制。 */
   autoplay?: boolean;
-  /** 有傳入時依此播放／暫停（false 會停在開頭）。 */
   active?: boolean;
   levaSetValues?: LevaSetValues;
   timelineRef?: RefObject<SkillWorkflowTimelineHandle | null>;
@@ -71,7 +70,7 @@ function buildSkillWorkflowTimeline(
   const line4 = q<SVGRectElement>(root, "line-4");
   const lines = [line1, line2, line3, line4];
 
-  const tl = gsap.timeline({ repeat: -1, paused: true });
+  const tl = gsap.timeline({ repeat: -1 });
 
   for (const id of BUBBLE_STROKE_IDS) {
     const bubble = q<SVGElement>(root, id);
@@ -377,94 +376,16 @@ export default function SkillWorkflowAnimation({
   levaSetValues,
   timelineRef,
 }: SkillWorkflowAnimationProps) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const wrapRef = useSkillSvgAnimation({
+    svgHtml: skillWorkflowSvg,
+    sceneSelector: "#skill-workflow",
+    buildTimeline: buildSkillWorkflowTimeline,
+    showCompleteState,
+    autoplay,
+    active,
+    levaSetValues,
+    timelineRef,
+  });
 
-  // 只掛一次 SVG，避免 active 重渲時 dangerouslySetInnerHTML 洗掉 GSAP 樣式
-  useLayoutEffect(() => {
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-    wrap.innerHTML = skillWorkflowSvg;
-  }, []);
-
-  useEffect(() => {
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-
-    const svg = wrap.querySelector("svg");
-    if (!svg) return;
-
-    const scene = svg.querySelector("#skill-workflow") ?? svg;
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    const ctx = gsap.context(() => {
-      if (prefersReduced) {
-        showCompleteState(scene);
-        if (timelineRef) timelineRef.current = null;
-        return;
-      }
-
-      const tl = buildSkillWorkflowTimeline(scene, levaSetValues);
-      tlRef.current = tl;
-
-      if (timelineRef) {
-        timelineRef.current = {
-          seek: (progress: number) => {
-            const t = tlRef.current;
-            if (!t) return;
-            t.pause();
-            t.progress(Math.max(0, Math.min(1, progress)));
-          },
-          getProgress: () => tlRef.current?.progress() ?? 0,
-          restart: () => {
-            const t = tlRef.current;
-            if (!t) return;
-            t.pause();
-            t.progress(0);
-            levaSetValues?.({ progress: 0 });
-            t.play();
-          },
-        };
-      }
-
-      levaSetValues?.({ progress: 0 });
-      tl.progress(0);
-      const shouldPlay = active !== undefined ? active : autoplay;
-      if (shouldPlay) tl.play();
-    }, svg);
-
-    return () => {
-      if (timelineRef) timelineRef.current = null;
-      tlRef.current = null;
-      ctx.revert();
-    };
-    // active 由下方 effect 控制，避免 hover 時重建 timeline
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
-  }, [autoplay, levaSetValues, timelineRef]);
-
-  useEffect(() => {
-    const tl = tlRef.current;
-    if (!tl || active === undefined) return;
-    if (active) {
-      tl.play();
-      return;
-    }
-    tl.pause();
-    tl.progress(0);
-    levaSetValues?.({ progress: 0 });
-  }, [active, levaSetValues]);
-
-  return (
-    <div
-      ref={wrapRef}
-      className={[
-        "[&>svg]:block [&>svg]:h-full [&>svg]:w-full [&>svg]:max-w-full",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    />
-  );
+  return <div ref={wrapRef} className={skillSvgClassName(className)} />;
 }
