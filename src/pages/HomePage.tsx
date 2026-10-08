@@ -1,3 +1,4 @@
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
@@ -29,31 +30,29 @@ export default function HomePage() {
   };
 
   return (
-    <div className="text-text-primary">
+    <div className="min-w-0 text-text-primary">
       {/* Hero — 100vh */}
       <section
         id="home-hero"
-        className="relative grid min-h-screen grid-rows-[1fr_minmax(0,45vh)_auto] bg-brand"
+        className="relative grid h-svh w-full min-w-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden bg-brand"
         aria-label="Hero"
       >
-        <div className="min-h-0" aria-hidden />
-
-        <div className="flex min-h-0 items-center justify-center px-6">
-          <HeroAnimation className="aspect-square h-full max-h-[min(45vh,24rem)] w-full max-w-md" />
+        <div className="flex min-h-0 min-w-0 items-center justify-center px-6 pt-14">
+          <HeroAnimation className="aspect-square h-auto max-h-full min-w-0 w-full max-w-xl" />
         </div>
 
-        <div className="flex flex-col items-center px-6 pb-16 pt-6 text-center text-ash-900 sm:pb-24">
+        <div className="min-w-0 px-6 pb-16 pt-2 text-center text-ash-900 sm:pb-24">
           <h1 className="type-hero-title">Bill's Portfolio</h1>
-          <p className="type-hero-subtitle mt-3">UI/UX Design</p>
         </div>
 
         <button
           type="button"
           onClick={scrollToSelectedWorks}
-          className="type-btn absolute bottom-10 right-6 z-10 cursor-pointer rounded-full border border-transparent px-2 py-6 text-ash-700 transition hover:text-ash-900 focus-visible:border-ash-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-400"
+          className="type-page-title absolute bottom-30 right-6 z-10 inline-flex rotate-90 cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-ash-900 transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-50"
           aria-label="Scroll to Selected Works"
         >
-          <span className="inline-block rotate-90">Scroll</span>
+          Scroll
+          <ArrowRight className="size-8 shrink-0" strokeWidth={3} aria-hidden />
         </button>
       </section>
 
