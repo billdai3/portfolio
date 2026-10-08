@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
+import HeroTitleRotator from "../components/HeroTitleRotator";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
 import { labProjects } from "../features/lab/lib/registry";
 import { workProjects } from "../features/work/lib/registry";
@@ -37,12 +38,12 @@ export default function HomePage() {
         className="relative grid h-svh w-full min-w-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden bg-brand"
         aria-label="Hero"
       >
-        <div className="flex min-h-0 min-w-0 items-center justify-center px-6 pt-14">
+        <div className="flex min-h-0 min-w-0 items-center justify-center px-6 pt-20">
           <HeroAnimation className="aspect-square h-auto max-h-full min-w-0 w-full max-w-xl" />
         </div>
 
-        <div className="min-w-0 px-6 pb-16 pt-2 text-center text-ash-900 sm:pb-24">
-          <h1 className="type-hero-title">Bill's Portfolio</h1>
+        <div className="min-w-0 px-6 pb-16 pt-2 text-center sm:pb-24">
+          <HeroTitleRotator />
         </div>
 
         <button
