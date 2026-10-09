@@ -355,7 +355,8 @@ export default function Layout() {
     if (!isDetailPage || !canHover) return;
 
     const related = event.relatedTarget;
-    if (related instanceof Node && event.currentTarget.contains(related)) return;
+    if (related instanceof Node && event.currentTarget.contains(related))
+      return;
 
     const interactive = detailNavInteractiveRef.current;
     requestAnimationFrame(() => {
@@ -469,25 +470,30 @@ export default function Layout() {
         </RouteTransitionOutlet>
       </main>
 
-      <footer className="border-t border-border-default">
-        <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-text-muted">
-          {import.meta.env.DEV ? (
-            <nav
-              aria-label="Dev pages"
-              className="mb-3 flex flex-wrap gap-x-4 gap-y-1"
-            >
-              {devPages.map(({ to, label }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  className="transition-colors hover:text-text-primary"
-                >
-                  {label}
-                </NavLink>
-              ))}
-            </nav>
-          ) : null}
-          © {new Date().getFullYear()} Your Name
+      <footer>
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 py-10 text-sm text-text-muted">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {import.meta.env.DEV ? (
+              <nav
+                aria-label="Dev pages"
+                className="flex flex-wrap items-center gap-x-4 gap-y-1"
+              >
+                {devPages.map(({ to, label }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    className="transition-colors hover:text-text-primary"
+                  >
+                    {label}
+                  </NavLink>
+                ))}
+              </nav>
+            ) : null}
+          </div>
+
+          <p className="shrink-0 whitespace-nowrap">
+            © {new Date().getFullYear()} Bill Dai
+          </p>
         </div>
       </footer>
     </div>
