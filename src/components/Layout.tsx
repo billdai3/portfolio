@@ -5,17 +5,38 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type ComponentType,
   type CSSProperties,
   type MouseEvent,
   type ReactNode,
   type RefObject,
+  type SVGProps,
 } from "react";
+import { Mail } from "lucide-react";
 import { NavLink, useLocation, useOutlet } from "react-router-dom";
-import { devPages } from "@/config/dev-pages";
+import GithubIcon from "./icons/GithubIcon";
 import RouteTransitionOutlet from "./RouteTransitionOutlet";
 
 const SCROLL_THRESHOLD = 8;
 const TOP_REVEAL_OFFSET = 16;
+
+type FooterIcon = ComponentType<
+  SVGProps<SVGSVGElement> & { strokeWidth?: number }
+>;
+
+/** Placeholder URLs — replace with real contact links later. */
+const footerLinks: { href: string; label: string; Icon: FooterIcon }[] = [
+  {
+    href: "mailto:twbilldai@gmail.com",
+    label: "Email",
+    Icon: Mail,
+  },
+  {
+    href: "https://github.com/billdai3",
+    label: "GitHub",
+    Icon: GithubIcon,
+  },
+];
 
 const navItems = [
   { to: "/", label: "Bill's", end: true, isHome: true },
@@ -471,25 +492,25 @@ export default function Layout() {
       </main>
 
       <footer>
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 py-10 text-sm text-text-muted">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            {import.meta.env.DEV ? (
-              <nav
-                aria-label="Dev pages"
-                className="flex flex-wrap items-center gap-x-4 gap-y-1"
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 py-10 text-md text-text-secondary">
+          <nav
+            aria-label="Contact"
+            className="flex flex-wrap items-center gap-x-4 gap-y-1"
+          >
+            {footerLinks.map(({ href, label, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                className="transition-colors hover:text-brand"
+                {...(href.startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
               >
-                {devPages.map(({ to, label }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    className="transition-colors hover:text-text-primary"
-                  >
-                    {label}
-                  </NavLink>
-                ))}
-              </nav>
-            ) : null}
-          </div>
+                <Icon className="size-6" aria-hidden strokeWidth={1.75} />
+              </a>
+            ))}
+          </nav>
 
           <p className="shrink-0 whitespace-nowrap">
             © {new Date().getFullYear()} Bill Dai
