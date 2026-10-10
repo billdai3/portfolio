@@ -104,24 +104,24 @@ function ShowcaseCardTitleBar({ title }: { title: string }) {
       <div ref={viewportRef} className="overflow-hidden">
         <span
           ref={segmentRef}
-          className="invisible absolute whitespace-nowrap pr-10 text-lg font-extrabold tracking-tight"
+          className="invisible absolute pr-10 text-lg font-extrabold tracking-tight whitespace-nowrap"
           aria-hidden
         >
           {title}
         </span>
-        <h3 className="text-lg font-extrabold leading-tight tracking-tight text-ash-50 transition-colors duration-300 ease-out group-hover:text-accent">
-          <span className="showcase-title-idle mx-auto block max-w-[60%] truncate text-center group-hover:hidden">
+        <h3 className="text-lg leading-tight font-extrabold tracking-tight text-ash-50 transition-colors duration-300 ease-out group-hover:text-accent">
+          <span className="showcase-title-idle mx-auto block max-w-[75%] truncate text-center group-hover:hidden">
             {title}
           </span>
           <span
             className="showcase-title-marquee hidden w-max group-hover:inline-flex"
             style={marqueeStyle}
           >
-            <span className="whitespace-nowrap pr-10">{title}</span>
-            <span className="whitespace-nowrap pr-10" aria-hidden>
+            <span className="pr-10 whitespace-nowrap">{title}</span>
+            <span className="pr-10 whitespace-nowrap" aria-hidden>
               {title}
             </span>
-            <span className="whitespace-nowrap pr-10" aria-hidden>
+            <span className="pr-10 whitespace-nowrap" aria-hidden>
               {title}
             </span>
           </span>
@@ -157,7 +157,7 @@ function ShowcaseCardCornerDecoration() {
       aria-hidden
     >
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="size-4 -rotate-45 rounded-full bg-ash-800 transition-transform duration-300 ease-out group-hover:rotate-45 [clip-path:inset(0_0_50%_0)]" />
+        <div className="size-4 -rotate-45 rounded-full bg-ash-800 transition-transform duration-300 ease-out [clip-path:inset(0_0_50%_0)] group-hover:rotate-45" />
       </div>
     </div>
   );
@@ -255,7 +255,7 @@ export default function ShowcaseCard({
           ) : null}
           <div
             className={`showcase-image-skeleton-fade absolute inset-0 transition-opacity duration-300 ease-out ${
-              loading ? "opacity-100" : "opacity-0 pointer-events-none"
+              loading ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
             aria-hidden={!loading}
           >
