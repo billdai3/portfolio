@@ -8,6 +8,7 @@ import {
   type ComponentType,
   type ReactNode,
 } from "react";
+import { GridIconLoadingBlock } from "../../../components/GridIconLoading";
 import { UnlockForm } from "./UnlockForm";
 import { RemoteMdxErrorBoundary } from "./RemoteMdxErrorBoundary";
 import { workMdxComponents } from "./mdx-components";
@@ -24,6 +25,9 @@ import {
   hasUnlockHint,
   type WorkContentPayload,
 } from "../lib/unlock-api";
+
+/** 避免極短等待時 loading 閃一下 */
+const MIN_LOADING_MS = 350;
 
 type LoadState =
   | { status: "checking" }
@@ -46,6 +50,45 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     return hasUnlockHint() ? { status: "checking" } : { status: "locked" };
   });
   const loadAbortRef = useRef<AbortController | null>(null);
+  const loadingStartedAtRef = useRef<number | null>(null);
+  const minLoadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearMinLoadingTimer = useCallback(() => {
+    if (minLoadingTimerRef.current) {
+      clearTimeout(minLoadingTimerRef.current);
+      minLoadingTimerRef.current = null;
+    }
+  }, []);
+
+  const markLoadingStarted = useCallback(() => {
+    loadingStartedAtRef.current = performance.now();
+  }, []);
+
+  const setStateAfterMinLoading = useCallback(
+    (next: LoadState, signal?: AbortSignal) => {
+      if (signal?.aborted) return;
+
+      const startedAt = loadingStartedAtRef.current;
+      const elapsed = startedAt == null ? MIN_LOADING_MS : performance.now() - startedAt;
+      const remaining = Math.max(0, MIN_LOADING_MS - elapsed);
+
+      clearMinLoadingTimer();
+
+      if (remaining === 0) {
+        loadingStartedAtRef.current = null;
+        setState(next);
+        return;
+      }
+
+      minLoadingTimerRef.current = setTimeout(() => {
+        minLoadingTimerRef.current = null;
+        if (signal?.aborted) return;
+        loadingStartedAtRef.current = null;
+        setState(next);
+      }, remaining);
+    },
+    [clearMinLoadingTimer],
+  );
 
   const compileAndStore = useCallback(
     async (content: WorkContentPayload, signal?: AbortSignal) => {
@@ -53,9 +96,12 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       if (signal?.aborted) return;
 
       setCachedWorkContent(slug, compiled.Content);
-      setState({ status: "ready", Content: compiled.Content });
+      setStateAfterMinLoading(
+        { status: "ready", Content: compiled.Content },
+        signal,
+      );
     },
-    [slug],
+    [setStateAfterMinLoading, slug],
   );
 
   const loadContent = useCallback(async (signal?: AbortSignal) => {
@@ -72,58 +118,79 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       if (result === "unauthorized") {
         clearUnlockHint();
         clearCachedWorkContent(slug);
-        setState({ status: "locked" });
+        setStateAfterMinLoading({ status: "locked" }, signal);
         return;
       }
 
       if (result === "error") {
-        setState({ status: "error", message: "無法載入內容，請稍後再試。" });
+        setStateAfterMinLoading(
+          { status: "error", message: "無法載入內容，請稍後再試。" },
+          signal,
+        );
         return;
       }
 
       await compileAndStore(result, signal);
     } catch (error) {
       if (isAbortError(error) || signal?.aborted) return;
-      setState({ status: "error", message: "內容格式錯誤，無法渲染。" });
+      setStateAfterMinLoading(
+        { status: "error", message: "內容格式錯誤，無法渲染。" },
+        signal,
+      );
     }
-  }, [compileAndStore, slug]);
+  }, [compileAndStore, setStateAfterMinLoading, slug]);
 
   const startLoadContent = useCallback(
     (content?: WorkContentPayload) => {
       loadAbortRef.current?.abort();
+      clearMinLoadingTimer();
       const controller = new AbortController();
       loadAbortRef.current = controller;
+      markLoadingStarted();
       setState({ status: "loading" });
 
       if (content) {
         void compileAndStore(content, controller.signal).catch((error: unknown) => {
           if (isAbortError(error) || controller.signal.aborted) return;
-          setState({ status: "error", message: "內容格式錯誤，無法渲染。" });
+          setStateAfterMinLoading(
+            { status: "error", message: "內容格式錯誤，無法渲染。" },
+            controller.signal,
+          );
         });
         return;
       }
 
       void loadContent(controller.signal);
     },
-    [compileAndStore, loadContent],
+    [
+      clearMinLoadingTimer,
+      compileAndStore,
+      loadContent,
+      markLoadingStarted,
+      setStateAfterMinLoading,
+    ],
   );
 
   useEffect(() => {
     if (getCachedWorkContent(slug)) {
       return () => {
         loadAbortRef.current?.abort();
+        clearMinLoadingTimer();
       };
     }
 
     if (!hasUnlockHint()) {
       return () => {
         loadAbortRef.current?.abort();
+        clearMinLoadingTimer();
       };
     }
 
     loadAbortRef.current?.abort();
+    clearMinLoadingTimer();
     const controller = new AbortController();
     loadAbortRef.current = controller;
+    markLoadingStarted();
     queueMicrotask(() => {
       void loadContent(controller.signal);
     });
@@ -131,17 +198,14 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     return () => {
       controller.abort();
       loadAbortRef.current?.abort();
+      clearMinLoadingTimer();
     };
-  }, [loadContent, slug]);
+  }, [clearMinLoadingTimer, loadContent, markLoadingStarted, slug]);
 
   let body: ReactNode;
 
   if (state.status === "checking" || state.status === "loading") {
-    body = (
-      <div className="py-24 text-center text-sm text-text-secondary">
-        載入中…
-      </div>
-    );
+    body = <GridIconLoadingBlock />;
   } else if (state.status === "locked") {
     body = <UnlockForm slug={slug} onUnlocked={startLoadContent} />;
   } else if (state.status === "error") {

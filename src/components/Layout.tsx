@@ -180,7 +180,9 @@ export default function Layout() {
   const isHome = location.pathname === "/";
   const isDetailPage = isDetailPagePath(location.pathname);
   const hidePrimaryNav =
-    import.meta.env.DEV && location.pathname === "/dev/gsap";
+    import.meta.env.DEV &&
+    (location.pathname === "/dev/gsap" ||
+      location.pathname === "/dev/loading");
   const canHover = useCanHover();
   const navRef = useRef<HTMLElement>(null);
   const lastScrollY = useRef(0);

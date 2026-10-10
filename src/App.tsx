@@ -9,6 +9,7 @@ import WorkPage from './pages/WorkPage'
 import WorkProjectPage from './pages/WorkProjectPage'
 
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
+const DevLoadingPlaygroundPage = lazy(() => import('./pages/DevLoadingPlaygroundPage'))
 const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
 const DevSandboxPage = lazy(() => import('./pages/DevSandboxPage'))
 
@@ -29,6 +30,14 @@ export default function App() {
               element={
                 <Suspense fallback={null}>
                   <DevGsapPlaygroundPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dev/loading"
+              element={
+                <Suspense fallback={null}>
+                  <DevLoadingPlaygroundPage />
                 </Suspense>
               }
             />
