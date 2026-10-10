@@ -491,8 +491,8 @@ export default function Layout() {
         </RouteTransitionOutlet>
       </main>
 
-      <footer>
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 py-10 text-md text-text-secondary">
+      <footer className="px-6 sm:px-10">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 py-10 text-base text-text-secondary">
           <nav
             aria-label="Contact"
             className="flex flex-wrap items-center gap-x-4 gap-y-1"
