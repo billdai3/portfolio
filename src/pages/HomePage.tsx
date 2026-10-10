@@ -42,7 +42,7 @@ export default function HomePage() {
           <HeroAnimation className="aspect-square h-auto max-h-full min-w-0 w-full max-w-xl" />
         </div>
 
-        <div className="min-w-0 px-6 pb-16 pt-2 text-center sm:pb-24">
+        <div className="min-w-0 pb-16 pt-2 text-center sm:pb-24">
           <HeroTitleRotator />
         </div>
 
