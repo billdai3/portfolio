@@ -116,6 +116,24 @@
     @apply font-display text-sm font-extrabold;
   }
 
+  /* Shared page section layout */
+  .section-shell {
+    @apply px-6 py-16 sm:px-10 sm:py-24;
+  }
+
+  .section-inner {
+    @apply mx-auto max-w-5xl;
+  }
+
+  /* Pair with type-section-title in markup (@apply of custom classes is unsupported) */
+  .section-heading {
+    @apply mb-8 text-center sm:mb-10;
+  }
+
+  .showcase-grid {
+    @apply grid gap-5 md:grid-cols-2 md:gap-6;
+  }
+
   /* Primary nav pill — theme via .nav-pill--over-hero | .nav-pill--scrolled */
   .nav-pill {
     @apply relative inline-flex items-center rounded-full p-1.5 shadow-md transition-colors duration-300;

@@ -8,7 +8,7 @@ export default function LabPage() {
       title="Lab"
       description="Experiments, prototypes, and work-in-progress ideas live here."
     >
-      <ul className="grid gap-5 md:grid-cols-2 md:gap-6">
+      <ul className="showcase-grid">
         {labProjects.map((item) => (
           <li key={item.slug}>
             <ShowcaseCardDelayed

@@ -77,13 +77,13 @@ export default function AboutPage() {
   return (
     <div className="text-text-primary">
       <section
-        className="bg-bg-section px-6 py-16 sm:px-10 sm:py-24"
+        className="section-shell bg-bg-section"
         aria-labelledby="about-me-heading"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="section-inner">
           <h1
             id="about-me-heading"
-            className="type-section-title mb-8 text-center sm:mb-10"
+            className="type-section-title section-heading"
           >
             About Me
           </h1>
@@ -109,13 +109,13 @@ export default function AboutPage() {
       </section>
 
       <section
-        className="bg-bg-section-alt px-6 py-16 sm:px-10 sm:py-24"
+        className="section-shell bg-bg-section-alt"
         aria-labelledby="skills-heading"
       >
-        <div className="mx-auto max-w-5xl">
+        <div className="section-inner">
           <h2
             id="skills-heading"
-            className="type-section-title mb-8 text-center sm:mb-10"
+            className="type-section-title section-heading"
           >
             Skills
           </h2>
