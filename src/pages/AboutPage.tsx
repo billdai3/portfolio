@@ -54,7 +54,7 @@ function SkillCard({
 
   return (
     <li
-      className="group flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
+      className="group flex flex-col items-center gap-4 rounded-3xl bg-bg-card p-5 text-center sm:flex-row sm:gap-5 sm:p-6 sm:text-left"
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
@@ -93,7 +93,7 @@ export default function AboutPage() {
               className="size-40 shrink-0 rounded-full bg-ash-600 sm:size-48"
               aria-hidden
             />
-            <div className="min-w-0 max-w-xl text-center sm:text-left">
+            <div className="max-w-xl min-w-0 text-center sm:text-left">
               <h2 className="type-hero-subtitle text-text-primary">
                 I&apos;m Bill.
               </h2>
@@ -120,7 +120,7 @@ export default function AboutPage() {
             Skills
           </h2>
 
-          <ul className="grid gap-6 sm:grid-cols-2">
+          <ul className="grid gap-6 lg:grid-cols-2">
             {skills.map((skill) => (
               <SkillCard key={skill.title} {...skill} />
             ))}
