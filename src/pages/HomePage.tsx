@@ -31,34 +31,34 @@ export default function HomePage() {
   };
 
   return (
-    <div className="text-text-primary min-w-0">
+    <div className="min-w-0 text-text-primary">
       {/* Hero — 100vh */}
       <section
         id="home-hero"
-        className="bg-brand relative grid h-svh w-full min-w-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden"
+        className="relative grid h-svh w-full min-w-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden bg-brand"
         aria-label="Hero"
       >
-        <div className="flex min-h-0 min-w-0 items-center justify-center px-6 pt-20">
+        <div className="flex min-h-0 min-w-0 items-center justify-center px-6 pt-24">
           <HeroAnimation className="aspect-square h-auto max-h-full w-full max-w-xl min-w-0" />
         </div>
 
-        <div className="flex min-w-0 flex-col items-center pt-2 pb-16 text-center sm:pb-24">
+        <div className="flex min-w-0 flex-col items-center pt-2 pb-6 text-center sm:pb-10">
           <HeroTitleRotator />
-          <div className="mt-4 md:absolute md:-right-6 md:bottom-30 md:z-10 md:mt-0">
+          <div className="mt-0 lg:absolute lg:-right-6 lg:bottom-20 lg:z-10">
             <button
               type="button"
               onClick={scrollToSelectedWorks}
-              className="type-page-title text-ash-900 hover:text-ash-50 focus-visible:border-ash-900 focus-visible:ring-ash-50 inline-flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 transition focus-visible:ring-2 focus-visible:outline-none md:rotate-90"
+              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-ash-900 transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:ring-2 focus-visible:ring-ash-50 focus-visible:outline-none lg:rotate-90"
               aria-label="Scroll to Selected Works"
             >
-              Scroll
+              <span className="type-scroll">Scroll</span>
               <ArrowDown
-                className="size-8 shrink-0 md:hidden"
+                className="size-5 shrink-0 sm:size-6 md:size-8 lg:hidden"
                 strokeWidth={3}
                 aria-hidden
               />
               <ArrowRight
-                className="hidden size-8 shrink-0 md:inline"
+                className="hidden size-8 shrink-0 lg:inline"
                 strokeWidth={3}
                 aria-hidden
               />
@@ -99,7 +99,7 @@ export default function HomePage() {
           <p className="mt-10 text-center sm:mt-12">
             <Link
               to="/work"
-              className="type-btn bg-bg-card text-text-primary hover:bg-brand hover:text-ash-900 focus-visible:ring-accent inline-flex rounded-full px-6 py-3 transition-colors duration-300 ease-out focus-visible:ring-2 focus-visible:outline-none"
+              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             >
               View all work
             </Link>
@@ -137,7 +137,7 @@ export default function HomePage() {
           <p className="mt-10 text-center sm:mt-12">
             <Link
               to="/lab"
-              className="type-btn bg-bg-card text-text-primary hover:bg-brand hover:text-ash-900 focus-visible:ring-accent inline-flex rounded-full px-6 py-3 transition-colors duration-300 ease-out focus-visible:ring-2 focus-visible:outline-none"
+              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             >
               Open lab
             </Link>
