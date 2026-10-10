@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import HeroAnimation from "../components/HeroAnimation";
 import HeroTitleRotator from "../components/HeroTitleRotator";
@@ -42,19 +42,29 @@ export default function HomePage() {
           <HeroAnimation className="aspect-square h-auto max-h-full min-w-0 w-full max-w-xl" />
         </div>
 
-        <div className="min-w-0 pb-16 pt-2 text-center sm:pb-24">
+        <div className="flex min-w-0 flex-col items-center pb-16 pt-2 text-center sm:pb-24">
           <HeroTitleRotator />
+          <div className="mt-4 md:absolute md:bottom-30 md:-right-6 md:z-10 md:mt-0">
+            <button
+              type="button"
+              onClick={scrollToSelectedWorks}
+              className="type-page-title inline-flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-ash-900 transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-50 md:rotate-90"
+              aria-label="Scroll to Selected Works"
+            >
+              Scroll
+              <ArrowDown
+                className="size-8 shrink-0 md:hidden"
+                strokeWidth={3}
+                aria-hidden
+              />
+              <ArrowRight
+                className="hidden size-8 shrink-0 md:inline"
+                strokeWidth={3}
+                aria-hidden
+              />
+            </button>
+          </div>
         </div>
-
-        <button
-          type="button"
-          onClick={scrollToSelectedWorks}
-          className="type-page-title absolute bottom-30 right-6 z-10 inline-flex rotate-90 cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-ash-900 transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ash-50"
-          aria-label="Scroll to Selected Works"
-        >
-          Scroll
-          <ArrowRight className="size-8 shrink-0" strokeWidth={3} aria-hidden />
-        </button>
       </section>
 
       {/* Selected Works — ash-900 block, ash-800 cards */}
