@@ -54,7 +54,7 @@ function SkillCard({
 
   return (
     <li
-      className="flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
+      className="group flex gap-4 rounded-3xl bg-bg-card p-5 sm:gap-5 sm:p-6"
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
     >
@@ -62,10 +62,10 @@ function SkillCard({
         <Animation className="size-full" active={active} />
       </div>
       <div className="min-w-0">
-        <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary sm:text-lg">
+        <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-brand sm:text-lg">
           {title}
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+        <p className="mt-2 text-sm leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
           {description}
         </p>
       </div>
