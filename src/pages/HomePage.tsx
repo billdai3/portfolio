@@ -70,17 +70,17 @@ export default function HomePage() {
       {/* Selected Works — ash-900 block, ash-800 cards */}
       <section
         id="selected-works"
-        className="bg-bg-section px-6 py-20 sm:py-24"
+        className="bg-bg-section px-6 py-16 sm:px-10 sm:py-24"
         aria-labelledby="home-selected-works-heading"
       >
         <div className="mx-auto max-w-5xl">
           <h2
             id="home-selected-works-heading"
-            className="type-section-title mb-10 text-center sm:mb-12"
+            className="type-section-title mb-8 text-center sm:mb-10"
           >
             Selected Works
           </h2>
-          <ul className="grid gap-10 sm:grid-cols-2">
+          <ul className="grid gap-5 md:grid-cols-2 md:gap-6">
             {selectedWorks.map((item) => (
               <li key={item.href}>
                 <ShowcaseCardDelayed
@@ -109,17 +109,17 @@ export default function HomePage() {
 
       {/* Creative Coding & Experiments — ash-700 block, ash-800 cards */}
       <section
-        className="bg-bg-section-alt px-6 py-20 sm:py-24"
+        className="bg-bg-section-alt px-6 py-16 sm:px-10 sm:py-24"
         aria-labelledby="home-experiments-heading"
       >
         <div className="mx-auto max-w-5xl">
           <h2
             id="home-experiments-heading"
-            className="type-section-title mb-10 text-center sm:mb-12"
+            className="type-section-title mb-8 text-center sm:mb-10"
           >
             Creative Coding &amp; Experiments
           </h2>
-          <ul className="grid gap-10 sm:grid-cols-2">
+          <ul className="grid gap-5 md:grid-cols-2 md:gap-6">
             {experiments.map((item) => (
               <li key={item.title}>
                 <ShowcaseCardDelayed

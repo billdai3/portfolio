@@ -10,7 +10,7 @@ export default function PageShell({
   children,
 }: PageShellProps) {
   return (
-    <section className="px-6 py-16">
+    <section className="px-6 py-16 sm:px-10 sm:py-24">
       <div className="mx-auto max-w-5xl">
         <header className="mb-12 max-w-2xl">
           <h1 className="type-page-title text-text-primary">
