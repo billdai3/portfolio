@@ -1,4 +1,4 @@
-import CurrentSketch from "@/components/sketches/CanvasParticleFlame";
+import CurrentSketch from "@/components/sketches/SandboxPlaceholder";
 
 export default function DevSandboxPage() {
   return (
