@@ -3,6 +3,7 @@ import {
   createElement,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentType,
@@ -202,6 +203,11 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     };
   }, [clearMinLoadingTimer, loadContent, markLoadingStarted, slug]);
 
+  useLayoutEffect(() => {
+    if (state.status !== "ready") return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [state.status, slug]);
+
   let body: ReactNode;
 
   if (state.status === "checking" || state.status === "loading") {
@@ -238,7 +244,10 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
   }
 
   return (
-    <WorkProjectLayout prose={state.status === "ready"}>
+    <WorkProjectLayout
+      prose={state.status === "ready"}
+      showPager={state.status === "ready"}
+    >
       {body}
     </WorkProjectLayout>
   );

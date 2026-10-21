@@ -6,11 +6,14 @@ type WorkProjectLayoutProps = {
   children: ReactNode;
   /** When false, skip article/work-prose (e.g. unlock form). Defaults to true. */
   prose?: boolean;
+  /** When false, hide Previous/Next (e.g. while locked content loads). Defaults to true. */
+  showPager?: boolean;
 };
 
 export default function WorkProjectLayout({
   children,
   prose = true,
+  showPager = true,
 }: WorkProjectLayoutProps) {
   return (
     <div className="bg-bg-page text-text-primary">
@@ -24,7 +27,7 @@ export default function WorkProjectLayout({
         ) : (
           children
         )}
-        <ProjectPager section="work" />
+        {showPager ? <ProjectPager section="work" /> : null}
       </div>
     </div>
   );
