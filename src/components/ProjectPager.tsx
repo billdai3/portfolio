@@ -4,10 +4,7 @@ import {
   type ProjectNavTarget,
   type ProjectSection,
 } from "@/features/projects/lib/project-neighbors";
-import {
-  getDetailFrom,
-  toDetailLocationState,
-} from "@/features/projects/lib/detail-from";
+import { parseDetailLocationState } from "@/features/projects/lib/detail-from";
 import ArrowIcon from "./icons/ArrowIcon";
 
 type ProjectPagerProps = {
@@ -29,7 +26,7 @@ export default function ProjectPager({ section }: ProjectPagerProps) {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
   const neighbors = getProjectNeighbors(section, slug);
-  const linkState = toDetailLocationState(getDetailFrom(location.state));
+  const linkState = parseDetailLocationState(location.state);
 
   if (!neighbors) return null;
 

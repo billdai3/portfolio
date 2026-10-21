@@ -333,13 +333,57 @@ export default function Layout() {
     };
   }, [entryCollapsePending, pillWidth, tabWidth]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    lastScrollY.current = 0;
+  useLayoutEffect(() => {
+    const hashId = location.hash.replace(/^#/, "");
+    let cancelled = false;
+    let frame = 0;
 
-    const frame = requestAnimationFrame(() => setNavVisible(true));
-    return () => cancelAnimationFrame(frame);
-  }, [location.pathname]);
+    const revealNav = () => {
+      frame = requestAnimationFrame(() => {
+        if (!cancelled) setNavVisible(true);
+      });
+    };
+
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      lastScrollY.current = 0;
+    };
+
+    const scrollToHashTarget = () => {
+      const hashTarget = document.getElementById(hashId);
+      if (!hashTarget) return false;
+      hashTarget.scrollIntoView({ behavior: "instant", block: "start" });
+      lastScrollY.current = window.scrollY;
+      return true;
+    };
+
+    // Hash targets may mount after the route transition outlet swaps.
+    // Never scrollTo(0) while a hash is present — that races HomePage mount
+    // and is what made some detail→home backs land at the hero instead.
+    if (hashId) {
+      const tryScroll = (attemptsLeft: number) => {
+        if (cancelled) return;
+        if (scrollToHashTarget()) {
+          revealNav();
+          return;
+        }
+        if (attemptsLeft <= 0) {
+          revealNav();
+          return;
+        }
+        frame = requestAnimationFrame(() => tryScroll(attemptsLeft - 1));
+      };
+      tryScroll(24);
+    } else {
+      scrollToTop();
+      revealNav();
+    }
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frame);
+    };
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     if (isDetailPage) return;
