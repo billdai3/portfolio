@@ -42,7 +42,7 @@ export default function LabProjectLayout({
   const [mobileTab, setMobileTab] = useState<MobileTab>("demo");
 
   const demoPanel = (
-    <div className="flex h-full min-h-[min(70svh,32rem)] flex-col lg:min-h-0">
+    <div className="flex h-full min-h-[calc(100svh-9rem)] flex-col lg:min-h-0">
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border-default bg-bg-card">
         <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-ash-900">
           {demo}
@@ -59,8 +59,8 @@ export default function LabProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <DetailBackButton fallbackTo="/lab" />
 
-      <div className="mx-auto max-w-360 px-2 pb-16 pt-14 sm:px-4 lg:px-6 lg:pb-20 lg:pt-18">
-        <div className="mb-4 lg:hidden">
+      <div className="mx-auto max-w-360 px-2 pt-16 sm:px-4 lg:px-6">
+        <div className="mb-3 lg:hidden">
           <div
             role="tablist"
             aria-label="Lab project sections"
