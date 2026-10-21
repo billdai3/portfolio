@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import DetailBackButton from "@/components/DetailBackButton";
+import ProjectPager from "@/components/ProjectPager";
 
 type LabProjectLayoutProps = {
   demo: ReactNode;
@@ -119,7 +120,7 @@ export default function LabProjectLayout({
     <div className="bg-bg-page text-text-primary">
       <DetailBackButton fallbackTo="/lab" />
 
-      <div className="mx-auto max-w-360 px-2 pt-16 sm:px-4 lg:px-6">
+      <div className="mx-auto max-w-360 px-2 pb-16 pt-16 sm:px-4 lg:px-6 lg:pb-20">
         <div className="mb-3 lg:hidden">
           <div
             ref={tablistRef}
@@ -176,6 +177,8 @@ export default function LabProjectLayout({
             {articlePanel}
           </div>
         </div>
+
+        <ProjectPager section="lab" />
       </div>
     </div>
   );

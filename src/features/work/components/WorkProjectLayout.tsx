@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import DetailBackButton from "@/components/DetailBackButton";
+import ProjectPager from "@/components/ProjectPager";
 
 type WorkProjectLayoutProps = {
   children: ReactNode;
@@ -23,6 +24,7 @@ export default function WorkProjectLayout({
         ) : (
           children
         )}
+        <ProjectPager section="work" />
       </div>
     </div>
   );
