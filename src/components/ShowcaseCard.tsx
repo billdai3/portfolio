@@ -280,8 +280,11 @@ export default function ShowcaseCard({
     activate: () => {},
     deactivate: () => {},
   });
-  spotlightCardRef.current.activate = activateSpotlight;
-  spotlightCardRef.current.deactivate = deactivateSpotlight;
+
+  useEffect(() => {
+    spotlightCardRef.current.activate = activateSpotlight;
+    spotlightCardRef.current.deactivate = deactivateSpotlight;
+  }, [activateSpotlight, deactivateSpotlight]);
 
   useEffect(() => {
     if (!video) return;
