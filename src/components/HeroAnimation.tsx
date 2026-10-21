@@ -2,7 +2,7 @@ import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 
-import iconGridSvg from "../assets/icon-grid.svg?raw";
+import iconGridSvg from "../assets/hero/icon-grid.svg?raw";
 import {
   buildGridIconTimeline,
   showGridIconComplete,

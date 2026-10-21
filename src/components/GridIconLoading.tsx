@@ -2,7 +2,7 @@ import gsap from "gsap";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import type { CSSProperties, RefObject } from "react";
 
-import iconGridSvg from "../assets/icon-grid.svg?raw";
+import iconGridSvg from "../assets/hero/icon-grid.svg?raw";
 import {
   applyGridIconLoadingAppearance,
   buildGridIconTimeline,
@@ -60,9 +60,12 @@ export default function GridIconLoading({
   const timeScaleRef = useRef(timeScale);
   const levaSetRef = useRef(levaSetValues);
   const timelineHandleRef = useRef(timelineRef);
-  timeScaleRef.current = timeScale;
-  levaSetRef.current = levaSetValues;
-  timelineHandleRef.current = timelineRef;
+
+  useEffect(() => {
+    timeScaleRef.current = timeScale;
+    levaSetRef.current = levaSetValues;
+    timelineHandleRef.current = timelineRef;
+  }, [timeScale, levaSetValues, timelineRef]);
 
   // 用 ref 灌 SVG，避免 style/size 重渲染時 dangerouslySetInnerHTML 清掉 GSAP 狀態
   useLayoutEffect(() => {

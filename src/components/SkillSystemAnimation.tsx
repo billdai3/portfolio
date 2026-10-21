@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import type { RefObject } from "react";
 
-import skillSystemSvg from "../assets/skill-system.svg?raw";
+import skillSystemSvg from "../assets/skills/skill-system.svg?raw";
 import {
   skillSvgClassName,
   useSkillSvgAnimation,
