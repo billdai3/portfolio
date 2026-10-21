@@ -10,6 +10,7 @@ const experiments = labProjects.slice(0, 2).map((item) => ({
   title: item.title,
   tag: item.tag,
   href: `/lab/${item.slug}`,
+  from: "/" as const,
   cover: item.cover,
   coverVideo: item.coverVideo,
 }));
@@ -19,6 +20,7 @@ export default function HomePage() {
     title: item.title,
     tag: item.tag,
     href: `/work/${item.slug}`,
+    from: "/" as const,
     cover: item.cover,
     coverVideo: item.coverVideo,
     isLocked: item.isLocked,
@@ -86,6 +88,7 @@ export default function HomePage() {
                     title: item.title,
                     tag: item.tag,
                     href: item.href,
+                    from: item.from,
                     isLocked: item.isLocked,
                   }}
                   image={item.cover}
@@ -125,6 +128,7 @@ export default function HomePage() {
                     title: item.title,
                     tag: item.tag,
                     href: item.href,
+                    from: item.from,
                   }}
                   image={item.cover}
                   video={item.coverVideo}

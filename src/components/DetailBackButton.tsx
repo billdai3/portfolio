@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getDetailFrom } from "@/features/projects/lib/detail-from";
 import ArrowIcon from "./icons/ArrowIcon";
 
 type DetailBackButtonProps = {
@@ -7,13 +8,11 @@ type DetailBackButtonProps = {
 
 export default function DetailBackButton({ fallbackTo }: DetailBackButtonProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleGoBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate(fallbackTo);
-    }
+    const from = getDetailFrom(location.state);
+    navigate(from ?? fallbackTo);
   };
 
   return (

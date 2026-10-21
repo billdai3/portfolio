@@ -16,6 +16,7 @@ export default function LabPage() {
                 title: item.title,
                 tag: item.tag,
                 href: `/lab/${item.slug}`,
+                from: "/lab",
               }}
               image={item.cover}
               video={item.coverVideo}

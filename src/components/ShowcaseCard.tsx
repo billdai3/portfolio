@@ -8,6 +8,10 @@ import {
   type Ref,
 } from "react";
 import { Link } from "react-router-dom";
+import {
+  toDetailLocationState,
+  type DetailFromPath,
+} from "@/features/projects/lib/detail-from";
 import LockIcon from "./icons/LockIcon";
 import LockOpenIcon from "./icons/LockOpenIcon";
 import SquircleClip from "./SquircleClip";
@@ -22,6 +26,8 @@ export type ShowcaseItem = {
   tag: string;
   href?: string;
   isLocked?: boolean;
+  /** Where Go Back should return after opening this detail. */
+  from?: DetailFromPath;
 };
 
 type ShowcaseCardProps = {
@@ -415,6 +421,7 @@ export default function ShowcaseCard({
       <Link
         ref={cardRef as Ref<HTMLAnchorElement>}
         to={item.href}
+        state={toDetailLocationState(item.from)}
         className={cardClassName}
         aria-busy={loading || undefined}
         onMouseEnter={handlePointerEnter}
