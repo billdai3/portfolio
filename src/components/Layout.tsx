@@ -23,16 +23,24 @@ const TOP_REVEAL_OFFSET = 16;
 type FooterIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 /** Placeholder URLs — replace with real contact links later. */
-const footerLinks: { href: string; label: string; Icon: FooterIcon }[] = [
+const footerLinks: {
+  href: string;
+  label: string;
+  Icon: FooterIcon;
+  iconClassName: string;
+}[] = [
   {
     href: "mailto:twbilldai@gmail.com",
     label: "Email",
     Icon: MailIcon,
+    iconClassName: "size-6",
   },
   {
     href: "https://github.com/billdai3",
     label: "GitHub",
     Icon: GithubIcon,
+    // Clearspace asset reads smaller than Mail at the same box size.
+    iconClassName: "size-7",
   },
 ];
 
@@ -497,7 +505,7 @@ export default function Layout() {
             aria-label="Contact"
             className="flex flex-wrap items-center gap-x-4 gap-y-1"
           >
-            {footerLinks.map(({ href, label, Icon }) => (
+            {footerLinks.map(({ href, label, Icon, iconClassName }) => (
               <a
                 key={label}
                 href={href}
@@ -507,7 +515,7 @@ export default function Layout() {
                   ? { target: "_blank", rel: "noreferrer" }
                   : {})}
               >
-                <Icon className="size-6" />
+                <Icon className={iconClassName} />
               </a>
             ))}
           </nav>
