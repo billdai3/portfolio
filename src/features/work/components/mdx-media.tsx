@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
@@ -240,6 +241,14 @@ type CarouselProps = {
 };
 
 const CAROUSEL_PUSH_MS = 300;
+const CAROUSEL_SWIPE_THRESHOLD_PX = 40;
+
+type CarouselSwipeState = {
+  pointerId: number;
+  startX: number;
+  startY: number;
+  swiped: boolean;
+};
 
 export function Carousel({
   children,
@@ -267,6 +276,7 @@ export function Carousel({
   const [isAnimating, setIsAnimating] = useState(false);
   const [shift, setShift] = useState(false);
   const animatingRef = useRef(false);
+  const swipeRef = useRef<CarouselSwipeState | null>(null);
 
   const safeIndex = slides.length === 0 ? 0 : index % slides.length;
   const current = slides[safeIndex];
@@ -327,6 +337,61 @@ export function Carousel({
     [finishAnimation],
   );
 
+  const onViewportPointerDown = useCallback(
+    (event: PointerEvent<HTMLButtonElement>) => {
+      if (slides.length < 2 || animatingRef.current) return;
+      swipeRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        swiped: false,
+      };
+      event.currentTarget.setPointerCapture(event.pointerId);
+    },
+    [slides.length],
+  );
+
+  const endViewportPointer = useCallback(
+    (event: PointerEvent<HTMLButtonElement>) => {
+      const swipe = swipeRef.current;
+      if (!swipe || swipe.pointerId !== event.pointerId) return;
+
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+
+      if (swipe.swiped) return;
+
+      const dx = event.clientX - swipe.startX;
+      const dy = event.clientY - swipe.startY;
+      const absDx = Math.abs(dx);
+      const absDy = Math.abs(dy);
+
+      if (absDx >= CAROUSEL_SWIPE_THRESHOLD_PX && absDx > absDy) {
+        swipe.swiped = true;
+        if (dx < 0) goNext();
+        else goPrev();
+        return;
+      }
+
+      swipeRef.current = null;
+    },
+    [goNext, goPrev],
+  );
+
+  const onLightboxClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (swipeRef.current?.swiped) {
+        event.preventDefault();
+        swipeRef.current = null;
+        return;
+      }
+      swipeRef.current = null;
+      setLightboxOpen(true);
+    },
+    [],
+  );
+
   if (!current) return null;
 
   const trackTransform = !isPair
@@ -356,7 +421,7 @@ export function Carousel({
       <figure className={`work-media mb-8 ${widthClassName[width]}`}>
         <div className="overflow-hidden rounded-xl border border-border-default bg-bg-card">
           <div
-            className="group relative overflow-hidden"
+            className="group relative touch-pan-y overflow-hidden"
             style={{ aspectRatio: viewportRatio }}
           >
             <div
@@ -391,8 +456,11 @@ export function Carousel({
 
             <button
               type="button"
-              onClick={() => setLightboxOpen(true)}
-              className="absolute inset-0 z-1 cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+              onPointerDown={onViewportPointerDown}
+              onPointerUp={endViewportPointer}
+              onPointerCancel={endViewportPointer}
+              onClick={onLightboxClick}
+              className="absolute inset-0 z-1 cursor-zoom-in touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
               aria-label={
                 current.alt
                   ? `View larger: ${current.alt}`
