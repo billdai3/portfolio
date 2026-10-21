@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -29,17 +30,66 @@ type ShowcaseCardProps = {
   loading?: boolean;
   /** Preview image; shown in SquircleClip when not loading. */
   image?: string;
-  /** Optional hover preview; muted loop plays on fine-pointer hover. */
+  /** Optional cover preview; muted loop on hover (desktop) or scroll spotlight (touch). */
   video?: string;
 };
 
-function canHoverPlayVideo(hasVideo: boolean): boolean {
-  if (!hasVideo || typeof window === "undefined") return false;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return false;
-  }
+type SpotlightCard = {
+  activate: () => void;
+  deactivate: () => void;
+};
+
+const intersectingSpotlightCards = new Set<SpotlightCard>();
+let activeSpotlightCard: SpotlightCard | null = null;
+
+function setActiveSpotlightCard(card: SpotlightCard | null) {
+  if (activeSpotlightCard === card) return;
+  activeSpotlightCard?.deactivate();
+  activeSpotlightCard = card;
+  card?.activate();
+}
+
+function notifySpotlightEnter(card: SpotlightCard) {
+  intersectingSpotlightCards.add(card);
+  setActiveSpotlightCard(card);
+}
+
+function notifySpotlightLeave(card: SpotlightCard) {
+  intersectingSpotlightCards.delete(card);
+  if (activeSpotlightCard !== card) return;
+
+  const next = intersectingSpotlightCards.values().next().value ?? null;
+  setActiveSpotlightCard(next);
+}
+
+function prefersReducedMotion(): boolean {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function canUseHoverSpotlight(): boolean {
+  if (typeof window === "undefined") return false;
+  if (prefersReducedMotion()) return false;
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
+
+function canUseScrollSpotlight(): boolean {
+  if (typeof window === "undefined") return false;
+  if (prefersReducedMotion()) return false;
+  return !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+}
+
+/** Hover + scroll-spotlight visual variants for group children. */
+const spotlight = {
+  title: "group-hover:text-accent group-[.showcase-card--active]:text-accent",
+  titleIdle:
+    "group-hover:hidden group-[.showcase-card--active]:hidden",
+  titleMarquee:
+    "group-hover:inline-flex group-[.showcase-card--active]:inline-flex",
+  image:
+    "group-hover:grayscale-0 group-[.showcase-card--active]:grayscale-0",
+  lock: "group-hover:bg-brand group-hover:text-ash-900 group-[.showcase-card--active]:bg-brand group-[.showcase-card--active]:text-ash-900",
+  corner: "group-hover:rotate-45 group-[.showcase-card--active]:rotate-45",
+} as const;
 
 function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
   const Icon = unlocked ? LockOpenIcon : LockIcon;
@@ -49,7 +99,12 @@ function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
       className="pointer-events-none absolute top-[10%] left-[10%]"
       aria-label={unlocked ? "Unlocked project" : "Locked project"}
     >
-      <span className="inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900">
+      <span
+        className={[
+          "inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out",
+          spotlight.lock,
+        ].join(" ")}
+      >
         <Icon className="size-6" />
       </span>
     </div>
@@ -110,12 +165,25 @@ function ShowcaseCardTitleBar({ title }: { title: string }) {
         >
           {title}
         </span>
-        <h3 className="text-lg leading-tight font-extrabold tracking-tight text-ash-50 transition-colors duration-300 ease-out group-hover:text-accent">
-          <span className="showcase-title-idle mx-auto block max-w-[75%] truncate text-center group-hover:hidden">
+        <h3
+          className={[
+            "text-lg leading-tight font-extrabold tracking-tight text-ash-50 transition-colors duration-300 ease-out",
+            spotlight.title,
+          ].join(" ")}
+        >
+          <span
+            className={[
+              "showcase-title-idle mx-auto block max-w-[75%] truncate text-center",
+              spotlight.titleIdle,
+            ].join(" ")}
+          >
             {title}
           </span>
           <span
-            className="showcase-title-marquee hidden w-max group-hover:inline-flex"
+            className={[
+              "showcase-title-marquee hidden w-max",
+              spotlight.titleMarquee,
+            ].join(" ")}
             style={marqueeStyle}
           >
             <span className="pr-10 whitespace-nowrap">{title}</span>
@@ -158,7 +226,12 @@ function ShowcaseCardCornerDecoration() {
       aria-hidden
     >
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="size-4 -rotate-45 rounded-full bg-ash-800 transition-transform duration-300 ease-out [clip-path:inset(0_0_50%_0)] group-hover:rotate-45" />
+        <div
+          className={[
+            "size-4 -rotate-45 rounded-full bg-ash-800 transition-transform duration-300 ease-out [clip-path:inset(0_0_50%_0)]",
+            spotlight.corner,
+          ].join(" ")}
+        />
       </div>
     </div>
   );
@@ -174,11 +247,45 @@ export default function ShowcaseCard({
   const cardRef = useRef<HTMLAnchorElement | HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoActive, setVideoActive] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [shouldPreload, setShouldPreload] = useState(false);
+
+  const deactivateSpotlight = useCallback(() => {
+    const el = videoRef.current;
+    if (el) {
+      el.pause();
+      el.currentTime = 0;
+    }
+    setVideoActive(false);
+    setIsActive(false);
+  }, []);
+
+  const activateSpotlight = useCallback(() => {
+    setIsActive(true);
+
+    const el = videoRef.current;
+    if (!el) return;
+
+    const playPromise = el.play();
+    if (playPromise) {
+      void playPromise
+        .then(() => setVideoActive(true))
+        .catch(() => setVideoActive(false));
+      return;
+    }
+    setVideoActive(true);
+  }, []);
+
+  const spotlightCardRef = useRef<SpotlightCard>({
+    activate: () => {},
+    deactivate: () => {},
+  });
+  spotlightCardRef.current.activate = activateSpotlight;
+  spotlightCardRef.current.deactivate = deactivateSpotlight;
 
   useEffect(() => {
     if (!video) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (prefersReducedMotion()) return;
 
     const node = cardRef.current;
     if (!node) return;
@@ -201,28 +308,53 @@ export default function ShowcaseCard({
     videoRef.current?.load();
   }, [shouldPreload, video]);
 
-  const handlePointerEnter = () => {
-    if (!canHoverPlayVideo(Boolean(video))) return;
-    const el = videoRef.current;
-    if (!el) return;
+  useEffect(() => {
+    if (!canUseScrollSpotlight()) return;
 
-    const playPromise = el.play();
-    if (playPromise) {
-      void playPromise
-        .then(() => setVideoActive(true))
-        .catch(() => setVideoActive(false));
-      return;
-    }
-    setVideoActive(true);
+    const node = cardRef.current;
+    if (!node) return;
+
+    const card = spotlightCardRef.current;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+
+        if (entry.isIntersecting) {
+          notifySpotlightEnter(card);
+          return;
+        }
+
+        notifySpotlightLeave(card);
+      },
+      { rootMargin: "-35% 0px -35% 0px" },
+    );
+
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+      notifySpotlightLeave(card);
+    };
+  }, []);
+
+  const handlePointerEnter = () => {
+    if (!canUseHoverSpotlight()) return;
+    activateSpotlight();
   };
 
   const handlePointerLeave = () => {
-    const el = videoRef.current;
-    if (!el) return;
-    el.pause();
-    el.currentTime = 0;
-    setVideoActive(false);
+    if (!canUseHoverSpotlight()) return;
+    deactivateSpotlight();
   };
+
+  const cardClassName = [
+    "group rounded-[8%] bg-bg-card p-5",
+    item.href ? "block transition-colors" : "",
+    isActive ? "showcase-card--active" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const inner = (
     <>
@@ -232,7 +364,10 @@ export default function ShowcaseCard({
             <img
               src={image}
               alt=""
-              className="h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"
+              className={[
+                "h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out",
+                spotlight.image,
+              ].join(" ")}
             />
           ) : null}
           {video ? (
@@ -277,7 +412,7 @@ export default function ShowcaseCard({
       <Link
         ref={cardRef as Ref<HTMLAnchorElement>}
         to={item.href}
-        className="group block rounded-[8%] bg-bg-card p-5 transition-colors"
+        className={cardClassName}
         aria-busy={loading || undefined}
         onMouseEnter={handlePointerEnter}
         onMouseLeave={handlePointerLeave}
@@ -290,7 +425,7 @@ export default function ShowcaseCard({
   return (
     <div
       ref={cardRef as Ref<HTMLDivElement>}
-      className="group rounded-[8%] bg-bg-card p-5"
+      className={cardClassName}
       aria-busy={loading || undefined}
       onMouseEnter={handlePointerEnter}
       onMouseLeave={handlePointerLeave}

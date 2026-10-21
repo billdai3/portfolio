@@ -468,7 +468,8 @@
     transform: translateX(var(--marquee-start, 0px));
   }
 
-  .group:hover .showcase-title-marquee {
+  .group:hover .showcase-title-marquee,
+  .showcase-card--active .showcase-title-marquee {
     animation-name: showcase-title-marquee;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
@@ -480,12 +481,14 @@
       background-color: var(--skeleton-color-dim);
     }
 
-    .group:hover .showcase-title-marquee {
+    .group:hover .showcase-title-marquee,
+    .showcase-card--active .showcase-title-marquee {
       animation: none;
       display: none !important;
     }
 
-    .group:hover .showcase-title-idle {
+    .group:hover .showcase-title-idle,
+    .showcase-card--active .showcase-title-idle {
       display: block !important;
     }
 
