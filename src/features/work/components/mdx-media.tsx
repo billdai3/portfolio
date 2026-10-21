@@ -637,7 +637,7 @@ export function Comparison({
             style={{ left: `${position}%` }}
             aria-hidden
           >
-            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ash-900 shadow-sm">
+            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ash-700 shadow-sm">
               <ComparisonIcon className="size-5" />
             </span>
           </div>

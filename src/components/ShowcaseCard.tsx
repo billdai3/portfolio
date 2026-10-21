@@ -50,7 +50,7 @@ function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
       aria-label={unlocked ? "Unlocked project" : "Locked project"}
     >
       <span className="inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900">
-        <Icon className="size-5" />
+        <Icon className="size-6" />
       </span>
     </div>
   );
