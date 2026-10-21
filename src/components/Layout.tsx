@@ -12,24 +12,22 @@ import {
   type RefObject,
   type SVGProps,
 } from "react";
-import { Mail } from "lucide-react";
 import { NavLink, useLocation, useOutlet } from "react-router-dom";
 import GithubIcon from "./icons/GithubIcon";
+import MailIcon from "./icons/MailIcon";
 import RouteTransitionOutlet from "./RouteTransitionOutlet";
 
 const SCROLL_THRESHOLD = 8;
 const TOP_REVEAL_OFFSET = 16;
 
-type FooterIcon = ComponentType<
-  SVGProps<SVGSVGElement> & { strokeWidth?: number }
->;
+type FooterIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 /** Placeholder URLs — replace with real contact links later. */
 const footerLinks: { href: string; label: string; Icon: FooterIcon }[] = [
   {
     href: "mailto:twbilldai@gmail.com",
     label: "Email",
-    Icon: Mail,
+    Icon: MailIcon,
   },
   {
     href: "https://github.com/billdai3",
@@ -509,7 +507,7 @@ export default function Layout() {
                   ? { target: "_blank", rel: "noreferrer" }
                   : {})}
               >
-                <Icon className="size-6" aria-hidden strokeWidth={1.75} />
+                <Icon className="size-6" />
               </a>
             ))}
           </nav>

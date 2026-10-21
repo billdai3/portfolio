@@ -1,5 +1,5 @@
-import { ArrowDown, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import ArrowIcon from "../components/icons/ArrowIcon";
 import HeroAnimation from "../components/HeroAnimation";
 import HeroTitleRotator from "../components/HeroTitleRotator";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
@@ -52,15 +52,13 @@ export default function HomePage() {
               aria-label="Scroll to Selected Works"
             >
               <span className="type-scroll">Scroll</span>
-              <ArrowDown
+              <ArrowIcon
+                direction="down"
                 className="size-5 shrink-0 sm:size-6 md:size-8 lg:hidden"
-                strokeWidth={3}
-                aria-hidden
               />
-              <ArrowRight
+              <ArrowIcon
+                direction="right"
                 className="hidden size-8 shrink-0 lg:inline"
-                strokeWidth={3}
-                aria-hidden
               />
             </button>
           </div>

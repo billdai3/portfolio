@@ -6,8 +6,9 @@ import {
   type CSSProperties,
   type Ref,
 } from "react";
-import { Lock, LockOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import LockIcon from "./icons/LockIcon";
+import LockOpenIcon from "./icons/LockOpenIcon";
 import SquircleClip from "./SquircleClip";
 import {
   ShowcaseCardImageSkeleton,
@@ -41,7 +42,7 @@ function canHoverPlayVideo(hasVideo: boolean): boolean {
 }
 
 function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
-  const Icon = unlocked ? LockOpen : Lock;
+  const Icon = unlocked ? LockOpenIcon : LockIcon;
 
   return (
     <div
@@ -49,7 +50,7 @@ function ShowcaseCardLockTag({ unlocked }: { unlocked: boolean }) {
       aria-label={unlocked ? "Unlocked project" : "Locked project"}
     >
       <span className="inline-flex size-12 items-center justify-center rounded-full bg-ash-700 text-text-secondary backdrop-blur-sm transition-[background-color,color] duration-300 ease-out group-hover:bg-brand group-hover:text-ash-900">
-        <Icon className="size-5" strokeWidth={4} aria-hidden />
+        <Icon className="size-5" />
       </span>
     </div>
   );
