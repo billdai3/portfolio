@@ -24,9 +24,9 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={[
-        "type-btn flex-1 rounded-full px-4 py-2.5 transition-colors",
+        "type-btn flex-1 rounded-xl px-4 py-2.5 transition-colors",
         active
-          ? "bg-accent text-ash-900"
+          ? "bg-bg-section-alt text-text-primary"
           : "text-text-secondary hover:text-text-primary",
       ].join(" ")}
     >
@@ -64,7 +64,7 @@ export default function LabProjectLayout({
           <div
             role="tablist"
             aria-label="Lab project sections"
-            className="flex gap-1 rounded-full border border-border-default bg-bg-card p-1"
+            className="flex gap-1 rounded-2xl bg-bg-card p-1.5"
           >
             <TabButton
               active={mobileTab === "demo"}
