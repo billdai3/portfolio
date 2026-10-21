@@ -24,7 +24,7 @@ export default function DetailBackButton({ fallbackTo }: DetailBackButtonProps) 
       aria-label="Go Back"
     >
       <span className="detail-back-btn__icon" aria-hidden>
-        <ArrowIcon direction="left" className="size-5" />
+        <ArrowIcon direction="left" className="size-6" />
       </span>
       <span className="detail-back-btn__label">Go Back</span>
     </button>

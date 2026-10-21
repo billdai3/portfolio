@@ -206,15 +206,15 @@
   }
 
   .detail-back-btn:hover .detail-back-btn__icon {
-    @apply bg-ash-600;
+    @apply bg-ash-700 sm:bg-ash-600;
   }
 
   .detail-back-btn__icon {
-    @apply flex items-center justify-center rounded-br-3xl bg-ash-700 px-4 py-3 transition-colors;
+    @apply flex items-center justify-center rounded-br-3xl bg-ash-800 px-4 py-3 transition-colors sm:bg-ash-700;
   }
 
   .detail-back-btn__label {
-    @apply flex items-center py-3 pr-4 pl-3;
+    @apply hidden items-center py-3 pr-4 pl-3 sm:flex;
   }
 
   .page-transition-stage {
