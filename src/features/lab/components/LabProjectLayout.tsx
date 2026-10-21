@@ -1,4 +1,10 @@
-import { useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import DetailBackButton from "@/components/DetailBackButton";
 
 type LabProjectLayoutProps = {
@@ -7,6 +13,12 @@ type LabProjectLayoutProps = {
 };
 
 type MobileTab = "demo" | "article";
+
+type IndicatorState = {
+  left: number;
+  width: number;
+  ready: boolean;
+};
 
 function TabButton({
   active,
@@ -24,9 +36,9 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={[
-        "type-btn flex-1 rounded-xl px-4 py-2.5 transition-colors",
+        "type-btn relative z-10 flex-1 rounded-xl px-4 py-2.5 transition-colors",
         active
-          ? "bg-bg-section-alt text-text-primary"
+          ? "text-text-primary"
           : "text-text-secondary hover:text-text-primary",
       ].join(" ")}
     >
@@ -40,6 +52,54 @@ export default function LabProjectLayout({
   children,
 }: LabProjectLayoutProps) {
   const [mobileTab, setMobileTab] = useState<MobileTab>("demo");
+  const tablistRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState<IndicatorState>({
+    left: 0,
+    width: 0,
+    ready: false,
+  });
+
+  const updateIndicator = useCallback(() => {
+    const tablist = tablistRef.current;
+    if (!tablist) return;
+
+    const activeTab = tablist.querySelector<HTMLElement>(
+      '[role="tab"][aria-selected="true"]',
+    );
+    if (!activeTab) return;
+
+    const tablistRect = tablist.getBoundingClientRect();
+    const tabRect = activeTab.getBoundingClientRect();
+
+    setIndicator({
+      left: tabRect.left - tablistRect.left,
+      width: tabRect.width,
+      ready: true,
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    updateIndicator();
+    const frame = requestAnimationFrame(() => updateIndicator());
+    return () => cancelAnimationFrame(frame);
+  }, [mobileTab, updateIndicator]);
+
+  useLayoutEffect(() => {
+    const tablist = tablistRef.current;
+    if (!tablist) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateIndicator();
+    });
+
+    resizeObserver.observe(tablist);
+    window.addEventListener("resize", updateIndicator);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [updateIndicator]);
 
   const demoPanel = (
     <div className="flex h-full min-h-[calc(100svh-9rem)] flex-col lg:min-h-0">
@@ -62,10 +122,24 @@ export default function LabProjectLayout({
       <div className="mx-auto max-w-360 px-2 pt-16 sm:px-4 lg:px-6">
         <div className="mb-3 lg:hidden">
           <div
+            ref={tablistRef}
             role="tablist"
             aria-label="Lab project sections"
-            className="flex gap-1 rounded-2xl bg-bg-card p-1.5"
+            className="relative flex gap-1 rounded-2xl bg-bg-card p-1.5"
           >
+            <div
+              aria-hidden
+              className={[
+                "pointer-events-none absolute top-1.5 bottom-1.5 rounded-xl bg-bg-section-alt",
+                "transition-[left,width,opacity] duration-300 ease-out",
+                "motion-reduce:transition-none",
+                indicator.ready ? "opacity-100" : "opacity-0",
+              ].join(" ")}
+              style={{
+                left: indicator.left,
+                width: indicator.width,
+              }}
+            />
             <TabButton
               active={mobileTab === "demo"}
               onClick={() => setMobileTab("demo")}
