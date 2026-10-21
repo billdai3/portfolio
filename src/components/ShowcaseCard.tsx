@@ -39,37 +39,9 @@ type ShowcaseCardProps = {
   loading?: boolean;
   /** Preview image; shown in SquircleClip when not loading. */
   image?: string;
-  /** Optional cover preview; muted loop on hover (desktop) or scroll spotlight (touch). */
+  /** Optional cover preview; muted loop on hover (desktop). */
   video?: string;
 };
-
-type SpotlightCard = {
-  activate: () => void;
-  deactivate: () => void;
-};
-
-const intersectingSpotlightCards = new Set<SpotlightCard>();
-let activeSpotlightCard: SpotlightCard | null = null;
-
-function setActiveSpotlightCard(card: SpotlightCard | null) {
-  if (activeSpotlightCard === card) return;
-  activeSpotlightCard?.deactivate();
-  activeSpotlightCard = card;
-  card?.activate();
-}
-
-function notifySpotlightEnter(card: SpotlightCard) {
-  intersectingSpotlightCards.add(card);
-  setActiveSpotlightCard(card);
-}
-
-function notifySpotlightLeave(card: SpotlightCard) {
-  intersectingSpotlightCards.delete(card);
-  if (activeSpotlightCard !== card) return;
-
-  const next = intersectingSpotlightCards.values().next().value ?? null;
-  setActiveSpotlightCard(next);
-}
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -81,13 +53,7 @@ function canUseHoverSpotlight(): boolean {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 
-function canUseScrollSpotlight(): boolean {
-  if (typeof window === "undefined") return false;
-  if (prefersReducedMotion()) return false;
-  return !window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-}
-
-/** Hover + scroll-spotlight visual variants for group children. */
+/** Hover visual variants for group children. */
 const spotlight = {
   title: "group-hover:text-accent group-[.showcase-card--active]:text-accent",
   titleIdle:
@@ -285,16 +251,6 @@ export default function ShowcaseCard({
     setVideoActive(true);
   }, []);
 
-  const spotlightCardRef = useRef<SpotlightCard>({
-    activate: () => {},
-    deactivate: () => {},
-  });
-
-  useEffect(() => {
-    spotlightCardRef.current.activate = activateSpotlight;
-    spotlightCardRef.current.deactivate = deactivateSpotlight;
-  }, [activateSpotlight, deactivateSpotlight]);
-
   useEffect(() => {
     if (!video) return;
     if (prefersReducedMotion()) return;
@@ -319,36 +275,6 @@ export default function ShowcaseCard({
     if (!shouldPreload) return;
     videoRef.current?.load();
   }, [shouldPreload, video]);
-
-  useEffect(() => {
-    if (!canUseScrollSpotlight()) return;
-
-    const node = cardRef.current;
-    if (!node) return;
-
-    const card = spotlightCardRef.current;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry) return;
-
-        if (entry.isIntersecting) {
-          notifySpotlightEnter(card);
-          return;
-        }
-
-        notifySpotlightLeave(card);
-      },
-      { rootMargin: "-35% 0px -35% 0px" },
-    );
-
-    observer.observe(node);
-    return () => {
-      observer.disconnect();
-      notifySpotlightLeave(card);
-    };
-  }, []);
 
   const handlePointerEnter = () => {
     if (!canUseHoverSpotlight()) return;
