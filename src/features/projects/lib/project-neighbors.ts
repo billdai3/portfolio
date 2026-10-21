@@ -14,20 +14,23 @@ type ProjectChainEntry = {
   title: string;
 };
 
-const projectChain: ProjectChainEntry[] = [
-  ...workProjects.map((project) => ({
-    section: "work" as const,
-    slug: project.slug,
-    href: `/work/${project.slug}`,
-    title: project.title,
-  })),
-  ...labProjects.map((project) => ({
-    section: "lab" as const,
-    slug: project.slug,
-    href: `/lab/${project.slug}`,
-    title: project.title,
-  })),
-];
+/** Built on first use so we don't read registries during their MDX init cycle. */
+function getProjectChain(): ProjectChainEntry[] {
+  return [
+    ...workProjects.map((project) => ({
+      section: "work" as const,
+      slug: project.slug,
+      href: `/work/${project.slug}`,
+      title: project.title,
+    })),
+    ...labProjects.map((project) => ({
+      section: "lab" as const,
+      slug: project.slug,
+      href: `/lab/${project.slug}`,
+      title: project.title,
+    })),
+  ];
+}
 
 function toNavTarget(
   entry: ProjectChainEntry | undefined,
@@ -50,6 +53,7 @@ export function getProjectNeighbors(
 ): { prev: ProjectNavTarget; next: ProjectNavTarget } | null {
   if (!slug) return null;
 
+  const projectChain = getProjectChain();
   const index = projectChain.findIndex(
     (entry) => entry.section === section && entry.slug === slug,
   );

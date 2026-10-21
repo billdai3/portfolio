@@ -11,7 +11,10 @@ type ProjectPagerProps = {
 };
 
 const linkClassName =
-  "type-btn inline-flex flex-1 items-center justify-center gap-1 rounded-xl bg-bg-card px-6 py-4 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none";
+  "group type-btn inline-flex flex-1 items-center justify-center rounded-xl bg-bg-card px-6 py-4 text-text-primary transition-colors duration-300 ease-out hover:bg-bg-section-alt focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none";
+
+const iconWrapClassName =
+  "inline-flex w-0 overflow-hidden opacity-0 transition-[width,opacity,margin] duration-300 ease-out motion-reduce:transition-none group-hover:w-4 group-hover:opacity-100 group-focus-visible:w-4 group-focus-visible:opacity-100";
 
 function targetLabel(target: ProjectNavTarget, side: "prev" | "next") {
   if (target.kind === "home") return "Home";
@@ -32,12 +35,22 @@ export default function ProjectPager({ section }: ProjectPagerProps) {
       className="mt-16 flex gap-3 sm:mt-20 sm:gap-4"
     >
       <Link to={prev.href} className={linkClassName}>
-        <ArrowIcon direction="left" className="size-4 shrink-0" />
+        <span
+          className={`${iconWrapClassName} group-hover:mr-1 group-focus-visible:mr-1`}
+          aria-hidden
+        >
+          <ArrowIcon direction="left" className="size-4 shrink-0" />
+        </span>
         <span>{targetLabel(prev, "prev")}</span>
       </Link>
       <Link to={next.href} className={linkClassName}>
         <span>{targetLabel(next, "next")}</span>
-        <ArrowIcon direction="right" className="size-4 shrink-0" />
+        <span
+          className={`${iconWrapClassName} group-hover:ml-1 group-focus-visible:ml-1`}
+          aria-hidden
+        >
+          <ArrowIcon direction="right" className="size-4 shrink-0" />
+        </span>
       </Link>
     </nav>
   );
