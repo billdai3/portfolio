@@ -399,6 +399,20 @@ export default function Layout() {
     if (isDetailPage && !canHover) setNavExpanded((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (!isDetailPage || canHover || !navExpanded) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const interactive = detailNavInteractiveRef.current;
+      const target = event.target;
+      if (!(target instanceof Node) || interactive?.contains(target)) return;
+      setNavExpanded(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => document.removeEventListener("pointerdown", onPointerDown, true);
+  }, [isDetailPage, canHover, navExpanded]);
+
   const renderNavPill = (options?: {
     ref?: RefObject<HTMLElement | null>;
     measure?: boolean;
