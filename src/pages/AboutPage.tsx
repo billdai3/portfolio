@@ -106,16 +106,16 @@ export default function AboutPage() {
             About Me
           </h1>
 
-          <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-12">
+          <div className="group flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-12">
             <div
               className="size-40 shrink-0 rounded-full bg-ash-600 sm:size-48"
               aria-hidden
             />
             <div className="max-w-xl min-w-0 text-center sm:text-left">
-              <h2 className="type-hero-subtitle text-text-primary">
+              <h2 className="type-hero-subtitle text-text-primary transition-colors group-hover:text-brand">
                 I&apos;m Bill.
               </h2>
-              <p className="mt-4 text-base leading-relaxed text-text-secondary">
+              <p className="mt-4 text-base leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
                 UI/UX 設計師，參與過多個從 0 到 1 的 Web 與 App
                 專案，負責從需求釐清到設計落地，並與 PM、工程團隊密切合作。熟悉
                 Figma、Adobe
@@ -160,11 +160,11 @@ export default function AboutPage() {
 
           <ul className="mx-auto max-w-2xl list-none space-y-8">
             {buildNotes.map((note) => (
-              <li key={note.title}>
-                <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary sm:text-lg">
+              <li key={note.title} className="group">
+                <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-brand sm:text-lg">
                   {note.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                <p className="mt-2 text-sm leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
                   {note.description}
                 </p>
               </li>
