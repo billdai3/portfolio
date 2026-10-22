@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# Bill's Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+這是我的個人 UI/UX 作品集網站，主要放了商業專案的 Case Study 與一些 Creative Coding 的實驗。專案採用了 Vite + React 框架，並透過 Cursor 輔助開發 (Vibe Coding) 完成網站的建置及部署。
 
-Currently, two official plugins are available:
+## 🛠 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Framework:** React, Vite
+- **Styling & Animation:** Tailwind CSS, GSAP
+- **Content Management:** MDX
+- **Database & Storage:** Supabase
+- **Deployment:** Vercel
 
-## React Compiler
+## ✨ Key Highlights & Architecture
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1. AI-Assisted Workflow (Vibe Coding)
 
-## Expanding the ESLint configuration
+專案的底層邏輯與架構主要利用 Cursor 輔助建構，我透過「精準的技術提問與意圖說明」，結合基礎的 Vue/React 概念，以設計工程 (Design Engineering) 的思維角度去做 Prototyping 實現與最終上線。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 2. Design System & Animation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Design Tokens:** 運用對 Design System 的熟悉，將視覺規範透過 Tailwind CSS 實現，讓網站的樣式維持一致性。
+- **Custom Icons:** 捨棄初期快速開發用的 Lucide icons，網站圖標最後都替換成利用 Figma 繪製的 SVG。
+- **Micro-interactions:** 使用 GSAP 操控 SVG 時間軸，實現流暢的網頁微動畫。
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 3. Content & Performance Optimization
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **MDX Case Studies:** 專案 Case study 使用 MDX 去做封裝，兼具 Markdown 的寫作便利性與 React 元件（如客製 Carousel）的擴充彈性。
+- **Secure & Fast Asset Delivery:** 上鎖的專案及圖片原先存放於 GitHub Private Repo，但因 GitHub API 提取有延遲，後續將圖片遷移到 Supabase。透過具時效性的 Signed URL 提取圖片，除了保有不公開的安全性，也優化專案頁的載入效能。
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Local Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+如果你想在本地端運行此專案，請參考以下步驟：
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 1. Clone the repository
+git clone https://github.com/billdai3/portfolio.git
+
+# 2. Install dependencies
+npm install
+
+# 3. Setup Environment Variables
+# 請在根目錄建立 .env 檔，並填入 Supabase 等相關金鑰（可參考 .env.example）
+
+# 4. Start the development server
+npm run dev
 ```
