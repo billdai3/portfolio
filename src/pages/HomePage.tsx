@@ -1,6 +1,7 @@
 import { useLayoutEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ArrowIcon from "../components/icons/ArrowIcon";
+import CtaLink from "../components/CtaLink";
 import HeroAnimation from "../components/HeroAnimation";
 import HeroTitleRotator from "../components/HeroTitleRotator";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
@@ -123,12 +124,7 @@ export default function HomePage() {
             ))}
           </ul>
           <p className="mt-10 text-center sm:mt-12">
-            <Link
-              to="/work"
-              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
-            >
-              View all work
-            </Link>
+            <CtaLink to="/work">View all work</CtaLink>
           </p>
         </div>
       </section>
@@ -164,12 +160,7 @@ export default function HomePage() {
             ))}
           </ul>
           <p className="mt-10 text-center sm:mt-12">
-            <Link
-              to="/lab"
-              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
-            >
-              Open lab
-            </Link>
+            <CtaLink to="/lab">Open lab</CtaLink>
           </p>
         </div>
       </section>

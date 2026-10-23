@@ -1,5 +1,6 @@
 import { useState, type ComponentType } from "react";
 
+import CtaLink from "../components/CtaLink";
 import SkillCodingAnimation from "../components/SkillCodingAnimation";
 import SkillDesignAnimation from "../components/SkillDesignAnimation";
 import SkillSystemAnimation from "../components/SkillSystemAnimation";
@@ -165,14 +166,13 @@ export default function AboutPage() {
           </ul>
 
           <p className="mt-10 text-center sm:mt-12">
-            <a
+            <CtaLink
               href="https://github.com/billdai3/portfolio"
               target="_blank"
               rel="noopener noreferrer"
-              className="type-btn inline-flex rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-ash-900 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             >
               View on GitHub
-            </a>
+            </CtaLink>
           </p>
         </div>
       </section>
