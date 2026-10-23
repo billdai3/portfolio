@@ -3,10 +3,20 @@ import { Navigate, useParams } from "react-router-dom";
 import LockedWorkProject from "../features/work/components/LockedWorkProject";
 import { workMdxComponents } from "../features/work/components/mdx-components";
 import { getWorkProject } from "../features/work/lib/registry";
+import {
+  formatDocumentTitle,
+  useDocumentTitle,
+} from "../hooks/useDocumentTitle";
 
 export default function WorkProjectPage() {
   const { slug } = useParams<{ slug: string }>();
   const project = getWorkProject(slug);
+
+  useDocumentTitle(
+    project
+      ? formatDocumentTitle(project.title, "Work")
+      : formatDocumentTitle("Work"),
+  );
 
   if (!project) {
     return <Navigate to="/work" replace />;

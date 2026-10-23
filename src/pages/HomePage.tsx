@@ -7,6 +7,10 @@ import HeroTitleRotator from "../components/HeroTitleRotator";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
 import { labProjects } from "../features/lab/lib/registry";
 import { workProjects } from "../features/work/lib/registry";
+import {
+  SITE_TITLE,
+  useDocumentTitle,
+} from "../hooks/useDocumentTitle";
 
 const HOME_SECTION_HASHES = new Set(["home-work", "home-lab"]);
 
@@ -22,6 +26,7 @@ const experiments = labProjects.slice(0, 2).map((item) => ({
 
 export default function HomePage() {
   const location = useLocation();
+  useDocumentTitle(SITE_TITLE);
 
   const selectedWorks = workProjects.slice(0, 2).map((item) => ({
     title: item.title,

@@ -5,6 +5,10 @@ import SkillCodingAnimation from "../components/SkillCodingAnimation";
 import SkillDesignAnimation from "../components/SkillDesignAnimation";
 import SkillSystemAnimation from "../components/SkillSystemAnimation";
 import SkillWorkflowAnimation from "../components/SkillWorkflowAnimation";
+import {
+  formatDocumentTitle,
+  useDocumentTitle,
+} from "../hooks/useDocumentTitle";
 
 type SkillAnimationProps = {
   className?: string;
@@ -93,6 +97,8 @@ function SkillCard({
 }
 
 export default function AboutPage() {
+  useDocumentTitle(formatDocumentTitle("About"));
+
   return (
     <div className="text-text-primary">
       <section

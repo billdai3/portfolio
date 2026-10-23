@@ -1,8 +1,14 @@
 import PageShell from "../components/PageShell";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
 import { labProjects } from "../features/lab/lib/registry";
+import {
+  formatDocumentTitle,
+  useDocumentTitle,
+} from "../hooks/useDocumentTitle";
 
 export default function LabPage() {
+  useDocumentTitle(formatDocumentTitle("Lab"));
+
   return (
     <PageShell>
       <ul className="showcase-grid">
