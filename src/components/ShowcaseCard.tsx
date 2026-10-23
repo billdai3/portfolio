@@ -244,7 +244,21 @@ export default function ShowcaseCard({
   const [videoActive, setVideoActive] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [shouldPreload, setShouldPreload] = useState(false);
+  const [prevHoverSpotlight, setPrevHoverSpotlight] = useState(hoverSpotlight);
   const showVideo = Boolean(video) && hoverSpotlight;
+  const spotlightActive = hoverSpotlight && isActive;
+  const spotlightVideoActive = hoverSpotlight && videoActive;
+
+  // Reset interaction state when hover spotlight capability turns off
+  // (React "adjust state when a value changes" pattern — avoid setState in effect).
+  if (hoverSpotlight !== prevHoverSpotlight) {
+    setPrevHoverSpotlight(hoverSpotlight);
+    if (!hoverSpotlight) {
+      setIsActive(false);
+      setVideoActive(false);
+      setShouldPreload(false);
+    }
+  }
 
   const deactivateSpotlight = useCallback(() => {
     const el = videoRef.current;
@@ -271,12 +285,6 @@ export default function ShowcaseCard({
     }
     setVideoActive(true);
   }, []);
-
-  useEffect(() => {
-    if (hoverSpotlight) return;
-    deactivateSpotlight();
-    setShouldPreload(false);
-  }, [hoverSpotlight, deactivateSpotlight]);
 
   useEffect(() => {
     if (!showVideo) return;
@@ -315,7 +323,7 @@ export default function ShowcaseCard({
   const cardClassName = [
     "group rounded-[8%] bg-bg-card p-5",
     item.href ? "block transition-colors" : "",
-    isActive ? "showcase-card--active" : "",
+    spotlightActive ? "showcase-card--active" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -345,7 +353,7 @@ export default function ShowcaseCard({
               aria-hidden
               className={[
                 "pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ease-out",
-                videoActive ? "opacity-100" : "opacity-0",
+                spotlightVideoActive ? "opacity-100" : "opacity-0",
               ].join(" ")}
             />
           ) : null}
