@@ -28,7 +28,7 @@ const skills: {
     Animation: SkillSystemAnimation,
   },
   {
-    title: "Creative Front-End",
+    title: "Design-to-Code",
     description:
       "瞭解網頁結構、樣式規則及互動邏輯等前端知識，並能運用相關技術來設計標準的互動式 RWD 網頁，讓設計能夠準確地落地實現。",
     Animation: SkillCodingAnimation,
@@ -95,26 +95,19 @@ export default function AboutPage() {
   return (
     <div className="text-text-primary">
       <section
-        className="section-shell bg-bg-section"
-        aria-labelledby="about-me-heading"
+        className="section-shell bg-bg-section pt-32 pb-16 sm:pt-40 sm:pb-24"
+        aria-label="About me"
       >
         <div className="section-inner">
-          <h1
-            id="about-me-heading"
-            className="type-section-title section-heading"
-          >
-            About Me
-          </h1>
-
           <div className="group flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-12">
             <div
               className="size-40 shrink-0 rounded-full bg-ash-600 sm:size-48"
               aria-hidden
             />
             <div className="max-w-xl min-w-0 text-center sm:text-left">
-              <h2 className="type-hero-subtitle text-text-primary transition-colors group-hover:text-brand">
-                I&apos;m Bill.
-              </h2>
+              <h1 className="type-hero-subtitle text-text-primary transition-colors group-hover:text-brand">
+                我是 Bill
+              </h1>
               <p className="mt-4 text-base leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
                 UI/UX 設計師，參與過多個從 0 到 1 的 Web 與 App
                 專案，負責從需求釐清到設計落地，並與 PM、工程團隊密切合作。熟悉

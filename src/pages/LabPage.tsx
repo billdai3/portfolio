@@ -4,10 +4,7 @@ import { labProjects } from "../features/lab/lib/registry";
 
 export default function LabPage() {
   return (
-    <PageShell
-      title="Lab"
-      description="Experiments, prototypes, and work-in-progress ideas live here."
-    >
+    <PageShell>
       <ul className="showcase-grid">
         {labProjects.map((item) => (
           <li key={item.slug}>
