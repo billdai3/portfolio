@@ -43,14 +43,33 @@ type ShowcaseCardProps = {
   video?: string;
 };
 
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const HOVER_SPOTLIGHT_QUERY = "(hover: hover) and (pointer: fine)";
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function readHoverSpotlight(): boolean {
+  if (typeof window === "undefined") return false;
+  if (window.matchMedia(REDUCED_MOTION_QUERY).matches) return false;
+  return window.matchMedia(HOVER_SPOTLIGHT_QUERY).matches;
 }
 
-function canUseHoverSpotlight(): boolean {
-  if (typeof window === "undefined") return false;
-  if (prefersReducedMotion()) return false;
-  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+/** True when grayscale idle + hover video are appropriate. */
+function useHoverSpotlight(): boolean {
+  const [enabled, setEnabled] = useState(readHoverSpotlight);
+
+  useEffect(() => {
+    const hover = window.matchMedia(HOVER_SPOTLIGHT_QUERY);
+    const reduced = window.matchMedia(REDUCED_MOTION_QUERY);
+    const sync = () => setEnabled(readHoverSpotlight());
+
+    hover.addEventListener("change", sync);
+    reduced.addEventListener("change", sync);
+    return () => {
+      hover.removeEventListener("change", sync);
+      reduced.removeEventListener("change", sync);
+    };
+  }, []);
+
+  return enabled;
 }
 
 /** Hover visual variants for group children. */
@@ -219,11 +238,13 @@ export default function ShowcaseCard({
   video,
 }: ShowcaseCardProps) {
   const unlocked = useWorkUnlockHint();
+  const hoverSpotlight = useHoverSpotlight();
   const cardRef = useRef<HTMLAnchorElement | HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoActive, setVideoActive] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [shouldPreload, setShouldPreload] = useState(false);
+  const showVideo = Boolean(video) && hoverSpotlight;
 
   const deactivateSpotlight = useCallback(() => {
     const el = videoRef.current;
@@ -252,8 +273,13 @@ export default function ShowcaseCard({
   }, []);
 
   useEffect(() => {
-    if (!video) return;
-    if (prefersReducedMotion()) return;
+    if (hoverSpotlight) return;
+    deactivateSpotlight();
+    setShouldPreload(false);
+  }, [hoverSpotlight, deactivateSpotlight]);
+
+  useEffect(() => {
+    if (!showVideo) return;
 
     const node = cardRef.current;
     if (!node) return;
@@ -269,20 +295,20 @@ export default function ShowcaseCard({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [video]);
+  }, [showVideo]);
 
   useEffect(() => {
-    if (!shouldPreload) return;
+    if (!shouldPreload || !showVideo) return;
     videoRef.current?.load();
-  }, [shouldPreload, video]);
+  }, [shouldPreload, showVideo, video]);
 
   const handlePointerEnter = () => {
-    if (!canUseHoverSpotlight()) return;
+    if (!hoverSpotlight) return;
     activateSpotlight();
   };
 
   const handlePointerLeave = () => {
-    if (!canUseHoverSpotlight()) return;
+    if (!hoverSpotlight) return;
     deactivateSpotlight();
   };
 
@@ -294,21 +320,21 @@ export default function ShowcaseCard({
     .filter(Boolean)
     .join(" ");
 
+  const imageClassName = hoverSpotlight
+    ? [
+        "h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out",
+        spotlight.image,
+      ].join(" ")
+    : "h-full w-full object-cover";
+
   const inner = (
     <>
       <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
         <div className="relative h-full w-full">
           {image ? (
-            <img
-              src={image}
-              alt=""
-              className={[
-                "h-full w-full object-cover grayscale transition-[filter] duration-300 ease-out",
-                spotlight.image,
-              ].join(" ")}
-            />
+            <img src={image} alt="" className={imageClassName} />
           ) : null}
-          {video ? (
+          {showVideo ? (
             <video
               ref={videoRef}
               src={video}
