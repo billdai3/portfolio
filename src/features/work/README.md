@@ -99,12 +99,27 @@ export default createWorkPage({ metadata });
 | `GITHUB_PRIVATE_TOKEN` | 讀取私有 repo 的 GitHub token              |
 | `GITHUB_USERNAME`      | 私有 repo 的 owner                         |
 | `GITHUB_REPO_NAME`     | 私有 repo 名稱                             |
-| `SUPABASE_URL`         | Supabase project URL                       |
-| `SUPABASE_SECRET_KEY`  | 伺服器端讀取 private Storage 的 secret key |
-| `WORK_UNLOCK_PASSWORD` | 解鎖密碼                                   |
-| `WORK_SESSION_SECRET`  | 簽署 session cookie                        |
+| `SUPABASE_URL`         | Supabase project URL（Storage + unlock rate limit） |
+| `SUPABASE_SECRET_KEY`  | 伺服器端 secret key（Storage 與 `unlock_attempts`） |
+| `WORK_UNLOCK_PASSWORD` | 解鎖密碼                                            |
+| `WORK_SESSION_SECRET`  | 簽署 session cookie                                 |
 
 本機測解鎖請用 `npm run dev:vercel`（純 `vite` 沒有 `/api`）。
+
+### Unlock rate limit
+
+`POST /api/work-unlock` 依客戶端 IP 計失敗次數（寫入 Supabase 表 `unlock_attempts`）。連續失敗 5 次後冷卻 15 分鐘，回 `429`；密碼正確則清除該 IP 紀錄。未設定 Supabase env 時不擋解鎖（fail open）。
+
+表欄位：
+
+| 欄位           | 說明                                      |
+| -------------- | ----------------------------------------- |
+| `key`          | text PK，例如 `ip:1.2.3.4`                |
+| `fail_count`   | int，目前累計失敗次數                     |
+| `locked_until` | timestamptz，冷卻結束時間；未鎖則為 null  |
+| `updated_at`   | timestamptz                               |
+
+建議開啟 RLS、不建 anon／authenticated policy（僅 service role 讀寫）。
 
 ### 公開空殼 MDX
 

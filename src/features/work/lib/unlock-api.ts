@@ -8,11 +8,34 @@ export type WorkContentPayload = {
 
 export type LockedContentResult = WorkContentPayload | "unauthorized" | "error";
 
+export type UnlockRateLimited = {
+  kind: "rate-limited";
+  retryAfterSec: number;
+};
+
 export type UnlockContentResult =
   | WorkContentPayload
   | "unauthorized"
   | "error"
-  | "unlocked-no-content";
+  | "unlocked-no-content"
+  | UnlockRateLimited;
+
+function parseRetryAfterSec(res: Response, body: unknown): number {
+  if (body && typeof body === "object") {
+    const candidate = (body as { retryAfterSec?: unknown }).retryAfterSec;
+    if (typeof candidate === "number" && Number.isFinite(candidate) && candidate > 0) {
+      return Math.ceil(candidate);
+    }
+  }
+
+  const header = res.headers.get("Retry-After");
+  if (header) {
+    const seconds = Number.parseInt(header, 10);
+    if (Number.isFinite(seconds) && seconds > 0) return seconds;
+  }
+
+  return 15 * 60;
+}
 
 const UNLOCK_HINT_KEY = "work:unlocked";
 
@@ -122,6 +145,15 @@ export async function unlockAndFetchContent(
   });
 
   if (res.status === 401) return "unauthorized";
+
+  if (res.status === 429) {
+    const body = await res.json().catch(() => null);
+    return {
+      kind: "rate-limited",
+      retryAfterSec: parseRetryAfterSec(res, body),
+    };
+  }
+
   if (!res.ok) return "error";
 
   const data = (await res.json()) as {

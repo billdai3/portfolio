@@ -32,9 +32,22 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
         return;
       }
 
+      if (result === "unlocked-no-content") {
+        setPassword("");
+        persistUnlockHint();
+        onUnlocked(undefined);
+        return;
+      }
+
+      if (typeof result === "object" && "kind" in result) {
+        const minutes = Math.max(1, Math.ceil(result.retryAfterSec / 60));
+        setError(`嘗試次數過多，請約 ${minutes} 分鐘後再試。`);
+        return;
+      }
+
       setPassword("");
       persistUnlockHint();
-      onUnlocked(result === "unlocked-no-content" ? undefined : result);
+      onUnlocked(result);
     } catch {
       setError("無法連線，請稍後再試。");
     } finally {
