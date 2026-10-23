@@ -1,8 +1,8 @@
 type PageShellProps = {
-  title?: string
-  description?: string
-  children?: React.ReactNode
-}
+  title?: string;
+  description?: string;
+  children?: React.ReactNode;
+};
 
 export default function PageShell({
   title,
@@ -10,7 +10,7 @@ export default function PageShell({
   children,
 }: PageShellProps) {
   return (
-    <section className="section-shell">
+    <section className="page-shell">
       <div className="section-inner">
         {title ? (
           <header className="mb-12 max-w-2xl">
@@ -25,5 +25,5 @@ export default function PageShell({
         {children}
       </div>
     </section>
-  )
+  );
 }

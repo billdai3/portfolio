@@ -102,11 +102,11 @@ export default function AboutPage() {
   return (
     <div className="text-text-primary">
       <section
-        className="section-shell bg-bg-section pt-32 pb-16 sm:pt-40 sm:pb-24"
+        className="page-shell page-shell--about bg-bg-section"
         aria-label="About me"
       >
         <div className="section-inner">
-          <div className="group flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-12">
+          <div className="group flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:justify-center sm:gap-12">
             <div
               className="size-40 shrink-0 rounded-full bg-ash-600 sm:size-48"
               aria-hidden

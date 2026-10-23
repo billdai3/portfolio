@@ -54,6 +54,8 @@
   --color-nav-indicator-default: var(--color-ash-900);
   --color-nav-hover-hero: var(--color-ash-100);
   --color-nav-hover-default: var(--color-ash-800);
+  /* Page-start top offset (.page-shell) — Work/Lab ShowcaseCard at 96px */
+  --page-shell-pt: 6rem;
 
   /* Typography — body: GlowSans only; display: Montserrat Alternates + GlowSans */
   --font-body:
@@ -119,6 +121,30 @@
   /* Shared page section layout */
   .section-shell {
     @apply px-6 py-16 sm:px-10 sm:py-24;
+  }
+
+  /* Page start under fixed nav — top locked for ShowcaseCard (default 6rem / 96px) */
+  .page-shell {
+    @apply px-6 sm:px-10;
+    padding-top: var(--page-shell-pt);
+    padding-bottom: 4rem;
+  }
+
+  @media (width >= 40rem) {
+    .page-shell {
+      padding-bottom: 6rem;
+    }
+  }
+
+  /* About intro — keep previous taller top (pt-32 / sm:pt-40) */
+  .page-shell--about {
+    --page-shell-pt: 8rem;
+  }
+
+  @media (width >= 40rem) {
+    .page-shell--about {
+      --page-shell-pt: 10rem;
+    }
   }
 
   .section-inner {
