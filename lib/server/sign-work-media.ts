@@ -1,5 +1,5 @@
-import { toSupabaseObjectKey, WORK_MEDIA_BUCKET } from "./load-work-media";
-import { getSupabaseAdminClient } from "./supabase";
+import { toSupabaseObjectKey, WORK_MEDIA_BUCKET } from "./load-work-media.js";
+import { getSupabaseAdminClient } from "./supabase.js";
 
 /** Signed URL lifetime; keep longer than work-content cache TTL (5 min). */
 export const SIGNED_MEDIA_URL_EXPIRES_IN = 3600;

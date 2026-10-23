@@ -1,5 +1,5 @@
-import { toAssetPath } from "../../src/features/work/lib/asset-path";
-import { createSignedMediaUrlMap } from "./sign-work-media";
+import { toAssetPath } from "../../src/features/work/lib/asset-path.js";
+import { createSignedMediaUrlMap } from "./sign-work-media.js";
 
 export { toAssetPath };
 

@@ -1,11 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { loadWorkContent } from "../lib/server/load-work-content";
-import { passwordsMatch } from "../lib/server/password";
+import { loadWorkContent } from "../lib/server/load-work-content.js";
+import { passwordsMatch } from "../lib/server/password.js";
 import {
   clearSessionCookie,
   createSessionToken,
   setSessionCookie,
-} from "../lib/server/session";
+} from "../lib/server/session.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "DELETE") {

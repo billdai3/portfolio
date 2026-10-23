@@ -2,8 +2,8 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   getWorkContentMeta,
   loadWorkContent,
-} from "../lib/server/load-work-content";
-import { isUnlocked } from "../lib/server/session";
+} from "../lib/server/load-work-content.js";
+import { isUnlocked } from "../lib/server/session.js";
 
 export default async function handler(
   req: VercelRequest,

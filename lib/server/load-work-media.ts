@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { isValidAssetPath } from "./github";
-import { getSupabaseAdminClient } from "./supabase";
+import { isValidAssetPath } from "./github.js";
+import { getSupabaseAdminClient } from "./supabase.js";
 
 type LoadedWorkMedia = {
   body: ArrayBuffer;

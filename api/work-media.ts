@@ -3,8 +3,8 @@ import {
   etagMatches,
   getWorkMediaMeta,
   loadWorkMedia,
-} from "../lib/server/load-work-media";
-import { isUnlocked } from "../lib/server/session";
+} from "../lib/server/load-work-media.js";
+import { isUnlocked } from "../lib/server/session.js";
 
 export default async function handler(
   req: VercelRequest,

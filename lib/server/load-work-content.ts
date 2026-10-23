@@ -1,9 +1,9 @@
 import matter from "gray-matter";
-import { fetchRepoText, isValidSlug, mdxPathForSlug } from "./github";
+import { fetchRepoText, isValidSlug, mdxPathForSlug } from "./github.js";
 import {
   containsImportOrExport,
   rewriteMediaPathsWithSignedUrls,
-} from "./rewrite-media";
+} from "./rewrite-media.js";
 
 export type LoadedWorkContent = {
   slug: string;
