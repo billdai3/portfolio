@@ -551,7 +551,7 @@ export default function Layout() {
         </div>
       )}
 
-      <main className="flex-1">
+      <main className="flex flex-1 flex-col">
         <RouteTransitionOutlet pathname={location.pathname}>
           {outlet}
         </RouteTransitionOutlet>

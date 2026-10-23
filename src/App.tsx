@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage'
 import HomePage from './pages/HomePage'
 import LabPage from './pages/LabPage'
 import LabProjectPage from './pages/LabProjectPage'
+import NotFoundPage from './pages/NotFoundPage'
 import WorkPage from './pages/WorkPage'
 import WorkProjectPage from './pages/WorkProjectPage'
 
@@ -61,6 +62,7 @@ export default function App() {
               />
             </>
           ) : null}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
       <Analytics />
