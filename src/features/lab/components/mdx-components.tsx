@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import CtaLink from "@/components/CtaLink";
 import {
   baseMdxComponents,
   createMdxImgComponent,
@@ -8,6 +9,7 @@ import { Carousel, Comparison, Media } from "@/features/work/components/mdx-medi
 
 export const labMdxComponents: MDXComponents = {
   ...baseMdxComponents,
+  CtaLink,
   Media,
   Carousel,
   Comparison,
