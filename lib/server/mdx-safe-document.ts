@@ -345,7 +345,6 @@ function convertContent(node: Content | RootContent): SafeMdxNode[] {
     case "html":
       throw new Error("Raw HTML in MDX is not allowed");
     case "yaml":
-    case "toml":
       return [];
     case "definition":
     case "footnoteDefinition":
