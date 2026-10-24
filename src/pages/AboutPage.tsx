@@ -173,7 +173,7 @@ export default function AboutPage() {
             />
             <div className="max-w-xl min-w-0 text-center sm:text-left">
               <h1 className="type-hero-subtitle text-text-primary transition-colors group-hover:text-brand">
-                我是 Bill
+                Hi! 我是 Bill
               </h1>
               <p className="mt-4 text-base leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
                 UI/UX 設計師，參與過多個從 0 到 1 的 Web 與 App
