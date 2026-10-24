@@ -28,3 +28,7 @@ dist-ssr
 .env.*
 !.env.example
 .vercel
+
+# Locked work MDX baked at build (private content — do not commit)
+lib/server/prebuilt-work/*.json
+!lib/server/prebuilt-work/.gitkeep

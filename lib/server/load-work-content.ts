@@ -1,14 +1,12 @@
-import matter from "gray-matter";
-import { fetchRepoText, isValidSlug, mdxPathForSlug } from "./github.js";
-import {
-  containsImportOrExport,
-  rewriteMediaPathsWithSignedUrls,
-} from "./rewrite-media.js";
+import type { SafeMdxDocument } from "../../src/features/work/lib/safe-mdx-types.js";
+import { isValidSlug } from "./github.js";
+import { readPrebuiltWork } from "./load-prebuilt-work.js";
+import { rewriteDocumentMediaPaths } from "./rewrite-media.js";
 
 export type LoadedWorkContent = {
   slug: string;
   frontmatter: Record<string, unknown>;
-  body: string;
+  document: SafeMdxDocument;
 };
 
 export type LoadWorkContentResult =
@@ -21,12 +19,16 @@ export type LoadWorkContentMeta = {
 
 type CacheEntry = {
   expiresAt: number;
-  content: LoadedWorkContent;
+  /** Pre-rewrite document from disk (media paths still relative). */
+  entry: {
+    slug: string;
+    frontmatter: Record<string, unknown>;
+    document: SafeMdxDocument;
+  };
 };
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const contentCache = new Map<string, CacheEntry>();
-const inFlightLoads = new Map<string, Promise<LoadWorkContentResult>>();
 
 export async function loadWorkContent(
   slug: string,
@@ -35,51 +37,41 @@ export async function loadWorkContent(
     return { ok: false, reason: "invalid-slug" };
   }
 
-  const cached = contentCache.get(slug);
-  if (cached && cached.expiresAt > Date.now()) {
-    return { ok: true, content: cached.content };
-  }
-
-  if (cached) {
+  let base = contentCache.get(slug);
+  if (base && base.expiresAt <= Date.now()) {
     contentCache.delete(slug);
+    base = undefined;
   }
 
-  const inFlight = inFlightLoads.get(slug);
-  if (inFlight) {
-    return inFlight;
-  }
-
-  const loadPromise = (async (): Promise<LoadWorkContentResult> => {
-    const raw = await fetchRepoText(mdxPathForSlug(slug));
-    if (raw === null) {
+  if (!base) {
+    const prebuilt = readPrebuiltWork(slug);
+    if (!prebuilt) {
       return { ok: false, reason: "not-found" };
     }
 
-    if (containsImportOrExport(raw)) {
-      return { ok: false, reason: "invalid-content" };
-    }
-
-    const { data: frontmatter, content } = matter(raw);
-    const loadedContent: LoadedWorkContent = {
-      slug,
-      frontmatter: frontmatter as Record<string, unknown>,
-      body: await rewriteMediaPathsWithSignedUrls(content),
-    };
-
-    contentCache.set(slug, {
-      content: loadedContent,
+    base = {
+      entry: {
+        slug: prebuilt.slug,
+        frontmatter: prebuilt.frontmatter,
+        document: prebuilt.document,
+      },
       expiresAt: Date.now() + CACHE_TTL_MS,
-    });
-
-    return { ok: true, content: loadedContent };
-  })();
-
-  inFlightLoads.set(slug, loadPromise);
+    };
+    contentCache.set(slug, base);
+  }
 
   try {
-    return await loadPromise;
-  } finally {
-    inFlightLoads.delete(slug);
+    const document = await rewriteDocumentMediaPaths(base.entry.document);
+    return {
+      ok: true,
+      content: {
+        slug: base.entry.slug,
+        frontmatter: base.entry.frontmatter,
+        document,
+      },
+    };
+  } catch {
+    return { ok: false, reason: "invalid-content" };
   }
 }
 

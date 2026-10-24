@@ -104,7 +104,17 @@ export default createWorkPage({ metadata });
 | `WORK_UNLOCK_PASSWORD` | 解鎖密碼                                            |
 | `WORK_SESSION_SECRET`  | 簽署 session cookie                                 |
 
-本機測解鎖請用 `npm run dev:vercel`（純 `vite` 沒有 `/api`）。
+本機測解鎖請用：
+
+```bash
+# 1) 先烘焙鎖定正文（需要 GITHUB_*）
+npm run prebuild:locked-work
+
+# 2) 再開帶 API 的開發伺服器（純 vite 沒有 /api）
+npm run dev:vercel
+```
+
+`npm run build`（含 Vercel deploy）會自動跑 `prebuild:locked-work`。請確認 Vercel 專案的 **Build** 與 Runtime 都能讀到 `GITHUB_*`；改私人 repo 文章後需重新 deploy 才會更新。
 
 ### Unlock rate limit
 
@@ -154,16 +164,18 @@ Supabase bucket `portfolio-assets`/
     └── secret-flow.jpg
 ```
 
-MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解鎖載入正文時，伺服器會把路徑改成 Supabase signed URL（約 1 小時有效），瀏覽器直連 private bucket 下載。簽發失敗時單張會 fallback 到需 cookie 的 `/api/work-media`。
+MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解鎖 API 回傳前，伺服器會把文件樹裡的路徑改成 Supabase signed URL（約 1 小時有效），瀏覽器直連 private bucket 下載。簽發失敗時單張會 fallback 到需 cookie 的 `/api/work-media`。
 
 ### 私有 MDX 寫法
 
 - 使用 **YAML frontmatter**（不要 `import`／`export`／`createWorkPage`）。
-- Frontmatter 欄位（如 `projectInfo`）會在執行期注入成變數，正文可寫 `items={projectInfo}`。
-- 自訂元件直接寫 JSX 標籤：`<Media>`、`<Carousel>`、`<Comparison>`、`<ProjectInfo>`（對應本站 `workMdxComponents`）。
-- 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會一併簽發。
+- **不要**寫 `{...}` 運算式（建置會失敗）。`projectInfo` 放在 frontmatter 即可，解鎖頁會自動渲染 `<ProjectInfo>`（正文裡的 `<ProjectInfo … />` 會在烘焙時剝除）。
+- 自訂元件只用字面量 props 的 JSX：`<Media>`、`<Carousel>`、`<Comparison>`（對應本站 `workMdxComponents`）。
+- 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會在**請求時**簽發（非建置時）。
 - 私有圖預設經 signed URL 直連 Storage；`/api/work-media` 僅作簽發失敗時的 fallback 代理。
 - 建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
+
+建置時會把私人 MDX 編成 `lib/server/prebuilt-work/{slug}.json`（gitignore，不進公開前端 bundle）。解鎖 API 只回這份安全文件樹，瀏覽器**不再** `evaluate()` MDX。
 
 ```mdx
 ---
@@ -176,8 +188,6 @@ projectInfo:
 ---
 
 # C2C App
-
-<ProjectInfo items={projectInfo} />
 
 <Media src="./assets/c2c-app/secret-flow.jpg" alt="Secret flow" width="wide" />
 ```

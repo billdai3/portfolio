@@ -1,16 +1,16 @@
-import type { ComponentType, ReactNode } from "react";
+import type { WorkContentPayload } from "./unlock-api";
 
-type CachedWorkContent = ComponentType<{ children?: ReactNode }>;
+const contentCache = new Map<string, WorkContentPayload>();
 
-const contentCache = new Map<string, CachedWorkContent>();
-
-export function getCachedWorkContent(slug: string): CachedWorkContent | undefined {
+export function getCachedWorkContent(
+  slug: string,
+): WorkContentPayload | undefined {
   return contentCache.get(slug);
 }
 
 export function setCachedWorkContent(
   slug: string,
-  content: CachedWorkContent,
+  content: WorkContentPayload,
 ): void {
   contentCache.set(slug, content);
 }

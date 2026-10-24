@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/work-content.ts": {
+      "includeFiles": "lib/server/prebuilt-work/**"
+    },
+    "api/work-unlock.ts": {
+      "includeFiles": "lib/server/prebuilt-work/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",

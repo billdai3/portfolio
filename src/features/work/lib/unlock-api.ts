@@ -1,9 +1,10 @@
 import { clearAllCachedWorkContent } from "./locked-content-cache";
+import type { SafeMdxDocument } from "./safe-mdx-types";
 
 export type WorkContentPayload = {
   slug: string;
-  body: string;
   frontmatter: Record<string, unknown>;
+  document: SafeMdxDocument;
 };
 
 export type LockedContentResult = WorkContentPayload | "unauthorized" | "error";
@@ -92,22 +93,28 @@ export async function lockWorkContent(): Promise<boolean> {
   }
 }
 
+function isSafeMdxDocument(value: unknown): value is SafeMdxDocument {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as { type?: unknown; children?: unknown };
+  return candidate.type === "root" && Array.isArray(candidate.children);
+}
+
 function toWorkContentPayload(data: unknown): WorkContentPayload | null {
   if (!data || typeof data !== "object") return null;
 
   const candidate = data as {
     slug?: unknown;
-    body?: unknown;
+    document?: unknown;
     frontmatter?: unknown;
+    body?: unknown;
   };
 
-  if (typeof candidate.slug !== "string" || typeof candidate.body !== "string") {
-    return null;
-  }
+  if (typeof candidate.slug !== "string") return null;
+  if (!isSafeMdxDocument(candidate.document)) return null;
 
   return {
     slug: candidate.slug,
-    body: candidate.body,
+    document: candidate.document,
     frontmatter:
       candidate.frontmatter && typeof candidate.frontmatter === "object"
         ? (candidate.frontmatter as Record<string, unknown>)
@@ -158,7 +165,7 @@ export async function unlockAndFetchContent(
 
   const data = (await res.json()) as {
     slug?: unknown;
-    body?: unknown;
+    document?: unknown;
     frontmatter?: unknown;
     contentError?: unknown;
   };

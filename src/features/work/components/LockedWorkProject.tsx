@@ -1,20 +1,20 @@
 import { MDXProvider } from "@mdx-js/react";
 import {
-  createElement,
   useCallback,
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  type ComponentType,
   type ReactNode,
 } from "react";
 import { GridIconLoadingBlock } from "../../../components/GridIconLoading";
 import { UnlockForm } from "./UnlockForm";
 import { RemoteMdxErrorBoundary } from "./RemoteMdxErrorBoundary";
+import { ProjectInfo } from "./ProjectInfo";
 import { workMdxComponents } from "./mdx-components";
 import WorkProjectLayout from "./WorkProjectLayout";
-import { compileRemoteMdx } from "../lib/compile-remote-mdx";
+import { SafeMdxDocumentView } from "../lib/render-safe-mdx-document";
+import { projectInfoFromFrontmatter } from "../lib/project-info-from-frontmatter";
 import {
   clearCachedWorkContent,
   getCachedWorkContent,
@@ -34,7 +34,7 @@ type LoadState =
   | { status: "checking" }
   | { status: "locked" }
   | { status: "loading" }
-  | { status: "ready"; Content: ComponentType<{ children?: ReactNode }> }
+  | { status: "ready"; content: WorkContentPayload }
   | { status: "error"; message: string };
 
 function isAbortError(error: unknown): boolean {
@@ -45,7 +45,7 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
   const [state, setState] = useState<LoadState>(() => {
     const cachedContent = getCachedWorkContent(slug);
     if (cachedContent) {
-      return { status: "ready", Content: cachedContent };
+      return { status: "ready", content: cachedContent };
     }
 
     return hasUnlockHint() ? { status: "checking" } : { status: "locked" };
@@ -91,55 +91,52 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     [clearMinLoadingTimer],
   );
 
-  const compileAndStore = useCallback(
-    async (content: WorkContentPayload, signal?: AbortSignal) => {
-      const compiled = await compileRemoteMdx(content.body, content.frontmatter);
-      if (signal?.aborted) return;
-
-      setCachedWorkContent(slug, compiled.Content);
-      setStateAfterMinLoading(
-        { status: "ready", Content: compiled.Content },
-        signal,
-      );
+  const storeAndReady = useCallback(
+    (content: WorkContentPayload, signal?: AbortSignal) => {
+      setCachedWorkContent(slug, content);
+      setStateAfterMinLoading({ status: "ready", content }, signal);
     },
     [setStateAfterMinLoading, slug],
   );
 
-  const loadContent = useCallback(async (signal?: AbortSignal) => {
-    const cachedContent = getCachedWorkContent(slug);
-    if (cachedContent) {
-      setState({ status: "ready", Content: cachedContent });
-      return;
-    }
-
-    try {
-      const result = await fetchLockedContent(slug, signal);
-      if (signal?.aborted) return;
-
-      if (result === "unauthorized") {
-        clearUnlockHint();
-        clearCachedWorkContent(slug);
-        setStateAfterMinLoading({ status: "locked" }, signal);
+  const loadContent = useCallback(
+    async (signal?: AbortSignal) => {
+      const cachedContent = getCachedWorkContent(slug);
+      if (cachedContent) {
+        setState({ status: "ready", content: cachedContent });
         return;
       }
 
-      if (result === "error") {
+      try {
+        const result = await fetchLockedContent(slug, signal);
+        if (signal?.aborted) return;
+
+        if (result === "unauthorized") {
+          clearUnlockHint();
+          clearCachedWorkContent(slug);
+          setStateAfterMinLoading({ status: "locked" }, signal);
+          return;
+        }
+
+        if (result === "error") {
+          setStateAfterMinLoading(
+            { status: "error", message: "無法載入內容，請稍後再試。" },
+            signal,
+          );
+          return;
+        }
+
+        storeAndReady(result, signal);
+      } catch (error) {
+        if (isAbortError(error) || signal?.aborted) return;
         setStateAfterMinLoading(
-          { status: "error", message: "無法載入內容，請稍後再試。" },
+          { status: "error", message: "內容格式錯誤，無法渲染。" },
           signal,
         );
-        return;
       }
-
-      await compileAndStore(result, signal);
-    } catch (error) {
-      if (isAbortError(error) || signal?.aborted) return;
-      setStateAfterMinLoading(
-        { status: "error", message: "內容格式錯誤，無法渲染。" },
-        signal,
-      );
-    }
-  }, [compileAndStore, setStateAfterMinLoading, slug]);
+    },
+    [setStateAfterMinLoading, slug, storeAndReady],
+  );
 
   const startLoadContent = useCallback(
     (content?: WorkContentPayload) => {
@@ -151,25 +148,13 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       setState({ status: "loading" });
 
       if (content) {
-        void compileAndStore(content, controller.signal).catch((error: unknown) => {
-          if (isAbortError(error) || controller.signal.aborted) return;
-          setStateAfterMinLoading(
-            { status: "error", message: "內容格式錯誤，無法渲染。" },
-            controller.signal,
-          );
-        });
+        storeAndReady(content, controller.signal);
         return;
       }
 
       void loadContent(controller.signal);
     },
-    [
-      clearMinLoadingTimer,
-      compileAndStore,
-      loadContent,
-      markLoadingStarted,
-      setStateAfterMinLoading,
-    ],
+    [clearMinLoadingTimer, loadContent, markLoadingStarted, storeAndReady],
   );
 
   useEffect(() => {
@@ -228,7 +213,8 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
       </div>
     );
   } else {
-    const { Content } = state;
+    const { content } = state;
+    const projectInfo = projectInfoFromFrontmatter(content.frontmatter);
     body = (
       <MDXProvider components={workMdxComponents}>
         <RemoteMdxErrorBoundary
@@ -237,7 +223,11 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
             setState({ status: "error", message: `渲染失敗：${message}` })
           }
         >
-          {createElement(Content)}
+          {projectInfo ? <ProjectInfo items={projectInfo} /> : null}
+          <SafeMdxDocumentView
+            document={content.document}
+            components={workMdxComponents}
+          />
         </RemoteMdxErrorBoundary>
       </MDXProvider>
     );

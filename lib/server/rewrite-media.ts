@@ -1,33 +1,45 @@
 import { toAssetPath } from "../../src/features/work/lib/asset-path.js";
+import {
+  SAFE_MDX_MEDIA_PROP_KEYS,
+  type SafeMdxDocument,
+  type SafeMdxNode,
+  type SafeMdxPropValue,
+} from "../../src/features/work/lib/safe-mdx-types.js";
 import { createSignedMediaUrlMap } from "./sign-work-media.js";
 
 export { toAssetPath };
 
 const MEDIA_PROXY = "/api/work-media";
 
-function jsxMediaAttrRe(): RegExp {
-  return /\b(src|poster|before|after)=(["'])([^"']+)\2/g;
-}
-
 function toProxyUrl(assetPath: string): string {
   return `${MEDIA_PROXY}?path=${encodeURIComponent(assetPath)}`;
 }
 
-function collectAssetPaths(body: string): string[] {
+function isMediaPropKey(
+  key: string,
+): key is (typeof SAFE_MDX_MEDIA_PROP_KEYS)[number] {
+  return (SAFE_MDX_MEDIA_PROP_KEYS as readonly string[]).includes(key);
+}
+
+function collectAssetPathsFromNode(node: SafeMdxNode, paths: string[]): void {
+  if (node.type === "text") return;
+
+  for (const [key, value] of Object.entries(node.props)) {
+    if (!isMediaPropKey(key) || typeof value !== "string") continue;
+    const asset = toAssetPath(value);
+    if (asset) paths.push(asset);
+  }
+
+  for (const child of node.children) {
+    collectAssetPathsFromNode(child, paths);
+  }
+}
+
+function collectAssetPathsFromDocument(document: SafeMdxDocument): string[] {
   const paths: string[] = [];
-
-  for (const match of body.matchAll(jsxMediaAttrRe())) {
-    const asset = toAssetPath(match[3] ?? "");
-    if (asset) paths.push(asset);
+  for (const child of document.children) {
+    collectAssetPathsFromNode(child, paths);
   }
-
-  for (const match of body.matchAll(
-    /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-  )) {
-    const asset = toAssetPath(match[2] ?? "");
-    if (asset) paths.push(asset);
-  }
-
   return paths;
 }
 
@@ -38,41 +50,49 @@ function resolveMediaUrl(
   return signedUrls.get(assetPath) ?? toProxyUrl(assetPath);
 }
 
-/**
- * Rewrite relative asset paths in MDX body to Supabase signed URLs.
- * Falls back to authenticated `/api/work-media` proxy per asset if signing fails.
- * Handles JSX `src` / `poster` / `before` / `after` and markdown images `![alt](...)`.
- */
-export async function rewriteMediaPathsWithSignedUrls(
-  body: string,
-): Promise<string> {
-  const assetPaths = collectAssetPaths(body);
+function rewritePropValue(
+  key: string,
+  value: SafeMdxPropValue,
+  signedUrls: Map<string, string>,
+): SafeMdxPropValue {
+  if (!isMediaPropKey(key) || typeof value !== "string") return value;
+  const asset = toAssetPath(value);
+  if (!asset) return value;
+  return resolveMediaUrl(asset, signedUrls);
+}
+
+function rewriteNode(
+  node: SafeMdxNode,
+  signedUrls: Map<string, string>,
+): SafeMdxNode {
+  if (node.type === "text") return node;
+
+  const props: Record<string, SafeMdxPropValue> = {};
+  for (const [key, value] of Object.entries(node.props)) {
+    props[key] = rewritePropValue(key, value, signedUrls);
+  }
+
+  return {
+    ...node,
+    props,
+    children: node.children.map((child) => rewriteNode(child, signedUrls)),
+  };
+}
+
+/** Deep-clone a safe document with media props rewritten to signed / proxy URLs. */
+export async function rewriteDocumentMediaPaths(
+  document: SafeMdxDocument,
+): Promise<SafeMdxDocument> {
+  const assetPaths = collectAssetPathsFromDocument(document);
   const signedUrls =
     assetPaths.length > 0
       ? await createSignedMediaUrlMap(assetPaths)
       : new Map<string, string>();
 
-  let out = body;
-
-  out = out.replace(
-    jsxMediaAttrRe(),
-    (full, attr: string, quote: string, value: string) => {
-      const asset = toAssetPath(value);
-      if (!asset) return full;
-      return `${attr}=${quote}${resolveMediaUrl(asset, signedUrls)}${quote}`;
-    },
-  );
-
-  out = out.replace(
-    /!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-    (full, alt: string, src: string) => {
-      const asset = toAssetPath(src);
-      if (!asset) return full;
-      return `![${alt}](${resolveMediaUrl(asset, signedUrls)})`;
-    },
-  );
-
-  return out;
+  return {
+    type: "root",
+    children: document.children.map((child) => rewriteNode(child, signedUrls)),
+  };
 }
 
 const IMPORT_EXPORT_RE = /^\s*(import|export)\s/m;
