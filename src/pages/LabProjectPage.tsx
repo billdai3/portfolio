@@ -1,6 +1,6 @@
 import { MDXProvider } from "@mdx-js/react";
 import { Suspense } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { labMdxComponents } from "../features/lab/components/mdx-components";
 import {
   getLabProject,
@@ -10,6 +10,7 @@ import {
   formatDocumentTitle,
   useDocumentTitle,
 } from "../hooks/useDocumentTitle";
+import NotFoundPage from "./NotFoundPage";
 
 function LabProjectBody({ project }: { project: LabProjectEntry }) {
   const { LazyPage } = project;
@@ -23,19 +24,19 @@ function LabProjectBody({ project }: { project: LabProjectEntry }) {
   );
 }
 
+function LabProjectResolved({ project }: { project: LabProjectEntry }) {
+  useDocumentTitle(formatDocumentTitle(project.title, "Lab"));
+
+  return <LabProjectBody key={project.slug} project={project} />;
+}
+
 export default function LabProjectPage() {
   const { slug } = useParams<{ slug: string }>();
   const project = getLabProject(slug);
 
-  useDocumentTitle(
-    project
-      ? formatDocumentTitle(project.title, "Lab")
-      : formatDocumentTitle("Lab"),
-  );
-
   if (!project) {
-    return <Navigate to="/lab" replace />;
+    return <NotFoundPage />;
   }
 
-  return <LabProjectBody key={project.slug} project={project} />;
+  return <LabProjectResolved project={project} />;
 }
