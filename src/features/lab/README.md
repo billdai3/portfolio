@@ -2,9 +2,15 @@
 
 ## 新增作品
 
+### 有互動 demo（Sketch）
+
 1. 在 `src/components/sketches/` 新增 sketch（PascalCase 檔名，例如 `MySketch.tsx`）。
 2. 新增 `src/content/lab/<slug>.meta.ts`（列表 metadata）與 `<slug>.mdx`（詳情；同名）。
 3. Lab 列表與 `/lab/<slug>` 由 `lib/registry.ts` 掃描 `*.meta.ts` + lazy `*.mdx`（Sketch 只進詳情 chunk）。
+
+### 純圖文（無 Sketch）
+
+結構比照 Work：只放 `.meta.ts` + `.mdx` + `assets/`，**不要**建 `components/sketches/` 或 `public/<slug>/`。`createLabPage` 省略 `Sketch` 後詳情會走單欄版面（與 Work 相同，支援 `Media` 的 `width="wide"` / `width="page"`）。
 
 ## OpenProcessing / 獨立 HTML sketch
 
@@ -29,6 +35,8 @@ export const metadata: LabProjectMetadata = {
 };
 ```
 
+### 有 Sketch
+
 ```mdx
 import { createLabPage } from "@/features/lab/lib/createLabPage";
 import MySketch from "@/components/sketches/MySketch";
@@ -44,4 +52,24 @@ export default createLabPage({
 列表標題寫在 `.meta.ts`。Sketch 只隨詳情 MDX lazy 載入。正文可保留單一 `#`；其餘章節用 `##`、`###`、`####`。
 
 Markdown 內容…
+```
+
+### 純圖文
+
+```mdx
+import { createLabPage } from "@/features/lab/lib/createLabPage";
+import { metadata } from "./my-project.meta";
+
+export default createLabPage({ metadata });
+
+<Media
+  src="./assets/my-project/hero.webp"
+  alt="Hero"
+  width="page"
+  ratio="16 / 9"
+/>
+
+# 作品標題
+
+正文用 `<Media>` / `<Carousel>` / `<Comparison>` 堆圖，寫法可對照 `src/content/work/branding-identity.mdx`。
 ```

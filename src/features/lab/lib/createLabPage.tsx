@@ -15,14 +15,17 @@ export type LabProjectMetadata = {
 };
 
 type CreateLabPageOptions = {
-  Sketch: ComponentType;
+  /** Interactive demo; omit for image/article-only lab projects. */
+  Sketch?: ComponentType;
   metadata: LabProjectMetadata;
 };
 
 export function createLabPage({ Sketch }: CreateLabPageOptions) {
   return function LabMdxPage({ children }: { children?: ReactNode }) {
     return (
-      <LabProjectLayout demo={<Sketch />}>{children}</LabProjectLayout>
+      <LabProjectLayout demo={Sketch ? <Sketch /> : undefined}>
+        {children}
+      </LabProjectLayout>
     );
   };
 }

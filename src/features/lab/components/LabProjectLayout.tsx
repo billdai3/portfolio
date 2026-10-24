@@ -11,7 +11,8 @@ import DetailBackButton from "@/components/DetailBackButton";
 import ProjectPager from "@/components/ProjectPager";
 
 type LabProjectLayoutProps = {
-  demo: ReactNode;
+  /** Interactive demo pane; omit for article-only (image-heavy) lab projects. */
+  demo?: ReactNode;
   children: ReactNode;
 };
 
@@ -76,10 +77,13 @@ function TabButton({
   );
 }
 
-export default function LabProjectLayout({
+function LabProjectLayoutWithDemo({
   demo,
   children,
-}: LabProjectLayoutProps) {
+}: {
+  demo: ReactNode;
+  children: ReactNode;
+}) {
   const [mobileTab, setMobileTab] = useState<MobileTab>("demo");
   const tablistRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -244,5 +248,29 @@ export default function LabProjectLayout({
         <ProjectPager section="lab" />
       </div>
     </div>
+  );
+}
+
+export default function LabProjectLayout({
+  demo,
+  children,
+}: LabProjectLayoutProps) {
+  if (!demo) {
+    return (
+      <div className="bg-bg-page text-text-primary">
+        <DetailBackButton fallbackTo="/lab" />
+
+        <div className="mx-auto max-w-360 px-4 pb-16 pt-14 sm:px-6 lg:px-8 lg:pb-20 lg:pt-18">
+          <article className="work-prose lab-prose max-w-none">
+            {children}
+          </article>
+          <ProjectPager section="lab" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <LabProjectLayoutWithDemo demo={demo}>{children}</LabProjectLayoutWithDemo>
   );
 }
