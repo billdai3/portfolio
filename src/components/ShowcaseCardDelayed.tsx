@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ShowcaseCard, { type ShowcaseItem } from "./ShowcaseCard";
 
 type ShowcaseCardDelayedProps = {
@@ -14,14 +14,37 @@ export default function ShowcaseCardDelayed({
   video,
   delayMs = 200,
 }: ShowcaseCardDelayedProps) {
-  const [loading, setLoading] = useState(true);
+  const [minElapsed, setMinElapsed] = useState(false);
+  const [imageSettled, setImageSettled] = useState(!image);
+  const [prevImage, setPrevImage] = useState(image);
+  const [prevDelayMs, setPrevDelayMs] = useState(delayMs);
+
+  // Reset gates when cover URL or min delay changes (avoid setState in effect).
+  if (image !== prevImage || delayMs !== prevDelayMs) {
+    setPrevImage(image);
+    setPrevDelayMs(delayMs);
+    setMinElapsed(false);
+    setImageSettled(!image);
+  }
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), delayMs);
+    const timer = window.setTimeout(() => setMinElapsed(true), delayMs);
     return () => window.clearTimeout(timer);
-  }, [delayMs]);
+  }, [delayMs, image]);
+
+  const handleImageSettled = useCallback(() => {
+    setImageSettled(true);
+  }, []);
+
+  const loading = !(minElapsed && imageSettled);
 
   return (
-    <ShowcaseCard item={item} image={image} video={video} loading={loading} />
+    <ShowcaseCard
+      item={item}
+      image={image}
+      video={video}
+      loading={loading}
+      onImageSettled={image ? handleImageSettled : undefined}
+    />
   );
 }

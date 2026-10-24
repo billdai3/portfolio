@@ -41,6 +41,8 @@ type ShowcaseCardProps = {
   image?: string;
   /** Optional cover preview; muted loop on hover (desktop). */
   video?: string;
+  /** Fired once when the cover image loads, errors, or is already complete. */
+  onImageSettled?: () => void;
 };
 
 const HOVER_SPOTLIGHT_QUERY = "(hover: hover) and (pointer: fine)";
@@ -236,11 +238,14 @@ export default function ShowcaseCard({
   loading = false,
   image,
   video,
+  onImageSettled,
 }: ShowcaseCardProps) {
   const unlocked = useWorkUnlockHint();
   const hoverSpotlight = useHoverSpotlight();
   const cardRef = useRef<HTMLAnchorElement | HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const imageSettledRef = useRef(false);
   const [videoActive, setVideoActive] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [shouldPreload, setShouldPreload] = useState(false);
@@ -248,6 +253,26 @@ export default function ShowcaseCard({
   const showVideo = Boolean(video) && hoverSpotlight;
   const spotlightActive = hoverSpotlight && isActive;
   const spotlightVideoActive = hoverSpotlight && videoActive;
+
+  const notifyImageSettled = useCallback(() => {
+    if (imageSettledRef.current) return;
+    imageSettledRef.current = true;
+    onImageSettled?.();
+  }, [onImageSettled]);
+
+  // Reset settle latch when the cover URL changes.
+  useEffect(() => {
+    imageSettledRef.current = false;
+  }, [image]);
+
+  // Cached / already-complete images may not fire onLoad.
+  useEffect(() => {
+    const el = imageRef.current;
+    if (!el || !image) return;
+    if (el.complete && el.naturalWidth > 0) {
+      notifyImageSettled();
+    }
+  }, [image, notifyImageSettled]);
 
   // Reset interaction state when hover spotlight capability turns off
   // (React "adjust state when a value changes" pattern — avoid setState in effect).
@@ -340,7 +365,16 @@ export default function ShowcaseCard({
       <SquircleClip className="mb-3 overflow-hidden bg-ash-700">
         <div className="relative h-full w-full">
           {image ? (
-            <img src={image} alt="" className={imageClassName} />
+            <img
+              ref={imageRef}
+              src={image}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              className={imageClassName}
+              onLoad={notifyImageSettled}
+              onError={notifyImageSettled}
+            />
           ) : null}
           {showVideo ? (
             <video
@@ -349,7 +383,7 @@ export default function ShowcaseCard({
               muted
               loop
               playsInline
-              preload={shouldPreload ? "auto" : "none"}
+              preload={shouldPreload ? "metadata" : "none"}
               aria-hidden
               className={[
                 "pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ease-out",
