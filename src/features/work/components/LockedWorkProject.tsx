@@ -214,19 +214,23 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     );
   } else {
     const { content } = state;
-    const projectInfo = projectInfoFromFrontmatter(content.frontmatter);
+    const projectInfoItems = projectInfoFromFrontmatter(content.frontmatter);
+    const lockedMdxComponents = {
+      ...workMdxComponents,
+      ProjectInfo: () =>
+        projectInfoItems ? <ProjectInfo items={projectInfoItems} /> : null,
+    };
     body = (
-      <MDXProvider components={workMdxComponents}>
+      <MDXProvider components={lockedMdxComponents}>
         <RemoteMdxErrorBoundary
           key={slug}
           onError={(message) =>
             setState({ status: "error", message: `渲染失敗：${message}` })
           }
         >
-          {projectInfo ? <ProjectInfo items={projectInfo} /> : null}
           <SafeMdxDocumentView
             document={content.document}
-            components={workMdxComponents}
+            components={lockedMdxComponents}
           />
         </RemoteMdxErrorBoundary>
       </MDXProvider>

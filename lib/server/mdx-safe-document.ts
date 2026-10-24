@@ -57,11 +57,14 @@ type MdxJsxElement = {
 
 type MdxJsxFlowElement = MdxJsxElement & { type: "mdxJsxFlowElement" };
 type MdxJsxTextElement = MdxJsxElement & { type: "mdxJsxTextElement" };
-/** Remove ProjectInfo JSX so frontmatter-driven injection can replace expression props. */
-export function stripProjectInfoJsx(body: string): string {
+/**
+ * Normalize ProjectInfo JSX to a prop-less marker so expression props like
+ * `items={projectInfo}` do not fail the safe parser, while keeping document order.
+ */
+export function normalizeProjectInfoJsx(body: string): string {
   return body
-    .replace(/<ProjectInfo\b[^>]*\/>/g, "")
-    .replace(/<ProjectInfo\b[^>]*>[\s\S]*?<\/ProjectInfo>/g, "");
+    .replace(/<ProjectInfo\b[^>]*\/>/g, "<ProjectInfo />")
+    .replace(/<ProjectInfo\b[^>]*>[\s\S]*?<\/ProjectInfo>/g, "<ProjectInfo />");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -410,7 +413,7 @@ function assertNoForbiddenNodes(tree: Root): void {
 export async function mdxBodyToSafeDocument(
   body: string,
 ): Promise<SafeMdxDocument> {
-  const prepared = stripProjectInfoJsx(body);
+  const prepared = normalizeProjectInfoJsx(body);
   const tree = unified()
     .use(remarkParse)
     .use(remarkMdx)

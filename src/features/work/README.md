@@ -169,7 +169,7 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 ### 私有 MDX 寫法
 
 - 使用 **YAML frontmatter**（不要 `import`／`export`／`createWorkPage`）。
-- **不要**寫 `{...}` 運算式（建置會失敗）。`projectInfo` 放在 frontmatter 即可，解鎖頁會自動渲染 `<ProjectInfo>`（正文裡的 `<ProjectInfo … />` 會在烘焙時剝除）。
+- 一般 JSX **不要**寫 `{...}` 運算式（建置會失敗）。例外：`<ProjectInfo items={projectInfo} />` 會在烘焙時正規化成位置標記，資料仍來自 YAML `projectInfo`，**渲染順序與 MDX 寫的位置相同**（例如 hero `<Media>` 在上、ProjectInfo 在下）。沒寫標記則不插入 ProjectInfo。
 - 自訂元件只用字面量 props 的 JSX：`<Media>`、`<Carousel>`、`<Comparison>`（對應本站 `workMdxComponents`）。
 - 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會在**請求時**簽發（非建置時）。
 - 私有圖預設經 signed URL 直連 Storage；`/api/work-media` 僅作簽發失敗時的 fallback 代理。
@@ -190,4 +190,6 @@ projectInfo:
 # C2C App
 
 <Media src="./assets/c2c-app/secret-flow.jpg" alt="Secret flow" width="wide" />
+
+<ProjectInfo items={projectInfo} />
 ```
