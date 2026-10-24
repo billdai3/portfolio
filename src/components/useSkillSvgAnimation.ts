@@ -39,7 +39,7 @@ type UseSkillSvgAnimationOptions = {
 const REST_DURATION_SEC = 0.35;
 
 /**
- * 共用：單次掛載 SVG、建立 timeline、依 autoplay / active 播放。
+ * 共用：單次掛載 SVG；僅在 active／autoplay 時建立 timeline。
  * 相對位移（+=）在中斷後會讓 playhead 與 DOM 脫節，因此每次播放前重建 timeline。
  */
 export function useSkillSvgAnimation({
@@ -59,6 +59,7 @@ export function useSkillSvgAnimation({
   const sceneRef = useRef<ParentNode | null>(null);
   const restTlRef = useRef<gsap.core.Timeline | null>(null);
   const rebuildRef = useRef<(() => gsap.core.Timeline) | null>(null);
+  const ctxRef = useRef<gsap.Context | null>(null);
 
   const onApplyIdle = useEffectEvent((root: ParentNode) => {
     applyIdleState(root);
@@ -120,6 +121,9 @@ export function useSkillSvgAnimation({
     };
 
     const rebuild = () => {
+      if (!ctxRef.current) {
+        ctxRef.current = gsap.context(() => {}, svg);
+      }
       tlRef.current?.kill();
       onApplyIdle(scene);
       const next = buildTimeline(scene, levaSetValues);
@@ -132,12 +136,15 @@ export function useSkillSvgAnimation({
 
     rebuildRef.current = rebuild;
 
-    const ctx = gsap.context(() => {
+    // autoplay 且未受 active 控制時（playground）：掛載即建軸播放
+    const shouldAutoplay = active === undefined && autoplay;
+    if (shouldAutoplay) {
       const tl = rebuild();
       levaSetValues?.({ progress: 0 });
-      const shouldPlay = active !== undefined ? active : autoplay;
-      if (shouldPlay) tl.play();
-    }, svg);
+      tl.play();
+    } else {
+      levaSetValues?.({ progress: 0 });
+    }
 
     return () => {
       restTlRef.current?.kill();
@@ -147,7 +154,8 @@ export function useSkillSvgAnimation({
       if (timelineRef) timelineRef.current = null;
       tlRef.current?.kill();
       tlRef.current = null;
-      ctx.revert();
+      ctxRef.current?.revert();
+      ctxRef.current = null;
     };
     // active 由下方 effect 控制，避免 hover 時重建 timeline setup
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
@@ -178,18 +186,27 @@ export function useSkillSvgAnimation({
     }
 
     const tl = tlRef.current;
-    if (!tl) return;
+    if (!tl) {
+      // 尚未建過軸（idle-only mount）→ 無需回位
+      levaSetValues?.({ progress: 0 });
+      return;
+    }
 
     tl.pause();
     // 已在開頭（含初次 mount）不必再播回位
     if (tl.progress() === 0 && !restTlRef.current) {
+      tl.kill();
+      tlRef.current = null;
+      if (timelineRef) timelineRef.current = null;
       levaSetValues?.({ progress: 0 });
       return;
     }
 
     const scene = sceneRef.current;
     if (!scene) {
-      rebuildRef.current?.();
+      tl.kill();
+      tlRef.current = null;
+      if (timelineRef) timelineRef.current = null;
       levaSetValues?.({ progress: 0 });
       return;
     }
@@ -198,13 +215,15 @@ export function useSkillSvgAnimation({
     restTlRef.current = tweenToRestState(scene, {
       duration: REST_DURATION_SEC,
       onComplete: () => {
-        // 回位結束後換一條乾淨 timeline，供下次 hover 使用
-        rebuildRef.current?.();
+        // 回位結束後清掉 timeline，下次 active 再重建
+        tlRef.current?.kill();
+        tlRef.current = null;
+        if (timelineRef) timelineRef.current = null;
         levaSetValues?.({ progress: 0 });
         restTlRef.current = null;
       },
     });
-  }, [active, levaSetValues, tweenToRestState]);
+  }, [active, levaSetValues, timelineRef, tweenToRestState]);
 
   return wrapRef;
 }

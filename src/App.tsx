@@ -2,12 +2,12 @@ import { Analytics } from '@vercel/analytics/react'
 import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
-import AboutPage from './pages/AboutPage'
 import HomePage from './pages/HomePage'
 import LabPage from './pages/LabPage'
 import NotFoundPage from './pages/NotFoundPage'
 import WorkPage from './pages/WorkPage'
 
+const AboutPage = lazy(() => import('./pages/AboutPage'))
 const WorkProjectPage = lazy(() => import('./pages/WorkProjectPage'))
 const LabProjectPage = lazy(() => import('./pages/LabProjectPage'))
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
@@ -39,7 +39,14 @@ export default function App() {
               </Suspense>
             }
           />
-          <Route path="about" element={<AboutPage />} />
+          <Route
+            path="about"
+            element={
+              <Suspense fallback={null}>
+                <AboutPage />
+              </Suspense>
+            }
+          />
           {import.meta.env.DEV ? (
             <>
               <Route

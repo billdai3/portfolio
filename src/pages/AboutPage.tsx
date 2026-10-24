@@ -1,11 +1,16 @@
-import { useState, type ComponentType } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  type ComponentType,
+  type LazyExoticComponent,
+} from "react";
 
 import aboutMe from "../assets/about-me.webp";
 import CtaLink from "../components/CtaLink";
-import SkillCodingAnimation from "../components/SkillCodingAnimation";
-import SkillDesignAnimation from "../components/SkillDesignAnimation";
-import SkillSystemAnimation from "../components/SkillSystemAnimation";
-import SkillWorkflowAnimation from "../components/SkillWorkflowAnimation";
 import {
   formatDocumentTitle,
   useDocumentTitle,
@@ -16,34 +21,38 @@ type SkillAnimationProps = {
   active?: boolean;
 };
 
+type SkillAnimationComponent =
+  | ComponentType<SkillAnimationProps>
+  | LazyExoticComponent<ComponentType<SkillAnimationProps>>;
+
 const skills: {
   title: string;
   description: string;
-  Animation: ComponentType<SkillAnimationProps>;
+  Animation: SkillAnimationComponent;
 }[] = [
   {
     title: "Figma & UI Prototyping",
     description:
       "熟練運用 Figma 製作數位產品的設計稿及可動原型。有設計、優化過多個網站及 App 的經驗。",
-    Animation: SkillDesignAnimation,
+    Animation: lazy(() => import("../components/SkillDesignAnimation")),
   },
   {
     title: "Design System Architecture",
     description:
       "熟悉設計系統的建立及維護，包含 Design Tokens 的使用、元件庫的製作、設計規格的撰寫等。",
-    Animation: SkillSystemAnimation,
+    Animation: lazy(() => import("../components/SkillSystemAnimation")),
   },
   {
     title: "Design-to-Code",
     description:
       "瞭解網頁結構、樣式規則及互動邏輯等前端知識，並能運用相關技術來設計標準的互動式 RWD 網頁，讓設計能夠準確地落地實現。",
-    Animation: SkillCodingAnimation,
+    Animation: lazy(() => import("../components/SkillCodingAnimation")),
   },
   {
     title: "AI-Empowered Delivery",
     description:
       "擁有完整的實務經驗，也能夠運用 Coding Agent 參與開發。能夠有效地與利害關係人、團隊溝通協作，推動專案順利上線。",
-    Animation: SkillWorkflowAnimation,
+    Animation: lazy(() => import("../components/SkillWorkflowAnimation")),
   },
 ];
 
@@ -65,6 +74,25 @@ const buildNotes: { title: string; description: string }[] = [
   },
 ];
 
+const HOVER_MEDIA = "(hover: hover) and (pointer: fine)";
+
+function useCanHover() {
+  const [canHover, setCanHover] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia(HOVER_MEDIA).matches;
+  });
+
+  useEffect(() => {
+    const mq = window.matchMedia(HOVER_MEDIA);
+    const sync = () => setCanHover(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return canHover;
+}
+
 function SkillCard({
   title,
   description,
@@ -72,18 +100,48 @@ function SkillCard({
 }: {
   title: string;
   description: string;
-  Animation: ComponentType<SkillAnimationProps>;
+  Animation: SkillAnimationComponent;
 }) {
   const [active, setActive] = useState(false);
+  const [nearViewport, setNearViewport] = useState(false);
+  const canHover = useCanHover();
+  const cardRef = useRef<HTMLLIElement>(null);
+
+  const onIntersect = useEffectEvent((near: boolean) => {
+    setNearViewport(near);
+    if (!near) setActive(false);
+  });
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        onIntersect(entry.isIntersecting);
+      },
+      { rootMargin: "100px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <li
+      ref={cardRef}
       className="group flex flex-col items-center gap-4 rounded-3xl bg-bg-card p-5 text-center sm:flex-row sm:gap-5 sm:p-6 sm:text-left"
-      onMouseEnter={() => setActive(true)}
-      onMouseLeave={() => setActive(false)}
+      onMouseEnter={canHover ? () => setActive(true) : undefined}
+      onMouseLeave={canHover ? () => setActive(false) : undefined}
+      onClick={canHover ? undefined : () => setActive((prev) => !prev)}
     >
       <div className="size-30 shrink-0 overflow-hidden rounded-xl" aria-hidden>
-        <Animation className="size-full" active={active} />
+        {nearViewport ? (
+          <Suspense fallback={<div className="size-full" />}>
+            <Animation className="size-full" active={active} />
+          </Suspense>
+        ) : (
+          <div className="size-full" />
+        )}
       </div>
       <div className="min-w-0">
         <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-brand sm:text-lg">
