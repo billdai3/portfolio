@@ -1,6 +1,13 @@
-import type { ComponentType, ReactNode } from "react";
+import {
+  lazy,
+  type ComponentType,
+  type LazyExoticComponent,
+  type ReactNode,
+} from "react";
+import { resolveOptionalCoverAsset } from "./resolve-cover-asset";
 
 export type MdxContentMetadataBase = {
+  title?: string;
   cover?: string;
   coverVideo?: string;
   order?: number;
@@ -8,21 +15,33 @@ export type MdxContentMetadataBase = {
 
 export type MdxContentModule<TMeta extends MdxContentMetadataBase> = {
   default: ComponentType<{ children?: ReactNode }>;
-  metadata: TMeta;
-  title?: string;
+  metadata?: TMeta;
 };
 
-export type MdxContentEntry<TMeta extends MdxContentMetadataBase> = TMeta & {
+export type MdxPageComponent = ComponentType<{ children?: ReactNode }>;
+
+export type MdxContentEntry<TMeta extends MdxContentMetadataBase> = Omit<
+  TMeta,
+  "cover" | "coverVideo" | "title"
+> & {
   slug: string;
   title: string;
-  Page: ComponentType<{ children?: ReactNode }>;
+  cover?: string;
+  coverVideo?: string;
+  /** Stable lazy page created once at registry build time (not during render). */
+  LazyPage: LazyExoticComponent<MdxPageComponent>;
 };
 
 type BuildOptions = {
   label: string;
 };
 
-function slugFromPath(path: string): string {
+function slugFromMetaPath(path: string): string {
+  const match = /\/([^/]+)\.meta\.ts$/.exec(path);
+  return match?.[1] ?? "";
+}
+
+function slugFromMdxPath(path: string): string {
   const match = /\/([^/]+)\.mdx$/.exec(path);
   return match?.[1] ?? "";
 }
@@ -35,45 +54,65 @@ function slugToTitle(slug: string): string {
 }
 
 function resolveTitle<TMeta extends MdxContentMetadataBase>(
-  mod: MdxContentModule<TMeta>,
+  meta: TMeta,
   slug: string,
   label: string,
 ): string {
-  const title = mod.title?.trim();
+  const title = meta.title?.trim();
 
   if (title) return title;
 
   if (import.meta.env.DEV) {
     console.warn(
-      `[${label}] No # heading in MDX for "${slug}"; using slug as title.`,
+      `[${label}] No metadata.title for "${slug}"; using slug as title.`,
     );
   }
 
   return slugToTitle(slug);
 }
 
-function resolveAssetUrl(value: string | undefined): string | undefined {
-  if (!value) return undefined;
-  if (typeof value === "string") return value;
-  return undefined;
-}
-
 export function buildMdxContentRegistry<TMeta extends MdxContentMetadataBase>(
-  modules: Record<string, MdxContentModule<TMeta>>,
+  metadataByPath: Record<string, TMeta>,
+  pageLoaders: Record<string, () => Promise<MdxContentModule<TMeta>>>,
   { label }: BuildOptions,
 ): MdxContentEntry<TMeta>[] {
-  return Object.entries(modules)
-    .map(([path, mod]) => {
-      const slug = slugFromPath(path);
+  const loadersBySlug = new Map<
+    string,
+    () => Promise<MdxContentModule<TMeta>>
+  >();
+
+  for (const [path, loader] of Object.entries(pageLoaders)) {
+    const slug = slugFromMdxPath(path);
+    if (slug) loadersBySlug.set(slug, loader);
+  }
+
+  return Object.entries(metadataByPath)
+    .map(([path, meta]) => {
+      const slug = slugFromMetaPath(path);
+      const loader = loadersBySlug.get(slug);
+
+      if (!loader && import.meta.env.DEV) {
+        console.warn(
+          `[${label}] Missing page loader for slug "${slug}" (meta: ${path}).`,
+        );
+      }
+
+      const { cover, coverVideo, ...rest } = meta;
 
       return {
+        ...rest,
         slug,
-        title: resolveTitle(mod, slug, label),
-        ...mod.metadata,
-        cover: resolveAssetUrl(mod.metadata.cover),
-        coverVideo: resolveAssetUrl(mod.metadata.coverVideo),
-        Page: mod.default,
-      };
+        title: resolveTitle(meta, slug, label),
+        cover: resolveOptionalCoverAsset(cover),
+        coverVideo: resolveOptionalCoverAsset(coverVideo),
+        LazyPage: lazy(async () => {
+          if (!loader) {
+            throw new Error(`[${label}] No page loader for slug "${slug}".`);
+          }
+          const mod = await loader();
+          return { default: mod.default };
+        }),
+      } as MdxContentEntry<TMeta>;
     })
     .sort((a, b) => {
       const ao = a.order ?? Number.POSITIVE_INFINITY;
@@ -83,10 +122,10 @@ export function buildMdxContentRegistry<TMeta extends MdxContentMetadataBase>(
     });
 }
 
-export function findContentBySlug<TMeta extends MdxContentMetadataBase>(
-  entries: MdxContentEntry<TMeta>[],
+export function findContentBySlug<TEntry extends { slug: string }>(
+  entries: TEntry[],
   slug: string | undefined,
-): MdxContentEntry<TMeta> | undefined {
+): TEntry | undefined {
   if (!slug) return undefined;
   return entries.find((entry) => entry.slug === slug);
 }

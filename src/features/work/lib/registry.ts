@@ -8,14 +8,20 @@ import type { WorkProjectMetadata } from "./createWorkPage";
 
 type WorkMdxModule = MdxContentModule<WorkProjectMetadata>;
 
-const modules = import.meta.glob<WorkMdxModule>("../../../content/work/*.mdx", {
-  eager: true,
-});
+const metadataByPath = import.meta.glob<WorkProjectMetadata>(
+  "../../../content/work/*.meta.ts",
+  { eager: true, import: "metadata" },
+);
+
+const pageLoaders = import.meta.glob<WorkMdxModule>(
+  "../../../content/work/*.mdx",
+);
 
 export type WorkProjectEntry = MdxContentEntry<WorkProjectMetadata>;
 
 export const workProjects: WorkProjectEntry[] = buildMdxContentRegistry(
-  modules,
+  metadataByPath,
+  pageLoaders,
   { label: "work" },
 );
 

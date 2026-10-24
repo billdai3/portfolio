@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import WorkProjectLayout from "../components/WorkProjectLayout";
 
 export type WorkProjectMetadata = {
+  /** List / document title; prefer this over relying on the MDX H1 alone. */
+  title?: string;
   tag: string;
   summary: string;
-  /** List card thumbnail; optional string URL or Vite image module src. */
+  /** List card thumbnail; `./assets/<slug>/cover…` path (resolved by cover registry). */
   cover?: string;
-  /** Optional list-card hover video; Vite import of mp4/webm. */
+  /** Optional list-card hover video; `./assets/<slug>/cover-hover…` path. */
   coverVideo?: string;
   /** When true, detail body is fetched from the secret repo after unlock. */
   isLocked?: boolean;

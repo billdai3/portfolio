@@ -5,11 +5,11 @@ import Layout from './components/Layout'
 import AboutPage from './pages/AboutPage'
 import HomePage from './pages/HomePage'
 import LabPage from './pages/LabPage'
-import LabProjectPage from './pages/LabProjectPage'
 import NotFoundPage from './pages/NotFoundPage'
 import WorkPage from './pages/WorkPage'
-import WorkProjectPage from './pages/WorkProjectPage'
 
+const WorkProjectPage = lazy(() => import('./pages/WorkProjectPage'))
+const LabProjectPage = lazy(() => import('./pages/LabProjectPage'))
 const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
 const DevLoadingPlaygroundPage = lazy(() => import('./pages/DevLoadingPlaygroundPage'))
 const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
@@ -22,9 +22,23 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="work" element={<WorkPage />} />
-          <Route path="work/:slug" element={<WorkProjectPage />} />
+          <Route
+            path="work/:slug"
+            element={
+              <Suspense fallback={null}>
+                <WorkProjectPage />
+              </Suspense>
+            }
+          />
           <Route path="lab" element={<LabPage />} />
-          <Route path="lab/:slug" element={<LabProjectPage />} />
+          <Route
+            path="lab/:slug"
+            element={
+              <Suspense fallback={null}>
+                <LabProjectPage />
+              </Suspense>
+            }
+          />
           <Route path="about" element={<AboutPage />} />
           {import.meta.env.DEV ? (
             <>

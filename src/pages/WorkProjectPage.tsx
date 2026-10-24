@@ -1,12 +1,28 @@
 import { MDXProvider } from "@mdx-js/react";
+import { Suspense } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import LockedWorkProject from "../features/work/components/LockedWorkProject";
 import { workMdxComponents } from "../features/work/components/mdx-components";
-import { getWorkProject } from "../features/work/lib/registry";
+import {
+  getWorkProject,
+  type WorkProjectEntry,
+} from "../features/work/lib/registry";
 import {
   formatDocumentTitle,
   useDocumentTitle,
 } from "../hooks/useDocumentTitle";
+
+function UnlockedWorkProject({ project }: { project: WorkProjectEntry }) {
+  const { LazyPage } = project;
+
+  return (
+    <MDXProvider components={workMdxComponents}>
+      <Suspense fallback={null}>
+        <LazyPage />
+      </Suspense>
+    </MDXProvider>
+  );
+}
 
 export default function WorkProjectPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -26,11 +42,5 @@ export default function WorkProjectPage() {
     return <LockedWorkProject key={project.slug} slug={project.slug} />;
   }
 
-  const { Page } = project;
-
-  return (
-    <MDXProvider components={workMdxComponents}>
-      <Page />
-    </MDXProvider>
-  );
+  return <UnlockedWorkProject key={project.slug} project={project} />;
 }

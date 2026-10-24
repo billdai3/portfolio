@@ -2,24 +2,29 @@
 
 ## 新增專案
 
-1. 在 `src/content/work/<slug>.mdx` 新增 MDX（slug = 檔名，kebab-case）。
-2. Work 列表、Home Selected Works 與 `/work/<slug>` 路由會由 `lib/registry.ts` 自動掃描 MDX。
+1. 新增 `src/content/work/<slug>.meta.ts`（列表用 metadata；slug = 檔名）。
+2. 新增 `src/content/work/<slug>.mdx`（詳情正文；與 meta 同名）。
+3. Work 列表、Home Selected Works 與 `/work/<slug>` 由 `lib/registry.ts` 掃描 `*.meta.ts` + lazy `*.mdx`。
 
-## MDX 範本
+## Metadata + MDX 範本
+
+```ts
+// src/content/work/my-project.meta.ts
+import type { WorkProjectMetadata } from "@/features/work/lib/createWorkPage";
+
+export const metadata: WorkProjectMetadata = {
+  title: "專案標題",
+  tag: "Product design",
+  summary: "列表頁簡述",
+  // 字串路徑（cover-only resolver；勿在 meta 裡靜態 import 媒體）
+  cover: "./assets/my-project/cover.jpg",
+  coverVideo: "./assets/my-project/cover-hover.mp4",
+};
+```
 
 ```mdx
 import { createWorkPage } from "@/features/work/lib/createWorkPage";
-// 列表 cover／coverVideo 仍需 Vite import（registry 不經 Media）
-import cover from "./assets/my-project/cover.jpg";
-// 可選：列表卡片 hover 時循環播放
-import coverVideo from "./assets/my-project/cover-hover.mp4";
-
-export const metadata = {
-  tag: "Product design",
-  summary: "列表頁簡述",
-  cover,
-  coverVideo,
-};
+import { metadata } from "./my-project.meta";
 
 export const projectInfo = [
   { label: "專案年份", value: "2025" },
@@ -32,7 +37,7 @@ export default createWorkPage({ metadata });
 
 <ProjectInfo items={projectInfo} />
 
-正文以單一 `#` 作為頁面標題；列表會由 `rehype-mdx-title` 匯出 `title`。其餘章節用 `##`、`###`、`####`。
+列表標題寫在 `.meta.ts` 的 `metadata.title`。正文可保留單一 `#`；其餘章節用 `##`、`###`、`####`。
 
 正文媒體可寫相對路徑（與遠端私有 MDX 相同）；`Media` 會解析成 Vite URL，不必逐張 import：
 
@@ -80,7 +85,7 @@ export default createWorkPage({ metadata });
 
 `<Comparison>` 用 `before` / `after` 路徑（與 `src` 相同解析規則），可選 `beforeLabel` / `afterLabel`；共用 `width` / `ratio` / `fit` / `caption`。
 
-本地公開正文可用 `./assets/<slug>/...`（檔案放 `src/content/work/assets/`）；`http(s)` 與 Vite `import` 結果仍可直接當 `src`。列表 `metadata.cover`／`coverVideo` 仍須 Vite `import`（不經 Media）。
+本地公開正文可用 `./assets/<slug>/...`（檔案放 `src/content/work/assets/`）；`http(s)` 與 Vite `import` 結果仍可直接當 `src`。列表 `metadata.cover`／`coverVideo` 同樣用 `./assets/...` 字串（cover-only resolver，不經正文 Media）。
 
 文字樣式與 Lab 共用 `baseMdxComponents`（見 `src/features/mdx/`）。
 
@@ -133,18 +138,23 @@ npm run dev:vercel
 
 ### 公開空殼 MDX
 
-列表標題來自公開殼的 `#` 或匯出的 `title`；都沒有則 registry 會用 slug（例如 `c2c-app` → `C2c App`）。
+列表標題請寫在公開殼的 `.meta.ts`；缺則 registry 會用 slug（例如 `c2c-app` → `C2c App`）。
 
-```mdx
-import cover from "./assets/c2c-app/placeholder-cover.jpg";
-import { createWorkPage } from "@/features/work/lib/createWorkPage";
-
+```ts
+// c2c-app.meta.ts
 export const metadata = {
-  cover,
+  title: "C2C 數位資產交易 App",
+  cover: "./assets/c2c-app/cover.webp",
+  coverVideo: "./assets/c2c-app/cover-hover.mp4",
   tag: "App",
   summary: "提供安全、即時的場外交易",
   isLocked: true,
 };
+```
+
+```mdx
+import { createWorkPage } from "@/features/work/lib/createWorkPage";
+import { metadata } from "./c2c-app.meta";
 
 export default createWorkPage({ metadata });
 
