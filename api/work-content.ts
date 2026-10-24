@@ -32,7 +32,7 @@ export default async function handler(
       return res.status(400).json({ error: "Invalid content" });
     }
 
-    return res.status(401).json({ error: "Unauthorized" });
+    return res.status(404).json({ error: "Not found" });
   }
 
   const { content } = result;

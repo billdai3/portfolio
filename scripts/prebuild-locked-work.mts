@@ -58,10 +58,10 @@ async function discoverLockedSlugs(): Promise<string[]> {
   const slugs: string[] = [];
 
   for (const name of entries) {
-    if (!name.endsWith(".mdx")) continue;
+    if (!name.endsWith(".meta.ts")) continue;
     const raw = await readFile(join(WORK_CONTENT_DIR, name), "utf8");
     if (!LOCKED_RE.test(raw)) continue;
-    slugs.push(name.slice(0, -".mdx".length));
+    slugs.push(name.slice(0, -".meta.ts".length));
   }
 
   return slugs.sort();
