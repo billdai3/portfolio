@@ -40,7 +40,6 @@ export default function ProjectPager({ section }: ProjectPagerProps) {
       <Link
         to={prev.href}
         state={linkState}
-        replace
         className={linkClassName}
       >
         <span
@@ -54,7 +53,6 @@ export default function ProjectPager({ section }: ProjectPagerProps) {
       <Link
         to={next.href}
         state={linkState}
-        replace
         className={linkClassName}
       >
         <span>{targetLabel(next, "next")}</span>
