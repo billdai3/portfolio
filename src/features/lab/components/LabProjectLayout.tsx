@@ -3,7 +3,9 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type KeyboardEvent,
   type ReactNode,
+  type Ref,
 } from "react";
 import DetailBackButton from "@/components/DetailBackButton";
 import ProjectPager from "@/components/ProjectPager";
@@ -15,6 +17,22 @@ type LabProjectLayoutProps = {
 
 type MobileTab = "demo" | "article";
 
+const TABS: { id: MobileTab; tabId: string; panelId: string; label: string }[] =
+  [
+    {
+      id: "demo",
+      tabId: "lab-tab-demo",
+      panelId: "lab-panel-demo",
+      label: "互動展示",
+    },
+    {
+      id: "article",
+      tabId: "lab-tab-article",
+      panelId: "lab-panel-article",
+      label: "技術文章",
+    },
+  ];
+
 type IndicatorState = {
   left: number;
   width: number;
@@ -22,19 +40,29 @@ type IndicatorState = {
 };
 
 function TabButton({
+  id,
+  controls,
   active,
   onClick,
+  buttonRef,
   children,
 }: {
+  id: string;
+  controls: string;
   active: boolean;
   onClick: () => void;
+  buttonRef: Ref<HTMLButtonElement>;
   children: ReactNode;
 }) {
   return (
     <button
+      ref={buttonRef}
+      id={id}
       type="button"
       role="tab"
       aria-selected={active}
+      aria-controls={controls}
+      tabIndex={active ? 0 : -1}
       onClick={onClick}
       className={[
         "type-btn relative z-10 flex-1 rounded-xl px-4 py-2.5 transition-colors",
@@ -54,11 +82,38 @@ export default function LabProjectLayout({
 }: LabProjectLayoutProps) {
   const [mobileTab, setMobileTab] = useState<MobileTab>("demo");
   const tablistRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [indicator, setIndicator] = useState<IndicatorState>({
     left: 0,
     width: 0,
     ready: false,
   });
+
+  const selectTab = useCallback((tab: MobileTab, focus = false) => {
+    setMobileTab(tab);
+    if (!focus) return;
+    const index = TABS.findIndex((item) => item.id === tab);
+    tabRefs.current[index]?.focus();
+  }, []);
+
+  const onTabListKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      const currentIndex = TABS.findIndex((tab) => tab.id === mobileTab);
+      if (currentIndex < 0) return;
+
+      let nextIndex: number | null = null;
+      if (event.key === "ArrowRight") {
+        nextIndex = (currentIndex + 1) % TABS.length;
+      } else if (event.key === "ArrowLeft") {
+        nextIndex = (currentIndex - 1 + TABS.length) % TABS.length;
+      }
+
+      if (nextIndex === null) return;
+      event.preventDefault();
+      selectTab(TABS[nextIndex].id, true);
+    },
+    [mobileTab, selectTab],
+  );
 
   const updateIndicator = useCallback(() => {
     const tablist = tablistRef.current;
@@ -126,6 +181,7 @@ export default function LabProjectLayout({
             ref={tablistRef}
             role="tablist"
             aria-label="Lab project sections"
+            onKeyDown={onTabListKeyDown}
             className="relative flex gap-1 rounded-2xl bg-bg-card p-1.5"
           >
             <div
@@ -141,34 +197,41 @@ export default function LabProjectLayout({
                 width: indicator.width,
               }}
             />
-            <TabButton
-              active={mobileTab === "demo"}
-              onClick={() => setMobileTab("demo")}
-            >
-              互動展示
-            </TabButton>
-            <TabButton
-              active={mobileTab === "article"}
-              onClick={() => setMobileTab("article")}
-            >
-              技術文章
-            </TabButton>
+            {TABS.map((tab, index) => (
+              <TabButton
+                key={tab.id}
+                id={tab.tabId}
+                controls={tab.panelId}
+                active={mobileTab === tab.id}
+                onClick={() => selectTab(tab.id)}
+                buttonRef={(node) => {
+                  tabRefs.current[index] = node;
+                }}
+              >
+                {tab.label}
+              </TabButton>
+            ))}
           </div>
         </div>
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-10">
           <aside
+            id="lab-panel-demo"
+            role="tabpanel"
+            aria-labelledby="lab-tab-demo"
             className={[
               "lg:sticky lg:top-14 lg:self-start",
               "lg:h-[calc(100svh-4.5rem)]",
               mobileTab === "demo" ? "block" : "hidden lg:block",
             ].join(" ")}
-            aria-label="Interactive demo"
           >
             {demoPanel}
           </aside>
 
           <div
+            id="lab-panel-article"
+            role="tabpanel"
+            aria-labelledby="lab-tab-article"
             className={[
               "min-w-0",
               mobileTab === "article" ? "block" : "hidden lg:block",
