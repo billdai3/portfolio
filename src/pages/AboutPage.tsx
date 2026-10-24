@@ -1,5 +1,6 @@
 import { useState, type ComponentType } from "react";
 
+import aboutMe from "../assets/about-me.webp";
 import CtaLink from "../components/CtaLink";
 import SkillCodingAnimation from "../components/SkillCodingAnimation";
 import SkillDesignAnimation from "../components/SkillDesignAnimation";
@@ -107,9 +108,10 @@ export default function AboutPage() {
       >
         <div className="section-inner">
           <div className="group flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:justify-center sm:gap-12">
-            <div
-              className="size-40 shrink-0 rounded-full bg-ash-600 sm:size-48"
-              aria-hidden
+            <img
+              src={aboutMe}
+              alt="Bill"
+              className="size-40 shrink-0 rounded-full object-cover sm:size-48"
             />
             <div className="max-w-xl min-w-0 text-center sm:text-left">
               <h1 className="type-hero-subtitle text-text-primary transition-colors group-hover:text-brand">
