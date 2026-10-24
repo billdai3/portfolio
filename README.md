@@ -44,3 +44,8 @@ npm install
 # 4. Start the development server
 npm run dev
 ```
+
+## 📄 版權聲明 (License)
+
+本專案為個人作品集展示與技術交流用途。歡迎參考前端架構、元件寫法或在本地端運行檢視，但請勿直接複製、重製或將視覺設計與互動特效碼用於個人或商業專案。
+Copyright © 2026 Bill Dai. All rights reserved. For showcase and educational purposes only.
