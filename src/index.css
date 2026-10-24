@@ -244,6 +244,7 @@
   }
 
   .page-transition-stage {
+    position: relative;
     display: grid;
     flex: 1 1 auto;
     grid-template-rows: minmax(min-content, 1fr);
@@ -270,6 +271,10 @@
   }
 
   .page-transition-layer--exit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
     pointer-events: none;
     animation-name: page-transition-exit;
     animation-duration: var(--page-transition-duration, 140ms);
