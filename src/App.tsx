@@ -10,10 +10,18 @@ import WorkPage from './pages/WorkPage'
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const WorkProjectPage = lazy(() => import('./pages/WorkProjectPage'))
 const LabProjectPage = lazy(() => import('./pages/LabProjectPage'))
-const DevGsapPlaygroundPage = lazy(() => import('./pages/DevGsapPlaygroundPage'))
-const DevLoadingPlaygroundPage = lazy(() => import('./pages/DevLoadingPlaygroundPage'))
-const DevMdxStyleguidePage = lazy(() => import('./pages/DevMdxStyleguidePage'))
-const DevSandboxPage = lazy(() => import('./pages/DevSandboxPage'))
+const DevGsapPlaygroundPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/DevGsapPlaygroundPage'))
+  : null
+const DevLoadingPlaygroundPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/DevLoadingPlaygroundPage'))
+  : null
+const DevMdxStyleguidePage = import.meta.env.DEV
+  ? lazy(() => import('./pages/DevMdxStyleguidePage'))
+  : null
+const DevSandboxPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/DevSandboxPage'))
+  : null
 
 export default function App() {
   return (
@@ -47,7 +55,11 @@ export default function App() {
               </Suspense>
             }
           />
-          {import.meta.env.DEV ? (
+          {import.meta.env.DEV &&
+          DevGsapPlaygroundPage &&
+          DevLoadingPlaygroundPage &&
+          DevMdxStyleguidePage &&
+          DevSandboxPage ? (
             <>
               <Route
                 path="dev/gsap"
