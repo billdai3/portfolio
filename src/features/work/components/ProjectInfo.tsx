@@ -16,7 +16,7 @@ export function ProjectInfo({ items }: ProjectInfoProps) {
 
   return (
     <section
-      className="mb-6 mt-4 rounded-3xl bg-bg-card/60 p-8"
+      className="mt-4 mb-6 rounded-3xl bg-bg-card/60 p-4 sm:p-8"
       aria-label="Project information"
     >
       <dl className="space-y-4 sm:space-y-5">
