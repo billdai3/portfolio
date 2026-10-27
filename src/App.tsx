@@ -1,27 +1,27 @@
-import { Analytics } from '@vercel/analytics/react'
-import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Layout from './components/Layout'
-import HomePage from './pages/HomePage'
-import LabPage from './pages/LabPage'
-import NotFoundPage from './pages/NotFoundPage'
-import WorkPage from './pages/WorkPage'
+import { Analytics } from "@vercel/analytics/react";
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import LabPage from "./pages/LabPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import WorkPage from "./pages/WorkPage";
 
-const AboutPage = lazy(() => import('./pages/AboutPage'))
-const WorkProjectPage = lazy(() => import('./pages/WorkProjectPage'))
-const LabProjectPage = lazy(() => import('./pages/LabProjectPage'))
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const WorkProjectPage = lazy(() => import("./pages/WorkProjectPage"));
+const LabProjectPage = lazy(() => import("./pages/LabProjectPage"));
 const DevGsapPlaygroundPage = import.meta.env.DEV
-  ? lazy(() => import('./pages/DevGsapPlaygroundPage'))
-  : null
+  ? lazy(() => import("./pages/DevGsapPlaygroundPage"))
+  : null;
 const DevLoadingPlaygroundPage = import.meta.env.DEV
-  ? lazy(() => import('./pages/DevLoadingPlaygroundPage'))
-  : null
+  ? lazy(() => import("./pages/DevLoadingPlaygroundPage"))
+  : null;
 const DevMdxStyleguidePage = import.meta.env.DEV
-  ? lazy(() => import('./pages/DevMdxStyleguidePage'))
-  : null
+  ? lazy(() => import("./pages/DevMdxStyleguidePage"))
+  : null;
 const DevSandboxPage = import.meta.env.DEV
-  ? lazy(() => import('./pages/DevSandboxPage'))
-  : null
+  ? lazy(() => import("./pages/DevSandboxPage"))
+  : null;
 
 export default function App() {
   return (
@@ -100,5 +100,5 @@ export default function App() {
       </Routes>
       <Analytics />
     </>
-  )
+  );
 }
