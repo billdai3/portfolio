@@ -174,9 +174,9 @@ Supabase bucket `portfolio-assets`/
     └── secret-flow.jpg
 ```
 
-MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解鎖 API 回傳前，伺服器會把文件樹裡的路徑改成 Supabase signed URL（`SIGNED_MEDIA_URL_EXPIRES_IN`，目前 1 小時），瀏覽器直連 private bucket 下載。簽發失敗時單張會 fallback 到需 cookie 的 `/api/work-media`。
+MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解鎖 API 回傳前，伺服器會把文件樹裡的路徑改成 Supabase signed URL（`SIGNED_MEDIA_URL_EXPIRES_IN`，目前 1 小時），瀏覽器直連 private bucket 下載。簽發失敗時單張會 fallback 到需 cookie 的 `/api/work-media`（驗 session 後 **302** 到當場簽發的 signed URL，函式不代理檔案位元組）。
 
-**Signed URL 洩漏面（刻意取捨）：** 取得內容仍要通過 session／解鎖；但 JSON 內嵌的簽名網址本身是短時通行證——過期前，任何人持有該 URL 即可取檔，**不必再帶 `work_session`**。這是為了少打自家 proxy、加快媒體載入的常見預簽模式，不是疏漏。TTL 刻意長於 work-content 記憶體快取（5 分鐘），避免快取命中時圖鏈已失效。若威脅模型要求「吊銷 session 後媒體立刻不可讀」，需改成一律經 `/api/work-media`（或縮短 TTL 並接受長讀頁中途失效）。
+**Signed URL 洩漏面（刻意取捨）：** 取得內容仍要通過 session／解鎖；但 JSON 內嵌（或 fallback 302 後）的簽名網址本身是短時通行證——過期前，任何人持有該 URL 即可取檔，**不必再帶 `work_session`**。這是為了少打自家 Serverless、加快媒體載入的常見預簽模式，不是疏漏。TTL 刻意長於 work-content 記憶體快取（5 分鐘），避免快取命中時圖鏈已失效。若威脅模型要求「吊銷 session 後媒體立刻不可讀」，需縮短 TTL（並接受長讀頁中途失效）或改回經函式代理位元組（有記憶體成本）。
 
 ### 私有 MDX 寫法
 
@@ -184,7 +184,7 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 - 一般 JSX **不要**寫 `{...}` 運算式（建置會失敗）。例外：`<ProjectInfo items={projectInfo} />` 會在烘焙時正規化成位置標記，資料仍來自 YAML `projectInfo`，**渲染順序與 MDX 寫的位置相同**（例如 hero `<Media>` 在上、ProjectInfo 在下）。沒寫標記則不插入 ProjectInfo。
 - 自訂元件只用字面量 props 的 JSX：`<Media>`、`<Carousel>`、`<Comparison>`（對應本站 `workMdxComponents`）。
 - 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會在**請求時**簽發（非建置時）。
-- 私有圖預設經 signed URL 直連 Storage（見上「洩漏面」）；`/api/work-media` 僅作簽發失敗時的 fallback 代理。
+- 私有圖預設經 signed URL 直連 Storage（見上「洩漏面」）；`/api/work-media` 僅作簽發失敗時的 fallback（驗 session 後 302 轉址）。
 - 建議先壓圖再上傳：長邊約 1600–2000px、WebP 或優化 JPEG，可縮短首次載入。
 
 建置時會把私人 MDX 編成 `lib/server/prebuilt-work/{slug}.json`（gitignore，不進公開前端 bundle）。解鎖 API 只回這份安全文件樹，瀏覽器**不再** `evaluate()` MDX。

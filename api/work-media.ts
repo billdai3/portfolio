@@ -1,10 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import {
-  etagMatches,
-  getWorkMediaMeta,
-  loadWorkMedia,
-} from "../lib/server/load-work-media.js";
+import { toSupabaseObjectKey } from "../lib/server/load-work-media.js";
 import { isUnlocked } from "../lib/server/session.js";
+import { createSignedMediaUrl } from "../lib/server/sign-work-media.js";
+import { getSupabaseAdminClient } from "../lib/server/supabase.js";
 
 export default async function handler(
   req: VercelRequest,
@@ -20,39 +18,17 @@ export default async function handler(
   }
 
   const path = typeof req.query.path === "string" ? req.query.path : "";
-  const metaBeforeLoad = getWorkMediaMeta(path);
-  const startedAt = performance.now();
-  const result = await loadWorkMedia(path);
-  const totalMs = performance.now() - startedAt;
+  if (!toSupabaseObjectKey(path)) {
+    return res.status(400).json({ error: "Invalid path" });
+  }
 
-  res.setHeader("Server-Timing", `total;dur=${totalMs.toFixed(1)}`);
-  res.setHeader("X-Work-Media-Cache", metaBeforeLoad.cache);
-
-  if (!result.ok) {
-    if (result.reason === "invalid-path") {
-      return res.status(400).json({ error: "Invalid path" });
-    }
-
-    if (result.reason === "not-found") {
-      return res.status(404).json({ error: "Not found" });
-    }
-
-    if (result.reason === "misconfigured") {
+  const signedUrl = await createSignedMediaUrl(path);
+  if (!signedUrl) {
+    if (!getSupabaseAdminClient()) {
       return res.status(500).json({ error: "Server misconfigured" });
     }
-
-    return res.status(502).json({ error: "Failed to load media" });
+    return res.status(502).json({ error: "Failed to sign media URL" });
   }
 
-  const { file } = result;
-
-  res.setHeader("Content-Type", file.contentType);
-  res.setHeader("Cache-Control", "private, max-age=86400");
-  res.setHeader("ETag", file.etag);
-
-  if (etagMatches(req.headers["if-none-match"], file.etag)) {
-    return res.status(304).end();
-  }
-
-  return res.status(200).send(Buffer.from(file.body));
+  return res.redirect(302, signedUrl);
 }
