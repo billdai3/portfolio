@@ -501,6 +501,9 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-svh flex-col">
+      <a href="#main" className="skip-link">
+        跳至主要內容
+      </a>
       {hidePrimaryNav ? null : (
         <div
           className={[
@@ -550,7 +553,7 @@ export default function Layout() {
         </div>
       )}
 
-      <main className="flex flex-1 flex-col">
+      <main id="main" tabIndex={-1} className="flex flex-1 flex-col">
         <RouteTransitionOutlet pathname={location.pathname}>
           {outlet}
         </RouteTransitionOutlet>

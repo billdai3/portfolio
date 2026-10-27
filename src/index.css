@@ -160,6 +160,16 @@
     @apply grid gap-5 md:grid-cols-2 md:gap-6;
   }
 
+  /* Skip link — off-screen until keyboard focus; above nav (z-70) */
+  .skip-link {
+    @apply fixed top-3 left-3 z-80 -translate-y-[calc(100%+1.5rem)] rounded-full bg-ash-50 px-4 py-2 font-display text-base font-extrabold text-ash-900 opacity-0 outline-none ring-2 ring-accent transition-none;
+  }
+
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    @apply translate-y-0 opacity-100;
+  }
+
   /* Primary nav pill — theme via .nav-pill--over-hero | .nav-pill--scrolled */
   .nav-pill {
     @apply relative inline-flex items-center rounded-full p-1.5 shadow-md transition-colors duration-300;
