@@ -22,7 +22,6 @@ const TOP_REVEAL_OFFSET = 16;
 
 type FooterIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
-/** Placeholder URLs — replace with real contact links later. */
 const footerLinks: {
   href: string;
   label: string;
