@@ -5,6 +5,8 @@ export default function CustomBrushes() {
       title="Custom Brushes"
       aria-label="Custom Brushes interactive sketch"
       loading="lazy"
+      sandbox="allow-scripts"
+      referrerPolicy="no-referrer"
       className="absolute inset-0 h-full w-full border-0"
     />
   );
