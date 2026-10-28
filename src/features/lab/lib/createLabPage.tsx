@@ -5,7 +5,8 @@ export type LabProjectMetadata = {
   /** List / document title; prefer this over relying on the MDX H1 alone. */
   title?: string;
   tag: string;
-  summary: string;
+  /** Optional; unused by list/detail UI today (reserved for future teaser/SEO). */
+  summary?: string;
   /** List card thumbnail; `./assets/<slug>/cover…` path (resolved by cover registry). */
   cover?: string;
   /** Optional list-card hover video; `./assets/<slug>/cover-hover…` path. */

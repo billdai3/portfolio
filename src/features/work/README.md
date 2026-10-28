@@ -15,7 +15,6 @@ import type { WorkProjectMetadata } from "@/features/work/lib/createWorkPage";
 export const metadata: WorkProjectMetadata = {
   title: "專案標題",
   tag: "Product design",
-  summary: "列表頁簡述",
   // 字串路徑（cover-only resolver；勿在 meta 裡靜態 import 媒體）
   cover: "./assets/my-project/cover.jpg",
   coverVideo: "./assets/my-project/cover-hover.mp4",
@@ -93,7 +92,7 @@ export default createWorkPage({ metadata });
 
 ## 上鎖專案（私有內容）
 
-公開 repo 只放空殼 MDX（`metadata.isLocked: true` + 列表用 cover／summary／標題）。完整正文放在私有 GitHub repo；機密圖放在 Supabase Storage 的 private bucket（`portfolio-assets`）。私有 repo 名稱勿寫進公開文件，改用環境變數。
+公開 repo 只放空殼 MDX（`metadata.isLocked: true` + 列表用 cover／標題）。完整正文放在私有 GitHub repo；機密圖放在 Supabase Storage 的 private bucket（`portfolio-assets`）。私有 repo 名稱勿寫進公開文件，改用環境變數。
 
 ### 環境變數
 
@@ -147,7 +146,6 @@ export const metadata = {
   cover: "./assets/c2c-app/cover.webp",
   coverVideo: "./assets/c2c-app/cover-hover.mp4",
   tag: "App",
-  summary: "提供安全、即時的場外交易",
   isLocked: true,
 };
 ```
@@ -193,7 +191,6 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 ---
 title: C2C App
 tag: App
-summary: 提供安全、即時的場外交易
 projectInfo:
   - label: 角色
     value: Design

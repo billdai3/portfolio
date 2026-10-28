@@ -5,7 +5,6 @@ export const metadata: WorkProjectMetadata = {
   cover: "./assets/c2c-app/cover.webp",
   coverVideo: "./assets/c2c-app/cover-hover.mp4",
   tag: "App",
-  summary: "提供安全、即時的場外交易",
   isLocked: true,
   order: 10,
 };

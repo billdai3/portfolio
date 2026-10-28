@@ -29,7 +29,6 @@ import type { LabProjectMetadata } from "@/features/lab/lib/createLabPage";
 export const metadata: LabProjectMetadata = {
   title: "作品標題",
   tag: "Canvas",
-  summary: "列表頁簡述",
   cover: "./assets/my-project/cover.jpg",
   coverVideo: "./assets/my-project/cover-hover.mp4",
 };

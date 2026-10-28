@@ -5,7 +5,6 @@ export const metadata: WorkProjectMetadata = {
   cover: "./assets/c2c-admins/cover.webp",
   coverVideo: "./assets/c2c-admins/cover-hover.mp4",
   tag: "Web",
-  summary: "視覺收斂，建立更具擴充性的元件庫",
   isLocked: true,
   order: 30,
 };

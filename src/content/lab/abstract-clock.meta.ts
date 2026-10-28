@@ -5,6 +5,5 @@ export const metadata: LabProjectMetadata = {
   cover: "./assets/abstract-clock/cover.webp",
   coverVideo: "./assets/abstract-clock/cover-hover.mp4",
   tag: "p5",
-  summary: "利用 p5.js 製作的抽象幾何時鐘",
   order: 20,
 };
