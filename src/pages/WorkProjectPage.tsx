@@ -1,6 +1,7 @@
 import { MDXProvider } from "@mdx-js/react";
 import { Suspense } from "react";
 import { useParams } from "react-router-dom";
+import { GridIconLoadingBlock } from "../components/GridIconLoading";
 import LockedWorkProject from "../features/work/components/LockedWorkProject";
 import { workMdxComponents } from "../features/work/components/mdx-components";
 import {
@@ -18,7 +19,7 @@ function UnlockedWorkProject({ project }: { project: WorkProjectEntry }) {
 
   return (
     <MDXProvider components={workMdxComponents}>
-      <Suspense fallback={null}>
+      <Suspense fallback={<GridIconLoadingBlock />}>
         <LazyPage />
       </Suspense>
     </MDXProvider>

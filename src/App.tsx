@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import { GridIconLoadingBlock } from "./components/GridIconLoading";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import LabPage from "./pages/LabPage";
@@ -33,7 +34,7 @@ export default function App() {
           <Route
             path="work/:slug"
             element={
-              <Suspense fallback={null}>
+              <Suspense fallback={<GridIconLoadingBlock />}>
                 <WorkProjectPage />
               </Suspense>
             }
@@ -42,7 +43,7 @@ export default function App() {
           <Route
             path="lab/:slug"
             element={
-              <Suspense fallback={null}>
+              <Suspense fallback={<GridIconLoadingBlock />}>
                 <LabProjectPage />
               </Suspense>
             }
@@ -50,7 +51,7 @@ export default function App() {
           <Route
             path="about"
             element={
-              <Suspense fallback={null}>
+              <Suspense fallback={<GridIconLoadingBlock />}>
                 <AboutPage />
               </Suspense>
             }
@@ -64,7 +65,7 @@ export default function App() {
               <Route
                 path="dev/gsap"
                 element={
-                  <Suspense fallback={null}>
+                  <Suspense fallback={<GridIconLoadingBlock />}>
                     <DevGsapPlaygroundPage />
                   </Suspense>
                 }
@@ -72,7 +73,7 @@ export default function App() {
               <Route
                 path="dev/loading"
                 element={
-                  <Suspense fallback={null}>
+                  <Suspense fallback={<GridIconLoadingBlock />}>
                     <DevLoadingPlaygroundPage />
                   </Suspense>
                 }
@@ -80,7 +81,7 @@ export default function App() {
               <Route
                 path="dev/mdx-styleguide"
                 element={
-                  <Suspense fallback={null}>
+                  <Suspense fallback={<GridIconLoadingBlock />}>
                     <DevMdxStyleguidePage />
                   </Suspense>
                 }
@@ -88,7 +89,7 @@ export default function App() {
               <Route
                 path="dev/sandbox"
                 element={
-                  <Suspense fallback={null}>
+                  <Suspense fallback={<GridIconLoadingBlock />}>
                     <DevSandboxPage />
                   </Suspense>
                 }

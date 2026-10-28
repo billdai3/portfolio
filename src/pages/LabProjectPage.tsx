@@ -1,6 +1,7 @@
 import { MDXProvider } from "@mdx-js/react";
 import { Suspense } from "react";
 import { useParams } from "react-router-dom";
+import { GridIconLoadingBlock } from "../components/GridIconLoading";
 import { labMdxComponents } from "../features/lab/components/mdx-components";
 import {
   getLabProject,
@@ -17,7 +18,7 @@ function LabProjectBody({ project }: { project: LabProjectEntry }) {
 
   return (
     <MDXProvider components={labMdxComponents}>
-      <Suspense fallback={null}>
+      <Suspense fallback={<GridIconLoadingBlock />}>
         <LazyPage />
       </Suspense>
     </MDXProvider>
