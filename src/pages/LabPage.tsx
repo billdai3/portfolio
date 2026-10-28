@@ -11,6 +11,7 @@ export default function LabPage() {
 
   return (
     <PageShell>
+      <h1 className="sr-only">Lab</h1>
       <ul className="showcase-grid">
         {labProjects.map((item) => (
           <li key={item.slug}>

@@ -11,6 +11,7 @@ export default function WorkPage() {
 
   return (
     <PageShell>
+      <h1 className="sr-only">Work</h1>
       <ul className="showcase-grid">
         {workProjects.map((project) => (
           <li key={project.slug}>
