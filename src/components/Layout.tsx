@@ -13,6 +13,7 @@ import {
   type SVGProps,
 } from "react";
 import { NavLink, useLocation, useOutlet } from "react-router-dom";
+import { AppErrorBoundary } from "./AppErrorBoundary";
 import GithubIcon from "./icons/GithubIcon";
 import MailIcon from "./icons/MailIcon";
 import RouteTransitionOutlet from "./RouteTransitionOutlet";
@@ -554,9 +555,11 @@ export default function Layout() {
       )}
 
       <main id="main" tabIndex={-1} className="flex flex-1 flex-col">
-        <RouteTransitionOutlet pathname={location.pathname}>
-          {outlet}
-        </RouteTransitionOutlet>
+        <AppErrorBoundary key={location.pathname}>
+          <RouteTransitionOutlet pathname={location.pathname}>
+            {outlet}
+          </RouteTransitionOutlet>
+        </AppErrorBoundary>
       </main>
 
       <footer className="px-6 sm:px-10">
