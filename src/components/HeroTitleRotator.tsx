@@ -4,7 +4,7 @@ const HERO_TITLES = [
   "Bill's Portfolio",
   "UI/UX Design",
   "Graphic Design",
-  "Creative Coding",
+  "Web Interaction",
 ] as const;
 
 /** Time each title stays fully visible. */
@@ -87,7 +87,7 @@ export default function HeroTitleRotator() {
           {slides.map((title, i) => (
             <span
               key={`${title}-${i}`}
-              className="flex items-center justify-center whitespace-nowrap leading-none"
+              className="flex items-center justify-center leading-none whitespace-nowrap"
               style={{ height: `${LINE_EM}em` }}
             >
               {title}

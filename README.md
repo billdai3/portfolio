@@ -1,6 +1,6 @@
 # Bill's Portfolio
 
-這是我的個人 UI/UX 作品集網站，主要放了商業專案的 Case Study 與一些 Creative Coding 的實驗。專案採用了 Vite + React 框架，並透過 Cursor 輔助開發 (Vibe Coding) 完成網站的建置及部署。
+這是我的個人 UI/UX 作品集網站，主要放了商業專案的 Case Study 與一些視覺與互動實驗。專案採用了 Vite + React 框架，並透過 Cursor 輔助開發 (Vibe Coding) 完成網站的建置及部署。
 
 ## 🛠 Tech Stack
 

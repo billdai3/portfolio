@@ -7,10 +7,7 @@ import HeroTitleRotator from "../components/HeroTitleRotator";
 import ShowcaseCardDelayed from "../components/ShowcaseCardDelayed";
 import { labProjects } from "../features/lab/lib/registry";
 import { workProjects } from "../features/work/lib/registry";
-import {
-  SITE_TITLE,
-  useDocumentTitle,
-} from "../hooks/useDocumentTitle";
+import { SITE_TITLE, useDocumentTitle } from "../hooks/useDocumentTitle";
 
 const HOME_SECTION_HASHES = new Set(["home-work", "home-lab"]);
 
@@ -134,7 +131,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Creative Coding & Experiments — ash-700 block, ash-800 cards */}
+      {/* Visual Explorations — ash-700 block, ash-800 cards */}
       <section
         id="home-lab"
         className="section-shell bg-bg-section-alt"
@@ -145,7 +142,7 @@ export default function HomePage() {
             id="home-experiments-heading"
             className="type-section-title section-heading"
           >
-            Creative Coding &amp; Experiments
+            Visual Explorations
           </h2>
           <ul className="showcase-grid">
             {experiments.map((item) => (
