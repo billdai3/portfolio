@@ -49,7 +49,7 @@ const skills: {
     Animation: lazy(() => import("../components/SkillCodingAnimation")),
   },
   {
-    title: "AI-Empowered Delivery",
+    title: "AI-Assisted Delivery",
     description:
       "擁有完整的實務經驗，也能夠運用 Coding Agent 參與開發。能夠有效地與利害關係人、團隊溝通協作，推動專案順利上線。",
     Animation: lazy(() => import("../components/SkillWorkflowAnimation")),
@@ -176,10 +176,11 @@ export default function AboutPage() {
                 Hi! 我是 Bill
               </h1>
               <p className="mt-4 text-base leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
-                UI/UX 設計師，參與過多個從 0 到 1 的 Web 與 App
-                專案，負責從需求釐清到設計落地，並與 PM、工程團隊密切合作。熟悉
-                Figma、Adobe
-                等設計工具，擅長設計系統建立及維護，並協助團隊建立設計流程、提升專案效率與設計一致性。
+                UI/UX 設計師，擁有 6 年以上 Web/App
+                數位產品設計經驗，參與過多個從 0 到 1 的專案。熟悉跨平台 Design
+                System 建立與 Design Tokens 應用，具備基礎前端概念與動態視覺思維
+                (Tailwind CSS, GSAP, React/Vue 等)，並能透過 Cursor 等 AI
+                工具建構產品原型及網站。擅長在商業需求、介面美感與工程可行性之間取得平衡，降低跨部門的溝通成本。
               </p>
             </div>
           </div>
