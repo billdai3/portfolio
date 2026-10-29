@@ -222,10 +222,10 @@ export default function AboutPage() {
           <ul className="mx-auto max-w-2xl list-none space-y-8">
             {buildNotes.map((note) => (
               <li key={note.title} className="group">
-                <h3 className="font-display text-base font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-brand sm:text-lg">
+                <h3 className="font-display text-xl font-extrabold tracking-tight text-text-primary transition-colors group-hover:text-brand">
                   {note.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
+                <p className="mt-2 text-base leading-relaxed text-text-secondary transition-colors group-hover:text-text-primary">
                   {note.description}
                 </p>
               </li>
