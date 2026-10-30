@@ -22,7 +22,7 @@ export default function NotFoundPage() {
         <p className="mt-4 max-w-md text-base leading-relaxed text-text-secondary">
           找不到這個頁面。可能已被移除，或網址有誤。
         </p>
-        <p className="mt-10 sm:mt-12">
+        <p className="mt-6">
           <CtaLink to="/">Back to home</CtaLink>
         </p>
       </div>

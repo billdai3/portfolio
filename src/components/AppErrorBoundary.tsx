@@ -36,13 +36,13 @@ function AppErrorFallback({ onReset }: AppErrorFallbackProps) {
         <p className="mt-4 max-w-md text-base leading-relaxed text-text-secondary">
           這個頁面暫時無法顯示。可以回首頁，或重新整理再試一次。
         </p>
-        <div className="mt-10 flex flex-col items-center gap-4 sm:mt-12">
+        <div className="mt-6 flex flex-col items-center gap-4">
           <p onClick={onReset}>
             <CtaLink to="/">Back to home</CtaLink>
           </p>
           <button
             type="button"
-            className="type-btn text-text-secondary transition-colors hover:text-brand focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+            className="type-btn cursor-pointer text-text-secondary transition-colors hover:text-brand focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             onClick={() => window.location.reload()}
           >
             重新整理
