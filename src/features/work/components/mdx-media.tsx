@@ -2,6 +2,7 @@ import {
   Children,
   isValidElement,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -20,6 +21,7 @@ import ImageLightbox from "./ImageLightbox";
 export type MediaWidth = "default" | "wide" | "page";
 export type MediaFit = "cover" | "contain";
 export type MediaType = "image" | "video";
+export type MediaLoadStatus = "loading" | "loaded" | "failed";
 
 export type MediaProps = {
   src: string;
@@ -42,6 +44,8 @@ const widthClassName: Record<MediaWidth, string> = {
   page: "work-media--page",
 };
 const DEFAULT_MEDIA_RATIO = "16 / 10";
+const MEDIA_LOAD_TIMEOUT_MS = 15_000;
+const MEDIA_AUTO_RETRY_DELAY_MS = 400;
 
 function resolveSrc(src: string | { src?: string } | undefined): string {
   if (typeof src === "string") return resolveLocalContentAsset(src);
@@ -49,6 +53,103 @@ function resolveSrc(src: string | { src?: string } | undefined): string {
     return resolveLocalContentAsset(src.src);
   }
   return "";
+}
+
+function MediaImageReloadButton({
+  onClick,
+}: {
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-ash-700 px-3 py-1 text-xs text-text-primary backdrop-blur-sm transition-colors hover:bg-ash-600 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+    >
+      重新載入
+    </button>
+  );
+}
+
+type RemountingImageLoadOptions = {
+  /** Stall timeout (15s). Keep false for native lazy images. */
+  timeoutActive?: boolean;
+};
+
+/** Remount-only image load: auto-retry once, then manual reload. Never mutates src query. */
+function useRemountingImageLoad(
+  src: string,
+  { timeoutActive = true }: RemountingImageLoadOptions = {},
+) {
+  const [status, setStatus] = useState<MediaLoadStatus>("loading");
+  const [attempt, setAttempt] = useState(0);
+  const [autoRetried, setAutoRetried] = useState(false);
+  const [prevSrc, setPrevSrc] = useState(src);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const autoRetryTimeoutRef = useRef<number | null>(null);
+
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setStatus("loading");
+    setAttempt(0);
+    setAutoRetried(false);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (autoRetryTimeoutRef.current !== null) {
+        window.clearTimeout(autoRetryTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = imgRef.current;
+    if (!el) return;
+    if (el.complete && el.naturalWidth > 0) {
+      setStatus("loaded");
+    }
+  }, [src, attempt]);
+
+  useEffect(() => {
+    if (status !== "loading" || !timeoutActive) return;
+    const timeout = window.setTimeout(() => {
+      setStatus("failed");
+    }, MEDIA_LOAD_TIMEOUT_MS);
+    return () => window.clearTimeout(timeout);
+  }, [status, src, attempt, timeoutActive]);
+
+  const onLoad = useCallback(() => {
+    setStatus("loaded");
+  }, []);
+
+  const onError = useCallback(() => {
+    if (!autoRetried) {
+      setAutoRetried(true);
+      if (autoRetryTimeoutRef.current !== null) {
+        window.clearTimeout(autoRetryTimeoutRef.current);
+      }
+      autoRetryTimeoutRef.current = window.setTimeout(() => {
+        autoRetryTimeoutRef.current = null;
+        setAttempt((prev) => prev + 1);
+        setStatus("loading");
+      }, MEDIA_AUTO_RETRY_DELAY_MS);
+      return;
+    }
+    setStatus("failed");
+  }, [autoRetried]);
+
+  const retry = useCallback(() => {
+    if (autoRetryTimeoutRef.current !== null) {
+      window.clearTimeout(autoRetryTimeoutRef.current);
+      autoRetryTimeoutRef.current = null;
+    }
+    setAutoRetried(false);
+    setStatus("loading");
+    setAttempt((prev) => prev + 1);
+  }, []);
+
+  return { status, attempt, imgRef, onLoad, onError, retry } as const;
 }
 
 type MediaImageProps = {
@@ -60,6 +161,7 @@ type MediaImageProps = {
   hoverClassName?: string;
   /** Fill a sized parent instead of driving layout via aspect-ratio. */
   fill?: boolean;
+  onStatusChange?: (status: MediaLoadStatus) => void;
 };
 
 function MediaImage({
@@ -70,9 +172,27 @@ function MediaImage({
   loading = "lazy",
   hoverClassName = "group-hover:opacity-95",
   fill = false,
+  onStatusChange,
 }: MediaImageProps) {
-  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
-  const isLoaded = loadedSrc === src;
+  // Stall timeout only for eager (e.g. carousel). Lazy off-screen images must
+  // not be marked failed before the browser has started fetching them.
+  const { status, attempt, imgRef, onLoad, onError, retry } =
+    useRemountingImageLoad(src, { timeoutActive: loading === "eager" });
+  const isLoaded = status === "loaded";
+  const isFailed = status === "failed";
+
+  useEffect(() => {
+    onStatusChange?.(status);
+  }, [status, onStatusChange]);
+
+  const onReloadClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      retry();
+    },
+    [retry],
+  );
 
   return (
     <div
@@ -83,11 +203,15 @@ function MediaImage({
       style={fill ? undefined : { aspectRatio: ratio }}
     >
       <img
+        key={attempt}
+        ref={imgRef}
         src={src}
         alt={alt}
-        loading={loading}
+        // Retries must not stay pending off-screen under native lazy loading.
+        loading={attempt > 0 ? "eager" : loading}
         decoding="async"
-        onLoad={() => setLoadedSrc(src)}
+        onLoad={onLoad}
+        onError={onError}
         className={[
           "absolute inset-0 h-full w-full transition-opacity duration-300",
           hoverClassName,
@@ -99,9 +223,15 @@ function MediaImage({
         className={`media-image-placeholder-fade absolute inset-0 transition-opacity duration-300 ${
           isLoaded ? "pointer-events-none opacity-0" : "opacity-100"
         }`}
-        aria-hidden
+        aria-hidden={isFailed ? undefined : true}
       >
-        <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+        {isFailed ? (
+          <div className="absolute inset-0 bg-bg-card">
+            <MediaImageReloadButton onClick={onReloadClick} />
+          </div>
+        ) : (
+          <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+        )}
       </div>
     </div>
   );
@@ -158,7 +288,7 @@ function MediaVideo({
 function MediaCaption({ caption }: { caption?: string }) {
   if (!caption) return null;
   return (
-    <figcaption className="mt-2 text-sm leading-relaxed text-center text-text-secondary hover:text-text-primary transition-colors duration-150">
+    <figcaption className="mt-2 text-center text-sm leading-relaxed text-text-secondary transition-colors duration-150 hover:text-text-primary">
       {caption}
     </figcaption>
   );
@@ -179,6 +309,7 @@ export function Media({
   controls = true,
 }: MediaProps) {
   const [open, setOpen] = useState(false);
+  const [imageStatus, setImageStatus] = useState<MediaLoadStatus>("loading");
   const mediaSrc = resolveSrc(src);
 
   if (!mediaSrc) return null;
@@ -207,14 +338,23 @@ export function Media({
   return (
     <>
       <figure className={`work-media mb-8 ${widthClassName[width]}`}>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="group block w-full cursor-zoom-in overflow-hidden rounded-xl border border-white/10 bg-bg-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          aria-label={alt ? `View larger: ${alt}` : "View larger image"}
-        >
-          <MediaImage src={mediaSrc} alt={alt} ratio={ratio} fit={fit} />
-        </button>
+        <div className="group relative overflow-hidden rounded-xl border border-white/10 bg-bg-card">
+          <MediaImage
+            src={mediaSrc}
+            alt={alt}
+            ratio={ratio}
+            fit={fit}
+            onStatusChange={setImageStatus}
+          />
+          {imageStatus === "loaded" ? (
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="absolute inset-0 z-1 cursor-zoom-in focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:ring-inset"
+              aria-label={alt ? `View larger: ${alt}` : "View larger image"}
+            />
+          ) : null}
+        </div>
         <MediaCaption caption={caption} />
       </figure>
       {open ? (
@@ -275,10 +415,17 @@ export function Carousel({
   const [direction, setDirection] = useState<1 | -1>(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [shift, setShift] = useState(false);
+  const [currentImageStatus, setCurrentImageStatus] =
+    useState<MediaLoadStatus>("loading");
   const animatingRef = useRef(false);
   const swipeRef = useRef<CarouselSwipeState | null>(null);
 
   const safeIndex = slides.length === 0 ? 0 : index % slides.length;
+  const [prevSafeIndex, setPrevSafeIndex] = useState(safeIndex);
+  if (safeIndex !== prevSafeIndex) {
+    setPrevSafeIndex(safeIndex);
+    setCurrentImageStatus("loading");
+  }
   const current = slides[safeIndex];
   const outgoing =
     outgoingIndex !== null ? slides[outgoingIndex % slides.length] : null;
@@ -387,9 +534,13 @@ export function Carousel({
         return;
       }
       swipeRef.current = null;
+      if (currentImageStatus !== "loaded") {
+        event.preventDefault();
+        return;
+      }
       setLightboxOpen(true);
     },
-    [],
+    [currentImageStatus],
   );
 
   if (!current) return null;
@@ -449,6 +600,9 @@ export function Carousel({
                     fit={slide.fit}
                     loading="eager"
                     fill
+                    onStatusChange={
+                      key === safeIndex ? setCurrentImageStatus : undefined
+                    }
                   />
                 </div>
               ))}
@@ -460,7 +614,14 @@ export function Carousel({
               onPointerUp={endViewportPointer}
               onPointerCancel={endViewportPointer}
               onClick={onLightboxClick}
-              className="absolute inset-0 z-1 cursor-zoom-in touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset"
+              className={[
+                "absolute inset-0 z-1 touch-pan-y focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:ring-inset",
+                currentImageStatus === "failed"
+                  ? "pointer-events-none"
+                  : "cursor-zoom-in",
+              ].join(" ")}
+              tabIndex={currentImageStatus === "loaded" ? undefined : -1}
+              aria-hidden={currentImageStatus !== "loaded" ? true : undefined}
               aria-label={
                 current.alt
                   ? `View larger: ${current.alt}`
@@ -471,7 +632,7 @@ export function Carousel({
             {slides.length > 1 ? (
               <>
                 <span
-                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg-card/80 px-3 py-1 text-xs tabular-nums text-text-primary backdrop-blur-sm"
+                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-full bg-bg-card/80 px-3 py-1 text-xs text-text-primary tabular-nums backdrop-blur-sm"
                   aria-hidden
                 >
                   {safeIndex + 1} / {slides.length}
@@ -511,7 +672,7 @@ export function Carousel({
           </div>
         </div>
         {caption || current.caption ? (
-          <figcaption className="mt-2 text-sm leading-relaxed text-center text-text-secondary hover:text-text-primary transition-colors duration-150">
+          <figcaption className="mt-2 text-center text-sm leading-relaxed text-text-secondary transition-colors duration-150 hover:text-text-primary">
             {caption ?? current.caption}
           </figcaption>
         ) : null}
@@ -560,9 +721,25 @@ export function Comparison({
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(50);
   const [dragging, setDragging] = useState(false);
-  const [beforeLoaded, setBeforeLoaded] = useState(false);
-  const [afterLoaded, setAfterLoaded] = useState(false);
-  const isLoaded = beforeLoaded && afterLoaded;
+  // Comparison imgs are lazy — no stall timeout (same as MediaImage lazy).
+  const {
+    status: beforeStatus,
+    attempt: beforeAttempt,
+    imgRef: beforeImgRef,
+    onLoad: onBeforeLoad,
+    onError: onBeforeError,
+    retry: retryBefore,
+  } = useRemountingImageLoad(beforeSrc, { timeoutActive: false });
+  const {
+    status: afterStatus,
+    attempt: afterAttempt,
+    imgRef: afterImgRef,
+    onLoad: onAfterLoad,
+    onError: onAfterError,
+    retry: retryAfter,
+  } = useRemountingImageLoad(afterSrc, { timeoutActive: false });
+  const isLoaded = beforeStatus === "loaded" && afterStatus === "loaded";
+  const isFailed = beforeStatus === "failed" || afterStatus === "failed";
   const objectFitClass = fit === "contain" ? "object-contain" : "object-cover";
 
   const updateFromClientX = useCallback((clientX: number) => {
@@ -575,12 +752,13 @@ export function Comparison({
 
   const onPointerDown = useCallback(
     (event: PointerEvent<HTMLDivElement>) => {
+      if (isFailed || !isLoaded) return;
       event.preventDefault();
       event.currentTarget.setPointerCapture(event.pointerId);
       setDragging(true);
       updateFromClientX(event.clientX);
     },
-    [updateFromClientX],
+    [isFailed, isLoaded, updateFromClientX],
   );
 
   const onPointerMove = useCallback(
@@ -598,22 +776,36 @@ export function Comparison({
     setDragging(false);
   }, []);
 
-  const onKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
-    const step = event.shiftKey ? 10 : 2;
-    if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (isFailed || !isLoaded) return;
+      const step = event.shiftKey ? 10 : 2;
+      if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+        event.preventDefault();
+        setPosition((prev) => clampPercent(prev - step));
+      } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+        event.preventDefault();
+        setPosition((prev) => clampPercent(prev + step));
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        setPosition(0);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        setPosition(100);
+      }
+    },
+    [isFailed, isLoaded],
+  );
+
+  const onReloadClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
-      setPosition((prev) => clampPercent(prev - step));
-    } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
-      event.preventDefault();
-      setPosition((prev) => clampPercent(prev + step));
-    } else if (event.key === "Home") {
-      event.preventDefault();
-      setPosition(0);
-    } else if (event.key === "End") {
-      event.preventDefault();
-      setPosition(100);
-    }
-  }, []);
+      event.stopPropagation();
+      retryBefore();
+      retryAfter();
+    },
+    [retryBefore, retryAfter],
+  );
 
   if (!beforeSrc || !afterSrc) return null;
 
@@ -627,30 +819,38 @@ export function Comparison({
         <div
           ref={containerRef}
           role="slider"
-          tabIndex={0}
+          tabIndex={isLoaded && !isFailed ? 0 : -1}
           aria-label={sliderLabel}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(position)}
           aria-valuetext={`${Math.round(position)}% before`}
+          aria-disabled={isFailed || !isLoaded ? true : undefined}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
           onKeyDown={onKeyDown}
           className={[
-            "relative w-full touch-none select-none overflow-hidden bg-bg-card outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
-            dragging ? "cursor-grabbing" : "cursor-ew-resize",
+            "relative w-full touch-none overflow-hidden bg-bg-card outline-none select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
+            isLoaded && !isFailed
+              ? dragging
+                ? "cursor-grabbing"
+                : "cursor-ew-resize"
+              : "",
           ].join(" ")}
           style={{ aspectRatio: ratio }}
         >
           <img
+            key={`after-${afterAttempt}`}
+            ref={afterImgRef}
             src={afterSrc}
             alt={alt ? `${alt} (after)` : ""}
             draggable={false}
-            loading="lazy"
+            loading={afterAttempt > 0 ? "eager" : "lazy"}
             decoding="async"
-            onLoad={() => setAfterLoaded(true)}
+            onLoad={onAfterLoad}
+            onError={onAfterError}
             className={[
               "absolute inset-0 h-full w-full transition-opacity duration-300",
               objectFitClass,
@@ -658,12 +858,15 @@ export function Comparison({
             ].join(" ")}
           />
           <img
+            key={`before-${beforeAttempt}`}
+            ref={beforeImgRef}
             src={beforeSrc}
             alt={alt ? `${alt} (before)` : ""}
             draggable={false}
-            loading="lazy"
+            loading={beforeAttempt > 0 ? "eager" : "lazy"}
             decoding="async"
-            onLoad={() => setBeforeLoaded(true)}
+            onLoad={onBeforeLoad}
+            onError={onBeforeError}
             className={[
               "absolute inset-0 h-full w-full transition-opacity duration-300",
               objectFitClass,
@@ -675,40 +878,50 @@ export function Comparison({
           />
 
           <div
-            className={`media-image-placeholder-fade absolute inset-0 transition-opacity duration-300 ${
+            className={`media-image-placeholder-fade absolute inset-0 z-20 transition-opacity duration-300 ${
               isLoaded ? "pointer-events-none opacity-0" : "opacity-100"
             }`}
-            aria-hidden
+            aria-hidden={isFailed ? undefined : true}
           >
-            <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+            {isFailed ? (
+              <div className="absolute inset-0 bg-bg-card">
+                <MediaImageReloadButton onClick={onReloadClick} />
+              </div>
+            ) : (
+              <div className="media-image-skeleton showcase-skeleton-breathe h-full w-full" />
+            )}
           </div>
 
-          {beforeLabel ? (
-            <span
-              className="pointer-events-none absolute top-3 left-3 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
-              aria-hidden
-            >
-              {beforeLabel}
-            </span>
-          ) : null}
-          {afterLabel ? (
-            <span
-              className="pointer-events-none absolute top-3 right-3 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
-              aria-hidden
-            >
-              {afterLabel}
-            </span>
-          ) : null}
+          {isLoaded ? (
+            <>
+              {beforeLabel ? (
+                <span
+                  className="pointer-events-none absolute top-3 left-3 z-10 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
+                  aria-hidden
+                >
+                  {beforeLabel}
+                </span>
+              ) : null}
+              {afterLabel ? (
+                <span
+                  className="pointer-events-none absolute top-3 right-3 z-10 rounded-md bg-bg-card/80 px-2 py-1 text-xs text-text-primary backdrop-blur-sm"
+                  aria-hidden
+                >
+                  {afterLabel}
+                </span>
+              ) : null}
 
-          <div
-            className="pointer-events-none absolute inset-y-0 z-10 w-px bg-white"
-            style={{ left: `${position}%` }}
-            aria-hidden
-          >
-            <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ash-700 shadow-sm">
-              <ComparisonIcon className="size-5" />
-            </span>
-          </div>
+              <div
+                className="pointer-events-none absolute inset-y-0 z-10 w-px bg-white"
+                style={{ left: `${position}%` }}
+                aria-hidden
+              >
+                <span className="absolute top-1/2 left-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-ash-700 shadow-sm">
+                  <ComparisonIcon className="size-5" />
+                </span>
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
       <MediaCaption caption={caption} />
