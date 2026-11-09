@@ -58,19 +58,24 @@ const skills: {
 
 const buildNotes: { title: string; description: string }[] = [
   {
-    title: "開發框架",
+    title: "開發流程與技術應用",
     description:
-      "主要使用 Cursor 輔助開發，透過 Vibe coding 的方式去一步步建構網站。框架是選用目前主流且能夠快速啟動的 Vite + React，雖然較深入的技術架構還不是很熟悉，但透過 Cursor 以及自學過一點 Vue 的知識，在開發過程中還是能夠大致理解進程、並且精準向 AI 提問或是說明意圖。",
+      "網站以 Vite + React 建置。前期先和 Gemini 討論網站架構與功能方向，再使用 Cursor 協助撰寫程式。結合過去接觸的前端知識 (HTML, CSS, Vue 等)，用 Vibe coding 的方式一步步建構網站。",
   },
   {
     title: "視覺與動態",
     description:
-      "視覺方面是使用 Tailwind CSS 來做處理，原先就很熟悉 Design tokens 了，所以使用起來很順手。網站中的一些小動畫是利用 GSAP 去操控 SVG 做時間軸動畫。Icon 部分，原先使用 Lucide icon 來做快速開發，最後決定替換成自己用 Figma 繪製的 Icon。",
+      "使用 Tailwind CSS 來處理樣式，因為過去就熟悉 Design tokens，所以使用起來很順手。網站中的小動畫是利用 GSAP 操控 SVG 做時間軸動畫。Icon 前期使用 Lucide 加快開發，最後再替換成自己用 Figma 繪製的版本。",
   },
   {
-    title: "內容與資料庫",
+    title: "內容與資料管理",
     description:
-      "專案 Case study 使用了 MDX 的技術去做包裝，讓我可以用 Markdown 的格式去撰寫，也能自己決定 Markdown 的樣式，且能安插自製的 React 元件（主要是圖片類的元件如 Carousel 等）。上鎖的專案 MDX 是另外存放在 Github 的 Private repo 裡，圖片原先也是，不過後來發現用 Github API 提取圖片太久 ，所以改成存放在 Supabase 中，透過有時效性的 Signed URL，讓我能夠快速提取圖片的同時保有安全性。最後再使用 Vercel 的服務去做網站的部署上線。過程中也算是邊做邊學，詳細的程式架構及過程中的 Commits 可以在我的作品集 Repo 中看到。",
+      "專案 Case study 使用 MDX 管理，讓我可以用 Markdown 語法撰寫內容、自訂樣式，也能安插自製的 React 元件（如圖片 Carousel）。上鎖專案的 MDX 存放在 Github 的 Private repo，圖片則放在 Supabase，透過有時效性的 Signed URL 控制存取權限。原先圖片也放在 Github，但考量 API 的讀取速度，後來才改成用 Supabase。",
+  },
+  {
+    title: "部署與版本管理",
+    description:
+      "使用 Vercel 部署網站，並透過 Github 管理程式碼。詳細的程式架構及 Commits 可以在作品集 Repo 中查看。",
   },
 ];
 
