@@ -33,25 +33,25 @@ const skills: {
   {
     title: "Figma & UI Prototyping",
     description:
-      "熟練運用 Figma 製作數位產品的設計稿及可動原型。有設計、優化過多個網站及 App 的經驗。",
+      "熟練使用 Figma 製作數位產品的介面設計稿及互動原型，具備多個網站及 App 的設計與優化經驗。",
     Animation: lazy(() => import("../components/SkillDesignAnimation")),
   },
   {
     title: "Design System Architecture",
     description:
-      "熟悉設計系統的建立及維護，包含 Design Tokens 的使用、元件庫的製作、設計規格的撰寫等。",
+      "熟悉設計系統的建立及維護，包括 Design Tokens 的管理、元件庫的製作，以及設計規格的整理及撰寫。",
     Animation: lazy(() => import("../components/SkillSystemAnimation")),
   },
   {
     title: "Design-to-Code",
     description:
-      "瞭解網頁結構、樣式規則及互動邏輯等前端知識，並能運用相關技術來設計標準的互動式 RWD 網頁，讓設計能夠準確地落地實現。",
+      "熟悉 HTML、CSS 、JS 等網頁基礎，能閱讀及修改既有程式碼，並將設計需求準確實現成標準的互動式 RWD 網頁。",
     Animation: lazy(() => import("../components/SkillCodingAnimation")),
   },
   {
     title: "AI-Assisted Delivery",
     description:
-      "擁有完整的實務經驗，也能夠運用 Coding Agent 參與開發。能夠有效地與利害關係人、團隊溝通協作，推動專案順利上線。",
+      "擁有完整的 UI/UX 實務經驗，能運用 Coding Agent 輔助開發，並與客戶及團隊溝通協作，推動專案完成與上線。",
     Animation: lazy(() => import("../components/SkillWorkflowAnimation")),
   },
 ];
