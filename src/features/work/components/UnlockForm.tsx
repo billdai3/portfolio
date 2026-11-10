@@ -92,7 +92,7 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
         <button
           type="submit"
           disabled={submitting || !password}
-          className="w-full cursor-pointer rounded-xl bg-bg-section-alt px-4 py-3 text-sm font-bold text-text-primary transition-colors duration-300 ease-out enabled:hover:bg-brand enabled:hover:text-on-light focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
+          className="w-full cursor-pointer rounded-xl bg-bg-section-alt px-4 py-3 text-sm font-bold text-text-primary transition-colors duration-300 ease-out enabled:hover:bg-brand enabled:hover:text-text-on-light focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
         >
           {submitting ? "驗證中…" : "解鎖"}
         </button>

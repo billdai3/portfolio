@@ -163,7 +163,7 @@
 
   /* Skip link — off-screen until keyboard focus; above nav (z-70) */
   .skip-link {
-    @apply fixed top-3 left-3 z-80 -translate-y-[calc(100%+1.5rem)] rounded-full bg-ash-50 px-4 py-2 font-display text-base font-extrabold text-on-light opacity-0 outline-none ring-2 ring-accent transition-none;
+    @apply fixed top-3 left-3 z-80 -translate-y-[calc(100%+1.5rem)] rounded-full bg-ash-50 px-4 py-2 font-display text-base font-extrabold text-text-on-light opacity-0 outline-none ring-2 ring-accent transition-none;
   }
 
   .skip-link:focus,

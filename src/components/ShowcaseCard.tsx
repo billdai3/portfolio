@@ -83,7 +83,7 @@ const spotlight = {
     "group-hover:inline-flex group-[.showcase-card--active]:inline-flex",
   image:
     "group-hover:grayscale-0 group-[.showcase-card--active]:grayscale-0",
-  lock: "group-hover:bg-brand group-hover:text-on-light group-[.showcase-card--active]:bg-brand group-[.showcase-card--active]:text-on-light",
+  lock: "group-hover:bg-brand group-hover:text-text-on-light group-[.showcase-card--active]:bg-brand group-[.showcase-card--active]:text-text-on-light",
   corner: "group-hover:rotate-45 group-[.showcase-card--active]:rotate-45",
 } as const;
 

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ArrowIcon from "./icons/ArrowIcon";
 
 const baseClassName =
-  "group type-btn inline-flex items-center rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-on-light focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none";
+  "group type-btn inline-flex items-center rounded-full bg-bg-card px-6 py-3 text-text-primary transition-colors duration-300 ease-out hover:bg-brand hover:text-text-on-light focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none";
 
 const iconWrapClassName =
   "inline-flex w-0 overflow-hidden opacity-0 transition-[width,opacity,margin] duration-300 ease-out motion-reduce:transition-none group-hover:ml-1 group-hover:w-4 group-hover:opacity-100 group-focus-visible:ml-1 group-focus-visible:w-4 group-focus-visible:opacity-100";
