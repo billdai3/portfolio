@@ -56,12 +56,20 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
   }
 
   return (
-    <div className="mx-auto flex min-h-[50vh] max-w-md flex-col justify-center py-16">
-      <h1 className="text-2xl font-semibold text-text-primary">此專案已上鎖</h1>
+    <section
+      className="mt-4 mb-6 rounded-3xl bg-bg-card/60 p-6 sm:p-8"
+      aria-labelledby="work-unlock-heading"
+    >
+      <h2
+        id="work-unlock-heading"
+        className="text-xl font-semibold text-text-primary"
+      >
+        此專案已上鎖
+      </h2>
       <p className="mt-2 text-sm text-text-secondary">
         輸入密碼後即可檢視完整內容。
       </p>
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <label className="block">
           <span className="sr-only">密碼</span>
           <input
@@ -84,11 +92,11 @@ export function UnlockForm({ slug, onUnlocked }: UnlockFormProps) {
         <button
           type="submit"
           disabled={submitting || !password}
-          className="w-full rounded-xl bg-text-primary px-4 py-3 text-sm font-medium text-bg-page transition enabled:hover:opacity-90 disabled:opacity-50"
+          className="w-full cursor-pointer rounded-xl bg-bg-section-alt px-4 py-3 text-sm font-bold text-text-primary transition-colors duration-300 ease-out enabled:hover:bg-brand enabled:hover:text-bg-page focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30"
         >
           {submitting ? "驗證中…" : "解鎖"}
         </button>
       </form>
-    </div>
+    </section>
   );
 }
