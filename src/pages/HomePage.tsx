@@ -77,7 +77,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={scrollToHomeWork}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-ash-900 transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:ring-2 focus-visible:ring-ash-50 focus-visible:outline-none lg:rotate-90"
+              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-transparent px-4 py-2 text-on-light transition hover:text-ash-50 focus-visible:border-ash-900 focus-visible:ring-2 focus-visible:ring-ash-50 focus-visible:outline-none lg:rotate-90"
               aria-label="Scroll to Selected Works"
             >
               <span className="type-scroll">Scroll</span>

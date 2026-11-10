@@ -2,13 +2,13 @@
 
 ::selection {
   background-color: var(--color-accent);
-  color: var(--color-ash-900);
+  color: var(--color-text-on-light);
 }
 
 .hero-title-rotator ::selection,
 .hero-title-rotator::selection {
   background-color: var(--color-ash-50);
-  color: var(--color-ash-900);
+  color: var(--color-text-on-light);
 }
 
 @theme {
@@ -41,6 +41,7 @@
   --color-text-primary: var(--color-ash-50);
   --color-text-secondary: var(--color-ash-300);
   --color-text-muted: var(--color-ash-400);
+  --color-text-on-light: var(--color-ash-900);
   --color-border-default: var(--color-ash-600);
   --color-border-strong: var(--color-ash-500);
   --color-accent: var(--color-brand);
@@ -48,7 +49,7 @@
   /* Navbar — light over hero / dark elsewhere */
   --color-nav-bg-hero: var(--color-ash-50);
   --color-nav-bg-default: var(--color-ash-700);
-  --color-nav-text-hero: var(--color-ash-900);
+  --color-nav-text-hero: var(--color-text-on-light);
   --color-nav-text-default: var(--color-ash-50);
   --color-nav-indicator-hero: var(--color-accent);
   --color-nav-indicator-default: var(--color-ash-900);
@@ -162,7 +163,7 @@
 
   /* Skip link — off-screen until keyboard focus; above nav (z-70) */
   .skip-link {
-    @apply fixed top-3 left-3 z-80 -translate-y-[calc(100%+1.5rem)] rounded-full bg-ash-50 px-4 py-2 font-display text-base font-extrabold text-ash-900 opacity-0 outline-none ring-2 ring-accent transition-none;
+    @apply fixed top-3 left-3 z-80 -translate-y-[calc(100%+1.5rem)] rounded-full bg-ash-50 px-4 py-2 font-display text-base font-extrabold text-on-light opacity-0 outline-none ring-2 ring-accent transition-none;
   }
 
   .skip-link:focus,
