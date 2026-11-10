@@ -9,6 +9,7 @@ import {
 } from "react";
 import { GridIconLoadingBlock } from "../../../components/GridIconLoading";
 import { UnlockForm } from "./UnlockForm";
+import { LockedWorkPreview } from "./LockedWorkPreview";
 import { RemoteMdxErrorBoundary } from "./RemoteMdxErrorBoundary";
 import { ProjectInfo } from "./ProjectInfo";
 import { workMdxComponents } from "./mdx-components";
@@ -26,6 +27,7 @@ import {
   hasUnlockHint,
   type WorkContentPayload,
 } from "../lib/unlock-api";
+import type { WorkProjectEntry } from "../lib/registry";
 
 /** 避免極短等待時 loading 閃一下 */
 const MIN_LOADING_MS = 350;
@@ -41,7 +43,12 @@ function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
-export default function LockedWorkProject({ slug }: { slug: string }) {
+export default function LockedWorkProject({
+  project,
+}: {
+  project: WorkProjectEntry;
+}) {
+  const { slug, title, summary, hero, projectInfo } = project;
   const [state, setState] = useState<LoadState>(() => {
     const cachedContent = getCachedWorkContent(slug);
     if (cachedContent) {
@@ -198,10 +205,14 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
   if (state.status === "checking" || state.status === "loading") {
     body = <GridIconLoadingBlock />;
   } else if (state.status === "locked") {
-    body = <UnlockForm slug={slug} onUnlocked={startLoadContent} />;
+    body = (
+      <div className="work-prose lab-prose max-w-none">
+        <UnlockForm slug={slug} onUnlocked={startLoadContent} />
+      </div>
+    );
   } else if (state.status === "error") {
     body = (
-      <div className="py-24 text-center">
+      <div className="py-12 text-center">
         <p className="text-sm text-text-secondary">{state.message}</p>
         <button
           type="button"
@@ -214,34 +225,46 @@ export default function LockedWorkProject({ slug }: { slug: string }) {
     );
   } else {
     const { content } = state;
-    const projectInfoItems = projectInfoFromFrontmatter(content.frontmatter);
+    // Prefer public meta projectInfo; fall back to private frontmatter only when
+    // the public preview has no rows (legacy private MDX still embeds ProjectInfo).
+    const hasPublicProjectInfo = Boolean(
+      projectInfo?.some((item) => item.label.trim() && item.value.trim()),
+    );
+    const projectInfoItems = hasPublicProjectInfo
+      ? null
+      : projectInfoFromFrontmatter(content.frontmatter);
     const lockedMdxComponents = {
       ...workMdxComponents,
       ProjectInfo: () =>
         projectInfoItems ? <ProjectInfo items={projectInfoItems} /> : null,
     };
     body = (
-      <MDXProvider components={lockedMdxComponents}>
-        <RemoteMdxErrorBoundary
-          key={slug}
-          onError={(message) =>
-            setState({ status: "error", message: `渲染失敗：${message}` })
-          }
-        >
-          <SafeMdxDocumentView
-            document={content.document}
-            components={lockedMdxComponents}
-          />
-        </RemoteMdxErrorBoundary>
-      </MDXProvider>
+      <div className="work-prose lab-prose max-w-none">
+        <MDXProvider components={lockedMdxComponents}>
+          <RemoteMdxErrorBoundary
+            key={slug}
+            onError={(message) =>
+              setState({ status: "error", message: `渲染失敗：${message}` })
+            }
+          >
+            <SafeMdxDocumentView
+              document={content.document}
+              components={lockedMdxComponents}
+            />
+          </RemoteMdxErrorBoundary>
+        </MDXProvider>
+      </div>
     );
   }
 
   return (
-    <WorkProjectLayout
-      prose={state.status === "ready"}
-      showPager={state.status === "ready"}
-    >
+    <WorkProjectLayout prose={false} showPager>
+      <LockedWorkPreview
+        title={title}
+        summary={summary}
+        hero={hero}
+        projectInfo={projectInfo}
+      />
       {body}
     </WorkProjectLayout>
   );

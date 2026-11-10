@@ -139,12 +139,19 @@ npm run dev:vercel
 
 列表標題請寫在公開殼的 `.meta.ts`；缺則 registry 會用 slug（例如 `c2c-app` → `C2c App`）。
 
+上鎖詳情頁在解鎖前會露出公開預覽：`hero` → `title` → `summary` → `projectInfo` → 解鎖表單 → prev/next。`hero`／`summary`／`projectInfo` 都寫在 `.meta.ts`；圖檔放公開 `src/content/work/assets/<slug>/`（例如 `hero.webp`）。缺檔或缺欄位時該塊省略。`title`／`summary` 分別套用 MDX `h1`／`p` 樣式。
+
 ```ts
 // c2c-app.meta.ts
 export const metadata = {
   title: "C2C 數位資產交易 App",
+  summary: "一句話說明專案。",
   cover: "./assets/c2c-app/cover.webp",
   coverVideo: "./assets/c2c-app/cover-hover.mp4",
+  hero: "./assets/c2c-app/hero.webp",
+  projectInfo: [
+    { label: "角色", value: "Design" },
+  ],
   tag: "App",
   isLocked: true,
 };
@@ -179,7 +186,8 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 ### 私有 MDX 寫法
 
 - 使用 **YAML frontmatter**（不要 `import`／`export`／`createWorkPage`）。
-- 一般 JSX **不要**寫 `{...}` 運算式（建置會失敗）。例外：`<ProjectInfo items={projectInfo} />` 會在烘焙時正規化成位置標記，資料仍來自 YAML `projectInfo`，**渲染順序與 MDX 寫的位置相同**（例如 hero `<Media>` 在上、ProjectInfo 在下）。沒寫標記則不插入 ProjectInfo。
+- **建議：** 公開預覽已負責 hero／標題／`projectInfo` 時，私有 MDX **不要**再寫開頭 hero `<Media>`、`#` 標題、`<ProjectInfo />`（及 frontmatter `projectInfo`），解鎖後只接正文，避免重複。若公開 meta 尚未填 `projectInfo`，仍可暫時靠私有 frontmatter + `<ProjectInfo items={projectInfo} />` 顯示。
+- 一般 JSX **不要**寫 `{...}` 運算式（建置會失敗）。例外：`<ProjectInfo items={projectInfo} />` 會在烘焙時正規化成位置標記，資料仍來自 YAML `projectInfo`，**渲染順序與 MDX 寫的位置相同**。沒寫標記則不插入 ProjectInfo。
 - 自訂元件只用字面量 props 的 JSX：`<Media>`、`<Carousel>`、`<Comparison>`（對應本站 `workMdxComponents`）。
 - 圖片／影片路徑用相對 `assets/`，例如 `./assets/c2c-app/secret-flow.jpg`（對應 bucket object key `c2c-app/secret-flow.jpg`）。`Media` 的 `src` 與 `poster` 都會在**請求時**簽發（非建置時）。
 - 私有圖預設經 signed URL 直連 Storage（見上「洩漏面」）；`/api/work-media` 僅作簽發失敗時的 fallback（驗 session 後 302 轉址）。
@@ -191,14 +199,9 @@ MDX 裡繼續寫 `./assets/c2c-app/secret-flow.jpg`（或 `assets/...`）。解�
 ---
 title: C2C App
 tag: App
-projectInfo:
-  - label: 角色
-    value: Design
 ---
 
-# C2C App
+## 挑戰
 
 <Media src="./assets/c2c-app/secret-flow.jpg" alt="Secret flow" width="wide" />
-
-<ProjectInfo items={projectInfo} />
 ```

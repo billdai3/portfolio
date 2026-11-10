@@ -30,7 +30,7 @@ function WorkProjectResolved({ project }: { project: WorkProjectEntry }) {
   useDocumentTitle(formatDocumentTitle(project.title, "Work"));
 
   if (project.isLocked) {
-    return <LockedWorkProject key={project.slug} slug={project.slug} />;
+    return <LockedWorkProject key={project.slug} project={project} />;
   }
 
   return <UnlockedWorkProject key={project.slug} project={project} />;
