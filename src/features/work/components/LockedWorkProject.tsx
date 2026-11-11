@@ -43,6 +43,13 @@ function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
+/** Capture before content height grows; ignore non-scrollable pages. */
+function isWindowScrolledToBottom(thresholdPx = 64): boolean {
+  const maxScroll =
+    document.documentElement.scrollHeight - window.innerHeight;
+  return maxScroll > thresholdPx && window.scrollY >= maxScroll - thresholdPx;
+}
+
 export default function LockedWorkProject({
   project,
 }: {
@@ -60,6 +67,8 @@ export default function LockedWorkProject({
   const loadAbortRef = useRef<AbortController | null>(null);
   const loadingStartedAtRef = useRef<number | null>(null);
   const minLoadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wasAtBottomRef = useRef(false);
+  const bodyStartRef = useRef<HTMLDivElement | null>(null);
 
   const clearMinLoadingTimer = useCallback(() => {
     if (minLoadingTimerRef.current) {
@@ -72,6 +81,10 @@ export default function LockedWorkProject({
     loadingStartedAtRef.current = performance.now();
   }, []);
 
+  const rememberScrollBeforeReady = useCallback(() => {
+    wasAtBottomRef.current = isWindowScrolledToBottom();
+  }, []);
+
   const setStateAfterMinLoading = useCallback(
     (next: LoadState, signal?: AbortSignal) => {
       if (signal?.aborted) return;
@@ -82,9 +95,16 @@ export default function LockedWorkProject({
 
       clearMinLoadingTimer();
 
+      const apply = () => {
+        if (next.status === "ready") {
+          rememberScrollBeforeReady();
+        }
+        setState(next);
+      };
+
       if (remaining === 0) {
         loadingStartedAtRef.current = null;
-        setState(next);
+        apply();
         return;
       }
 
@@ -92,10 +112,10 @@ export default function LockedWorkProject({
         minLoadingTimerRef.current = null;
         if (signal?.aborted) return;
         loadingStartedAtRef.current = null;
-        setState(next);
+        apply();
       }, remaining);
     },
-    [clearMinLoadingTimer],
+    [clearMinLoadingTimer, rememberScrollBeforeReady],
   );
 
   const storeAndReady = useCallback(
@@ -110,6 +130,7 @@ export default function LockedWorkProject({
     async (signal?: AbortSignal) => {
       const cachedContent = getCachedWorkContent(slug);
       if (cachedContent) {
+        rememberScrollBeforeReady();
         setState({ status: "ready", content: cachedContent });
         return;
       }
@@ -142,7 +163,12 @@ export default function LockedWorkProject({
         );
       }
     },
-    [setStateAfterMinLoading, slug, storeAndReady],
+    [
+      rememberScrollBeforeReady,
+      setStateAfterMinLoading,
+      slug,
+      storeAndReady,
+    ],
   );
 
   const startLoadContent = useCallback(
@@ -197,7 +223,12 @@ export default function LockedWorkProject({
 
   useLayoutEffect(() => {
     if (state.status !== "ready") return;
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (!wasAtBottomRef.current) return;
+    wasAtBottomRef.current = false;
+    bodyStartRef.current?.scrollIntoView({
+      block: "start",
+      behavior: "instant",
+    });
   }, [state.status, slug]);
 
   let body: ReactNode;
@@ -239,7 +270,7 @@ export default function LockedWorkProject({
         projectInfoItems ? <ProjectInfo items={projectInfoItems} /> : null,
     };
     body = (
-      <div className="work-prose lab-prose max-w-none">
+      <div ref={bodyStartRef} className="work-prose lab-prose max-w-none">
         <MDXProvider components={lockedMdxComponents}>
           <RemoteMdxErrorBoundary
             key={slug}
